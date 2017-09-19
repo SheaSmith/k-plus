@@ -1,0 +1,30 @@
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/main_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ListView
+        android:id="@+id/servers"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></ListView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add_black_24dp"
+        app:layout_anchor="@id/servers"
+        app:layout_anchorGravity="bottom|right|end"
+        android:id="@+id/addButton" />
+    <TextView
+        android:id="@+id/empty"
+        android:text="No servers! Click the plus icon below to add some."
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        />
+
+</android.support.design.widget.CoordinatorLayout>

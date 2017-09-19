@@ -1,0 +1,1134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="0dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="sheasmith.me.betterkamar.pages.ncea.NCEA"
+    tools:showIn="@layout/app_bar_ncea">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/scrollView2"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/main"
+            android:focusableInTouchMode="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="10dp">
+
+                <TextView
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="NCEA Summary"
+                    android:id="@+id/serviceName"
+                    android:layout_column="0"
+                    android:textSize="28dp"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="10dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/chart"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal" >
+            </LinearLayout>
+
+            <TextView
+                android:text="NZQA Ratified Results"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView5"
+                android:layout_marginLeft="10dp"
+                android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+
+            <TextView
+                android:text="* There are no official results from NZQA available yet."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/nzqaEmpty"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
+
+            <TextView
+                android:text="* Stored results may not be confirmed with NZQA and should not be considered official."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView20"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:textStyle="normal|italic" />
+
+            <TextView
+                android:text="Summarised Results"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView12"
+                android:textAppearance="@android:style/TextAppearance.Material.Medium"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp" />
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <TextView
+                        android:text="NA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:id="@+id/na"
+                        android:padding="5dp"
+
+                        android:background="@drawable/table_border_gray" />
+
+                    <TextView
+                        android:text="A"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:id="@+id/textView6"
+                        android:padding="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_gray" />
+
+                    <TextView
+                        android:text="M"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:id="@+id/textView7"
+                        android:padding="5dp"
+                        android:background="@drawable/table_border_gray" />
+
+                    <TextView
+                        android:text="E"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:id="@+id/textView8"
+                        android:padding="5dp"
+                        android:background="@drawable/table_border_gray" />
+
+                    <TextView
+                        android:text="Credits"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:id="@+id/textView9"
+                        android:padding="5dp"
+                        android:background="@drawable/table_border_gray" />
+
+                    <TextView
+                        android:text="Attempted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:id="@+id/textView10"
+                        android:padding="5dp"
+                        android:background="@drawable/table_border_gray"
+                        android:layout_marginTop="0dp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/naGrade"
+                        android:background="@drawable/table_border_red"
+                        android:layout_weight="1"
+                        android:padding="5dp" />
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/aGrade"
+                        android:background="@drawable/table_border_blue"
+                        android:layout_weight="1"
+                        android:padding="5dp" />
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/mGrade"
+                        android:background="@drawable/table_border_orange"
+                        android:layout_weight="1"
+                        android:padding="5dp" />
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/eGrade"
+                        android:background="@drawable/table_border_green"
+                        android:layout_weight="1"
+                        android:padding="5dp" />
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/totalGrade"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:background="@drawable/table_border"/>
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/totalAttemptedGrade"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:background="@drawable/table_border"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </TableLayout>
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <TextView
+                        android:text="Year Sat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView13"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_gray"
+                        android:padding="5dp" />
+
+                    <TextView
+                        android:text="NA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView14"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_gray"
+                        android:padding="5dp" />
+
+                    <TextView
+                        android:text="A"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView15"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_gray"
+                        android:padding="5dp" />
+
+                    <TextView
+                        android:text="M"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView16"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_gray"
+                        android:padding="5dp" />
+
+                    <TextView
+                        android:text="E"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView17"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_gray"
+                        android:padding="5dp" />
+
+                    <TextView
+                        android:text="Credits"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView18"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_gray"
+                        android:padding="5dp" />
+
+                    <TextView
+                        android:text="Attempted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView19"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_gray"
+                        android:padding="5dp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <TextView
+                        android:text="2017"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year0"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_all"
+                        android:padding="5dp" />
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year0Na"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year0A"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year0M"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year0E"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year0Credits"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year0Attempted"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+                <TextView
+                    android:text="2016"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/year1"
+                    android:layout_weight="1"
+                    android:background="@drawable/table_border_all"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:text="0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/year1Na"
+                    android:layout_weight="1"
+                    android:background="@drawable/table_border"
+                    android:padding="5dp"/>
+
+                <TextView
+                    android:text="0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/year1A"
+                    android:layout_weight="1"
+                    android:background="@drawable/table_border"
+                    android:padding="5dp"/>
+
+                <TextView
+                    android:text="0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/year1M"
+                    android:layout_weight="1"
+                    android:background="@drawable/table_border"
+                    android:padding="5dp"/>
+
+                <TextView
+                    android:text="0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/year1E"
+                    android:layout_weight="1"
+                    android:background="@drawable/table_border"
+                    android:padding="5dp"/>
+
+                <TextView
+                    android:text="0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/year1Credits"
+                    android:layout_weight="1"
+                    android:background="@drawable/table_border"
+                    android:padding="5dp"/>
+
+                <TextView
+                    android:text="0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/year1Attempted"
+                    android:layout_weight="1"
+                    android:background="@drawable/table_border"
+                    android:padding="5dp"/>
+            </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:text="2015"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year2"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_all"
+                        android:padding="5dp" />
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year2Na"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year2A"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year2M"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year2E"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year2Credits"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year2Attempted"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+                    </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:text="2014"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year3"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_all"
+                        android:padding="5dp" />
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year3Na"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year3A"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year3M"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year3E"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year3Credits"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year3Attempted"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+                </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:text="2013"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year4"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_all"
+                        android:padding="5dp" />
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year4Na"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year4A"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year4M"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year4E"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year4Credits"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/year4Attempted"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+                </TableRow>
+            </TableLayout>
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <TextView
+                        android:text="Level"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView27"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_gray"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="NA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView28"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_gray"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="A"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView29"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_gray"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="M"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView30"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_gray"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="E"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView31"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_gray"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="Credits"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView32"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_gray"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="Attempted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView33"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_gray"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="Qualification"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView34"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border_gray"
+                        android:padding="5dp"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <TextView
+                        android:text="5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level5"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level5Na"
+
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level5A"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level5M"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level5E"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level5Credits"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level5Attempted"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level5Qualification"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:text="4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level4"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level4Na"
+
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level4A"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level4M"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level4E"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level4Credits"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level4Attempted"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level4Qualification"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+                    </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:text="3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level3"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level3Na"
+
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level3A"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level3M"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level3E"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level3Credits"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level3Attempted"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level3Qualification"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+                    </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:text="2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level2"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level2Na"
+
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level2A"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level2M"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level2E"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level2Credits"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level2Attempted"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level2Qualification"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+                </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:text="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level1"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level1Na"
+
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level1A"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level1M"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level1E"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level1Credits"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level1Attempted"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/level1Qualification"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_border"
+                        android:padding="5dp"/>
+                </TableRow>
+            </TableLayout>
+
+            <TextView
+                android:text="University Entrance [0/0/0]"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ue"
+                android:layout_marginLeft="10dp" />
+
+            <TextView
+                android:text="Level 1 Literacy [0/0 credits]"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/literacy"
+                android:layout_marginLeft="10dp" />
+
+            <TextView
+                android:text="Numeracy No [0/0]"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/numeracy"
+                android:layout_marginLeft="10dp" />
+
+            <TextView
+                android:text="Detailed Results"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView"
+                android:textAppearance="@android:style/TextAppearance.Material.Medium"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp" />
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
