@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearView"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="0dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".pages.notices.NoticesPage"
+    tools:showIn="@layout/app_bar_notices_page">
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical|center_horizontal|center" />
+
+    <ScrollView
+        android:id="@+id/mainArea"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical"
+            android:paddingTop="10dp"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/serviceName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:text="Notices"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="28dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.32">
+
+                <Button
+                    android:id="@+id/prevDay"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="Previous Day" />
+
+                <Button
+                    android:id="@+id/todaysNotices"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="Today" />
+
+                <Button
+                    android:id="@+id/nextDay"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:text="Next Day" />
+
+                <TextView
+                    android:id="@+id/todaysDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/nextDay"
+                    android:layout_marginBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:text="Todays Date"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            </RelativeLayout>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/meetings"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/dim_foreground_disabled_material_dark"
+                    android:paddingLeft="10dp"
+                    android:text="Meetings / Practices"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="20dp" />
+            </TableRow>
+
+            <sheasmith.me.betterkamar.NestedListView
+                android:id="@+id/meetingsList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/serviceName" />
+
+            <TextView
+                android:id="@+id/emptyMeetings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:text="There are no meetings or practices today"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/general"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/dim_foreground_disabled_material_dark"
+                    android:paddingLeft="10dp"
+                    android:text="General Notices"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="20dp" />
+            </TableRow>
+
+            <sheasmith.me.betterkamar.NestedListView
+                android:id="@+id/generalList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/serviceName" />
+
+            <TextView
+                android:id="@+id/emptyGeneral"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:text="There are no general notices today"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

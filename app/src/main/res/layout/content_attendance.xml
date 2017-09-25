@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearView"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="0dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="sheasmith.me.betterkamar.pages.attendance.Attendance"
+    tools:showIn="@layout/app_bar_attendance">
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical|center_horizontal|center" />
+
+    <ScrollView
+        android:id="@+id/mainArea"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="10dp">
+
+                <TextView
+                    android:id="@+id/serviceName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_column="0"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="Attendance"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="28dp" />
+
+            </RelativeLayout>
+
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TableLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="5dp">
+
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/Period"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border_gray"
+                            android:padding="5dp"
+                            android:text="Period" />
+
+                        <TextView
+                            android:id="@+id/monday"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border_gray"
+                            android:padding="5dp"
+                            android:text="Mon" />
+
+                        <TextView
+                            android:id="@+id/tuesday"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border_gray"
+                            android:padding="5dp"
+                            android:text="Tues" />
+
+                        <TextView
+                            android:id="@+id/wednesday"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border_gray"
+                            android:padding="5dp"
+                            android:text="Wed" />
+
+                        <TextView
+                            android:id="@+id/thursday"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border_gray"
+                            android:padding="5dp"
+                            android:text="Thur" />
+
+                        <TextView
+                            android:id="@+id/friday"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border_gray"
+                            android:padding="5dp"
+                            android:text="Fri" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/period1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border_all"
+                            android:padding="5dp"
+                            android:text="1 \n00:00pm" />
+
+                        <TextView
+                            android:id="@+id/period1mon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="1Monday" />
+
+                        <TextView
+                            android:id="@+id/period1tues"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="1Tuesday" />
+
+                        <TextView
+                            android:id="@+id/period1wed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="1Wednesday" />
+
+                        <TextView
+                            android:id="@+id/period1thur"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="1Thursday" />
+
+                        <TextView
+                            android:id="@+id/period1fri"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="1Friday" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/formTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border_all"
+                            android:padding="5dp"
+                            android:text="FmTime\n00:00pm" />
+
+                        <TextView
+                            android:id="@+id/fmTimeMon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="2Monday" />
+
+                        <TextView
+                            android:id="@+id/fmTimetues"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="2Tuesday" />
+
+                        <TextView
+                            android:id="@+id/fmTimewed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="2Wednesday" />
+
+                        <TextView
+                            android:id="@+id/fmTimethur"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="2Thursday" />
+
+                        <TextView
+                            android:id="@+id/fmTimefri"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="2Friday" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/period2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border_all"
+                            android:padding="5dp"
+                            android:text="2\n00:00pm" />
+
+                        <TextView
+                            android:id="@+id/period2mon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="3Monday" />
+
+                        <TextView
+                            android:id="@+id/period2tues"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="3Tuesday" />
+
+                        <TextView
+                            android:id="@+id/period2wed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="3Wednesday" />
+
+                        <TextView
+                            android:id="@+id/period2thur"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="3Thursday" />
+
+                        <TextView
+                            android:id="@+id/period2fri"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="3Friday" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/interval"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border_all"
+                            android:padding="5dp"
+                            android:text="Interval\n00:00pm" />
+
+                        <TextView
+                            android:id="@+id/intervalmon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="4Monday" />
+
+                        <TextView
+                            android:id="@+id/intervaltues"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="4Tuesday" />
+
+                        <TextView
+                            android:id="@+id/intervalwed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="4Wednesday" />
+
+                        <TextView
+                            android:id="@+id/intervalthur"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="4Thursday" />
+
+                        <TextView
+                            android:id="@+id/intervalfri"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="4Friday" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/period3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border_all"
+                            android:padding="5dp"
+                            android:text="3 \n00:00pm" />
+
+                        <TextView
+                            android:id="@+id/period3mon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="5Monday" />
+
+                        <TextView
+                            android:id="@+id/period3tues"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="5Tuesday" />
+
+                        <TextView
+                            android:id="@+id/period3wed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="5Wednesday" />
+
+                        <TextView
+                            android:id="@+id/period3thur"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="5Thursday" />
+
+                        <TextView
+                            android:id="@+id/period3fri"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="5Friday" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/period4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border_all"
+                            android:padding="5dp"
+                            android:text="4 \n00:00pm" />
+
+                        <TextView
+                            android:id="@+id/period4mon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="6Monday" />
+
+                        <TextView
+                            android:id="@+id/period4tues"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="6Tuesday" />
+
+                        <TextView
+                            android:id="@+id/period4wed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="6Wednesday" />
+
+                        <TextView
+                            android:id="@+id/period4thur"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="6Thursday" />
+
+                        <TextView
+                            android:id="@+id/period4fri"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="6Friday" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/lunch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border_all"
+                            android:padding="5dp"
+                            android:text="Lunch\n00:00pm" />
+
+                        <TextView
+                            android:id="@+id/lunchmon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="7Monday" />
+
+                        <TextView
+                            android:id="@+id/lunchtues"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="7Tuesday" />
+
+                        <TextView
+                            android:id="@+id/lunchwed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="7Wednesday" />
+
+                        <TextView
+                            android:id="@+id/lunchthur"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="7Thursday" />
+
+                        <TextView
+                            android:id="@+id/lunchfri"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="7Friday" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/period5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border_all"
+                            android:padding="5dp"
+                            android:text="5 \n00:00pm" />
+
+                        <TextView
+                            android:id="@+id/period5mon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="8Monday" />
+
+                        <TextView
+                            android:id="@+id/period5tues"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="8Tuesday" />
+
+                        <TextView
+                            android:id="@+id/period5wed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="8Wednesday" />
+
+                        <TextView
+                            android:id="@+id/period5thur"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="8Thursday" />
+
+                        <TextView
+                            android:id="@+id/period5fri"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="8Friday" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/period6"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border_all"
+                            android:padding="5dp"
+                            android:text="6\n00:00pm" />
+
+                        <TextView
+                            android:id="@+id/period6mon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="9Monday" />
+
+                        <TextView
+                            android:id="@+id/period6tues"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="9Tuesday" />
+
+                        <TextView
+                            android:id="@+id/period6wed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="9Wednesday" />
+
+                        <TextView
+                            android:id="@+id/period6thur"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="9Thursday" />
+
+                        <TextView
+                            android:id="@+id/period6fri"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/table_border"
+                            android:padding="5dp"
+                            android:tag="9Friday" />
+
+                    </TableRow>
+                </TableLayout>
+            </HorizontalScrollView>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

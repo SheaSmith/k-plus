@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="sheasmith.me.betterkamar">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".Servers" />
+        <activity
+            android:name=".SplashScreen"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".AddServer" />
+        <activity
+            android:name=".pages.notices.NoticesPage"
+            android:label="Notices"
+            android:parentActivityName=".Servers"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="sheasmith.me.betterkamar.Servers" />
+        </activity>
+        <activity
+            android:name=".pages.groups.Groups"
+            android:label="@string/title_activity_groups"
+            android:parentActivityName=".Servers"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="sheasmith.me.betterkamar.Servers" />
+        </activity>
+        <activity
+            android:name=".pages.ncea.NCEA"
+            android:label="NCEA"
+            android:parentActivityName=".Servers"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="sheasmith.me.betterkamar.Servers" />
+        </activity>
+        <activity
+            android:name=".pages.calender.Calender"
+            android:label="Calendar"
+            android:parentActivityName=".Servers"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="sheasmith.me.betterkamar.Servers" />
+        </activity>
+        <activity
+            android:name=".pages.timetable.Timetable"
+            android:label="Timetable"
+            android:parentActivityName=".Servers"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="sheasmith.me.betterkamar.Servers" />
+        </activity>
+        <activity
+            android:name=".pages.reports.Reports"
+            android:label="Reports"
+            android:parentActivityName=".Servers"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="sheasmith.me.betterkamar.Servers" />
+        </activity>
+        <activity
+            android:name=".pages.reports.PDFViewer"
+            android:label="View Report"
+            android:parentActivityName=".Servers"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="sheasmith.me.betterkamar.Servers" />
+        </activity>
+        <activity
+            android:name=".pages.attendance.Attendance"
+            android:label="Attendance"
+            android:parentActivityName=".Servers"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="sheasmith.me.betterkamar.Servers" />
+        </activity>
+        <activity
+            android:name=".pages.pathways.Pathways"
+            android:label="Pathways"
+            android:parentActivityName=".Servers"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="sheasmith.me.betterkamar.Servers" />
+        </activity>
+        <activity
+            android:name=".pages.details.Details"
+            android:label="Details"
+            android:parentActivityName=".Servers"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="sheasmith.me.betterkamar.Servers" />
+        </activity>
+
+        <receiver android:name=".pages.timetable.TimeAlarm" />
+
+        <activity android:name=".EditServer"></activity>
+    </application>
+
+</manifest>
