@@ -214,42 +214,34 @@ public class Calender extends AppCompatActivity implements NavigationView.OnNavi
                     date = dateFormat.format(future);
                 }
 
-                Document d = Jsoup.connect(s.hostname + "/student/index.php/calendar/" + date + "/" + viewBy).cookies(s.cookies).get();
-                Elements groups = d.getElementById("calendar_table").child(0).children();
+                Document d = Jsoup.connect(s.hostname + "/index.php/calendar/" + date + "/" + viewBy).cookies(s.cookies).get();
+                Elements groups = d.getElementById("calendar_table").child(2).children();
                 CalenderObject g = new CalenderObject();
                 boolean tile = false;
                 for (Element e : groups) {
-                    if (e.child(0).hasClass("result_increase")) {
+                    if (e.hasClass("table-active")) {
                         if(g.date != null)
                         events.add(g);
                         tile = false;
                         g = new CalenderObject();
                         SimpleDateFormat format = new SimpleDateFormat("EEE, d MMMMM");
-                        SimpleDateFormat spaceFormat = new SimpleDateFormat(" EEE, d MMMMM");
-                        if (e.text().contains("to")) {
-                            String[] dates = e.text().split("to");
-                            g.date = format.parse(dates[0].replaceAll("(?<=\\d)(st|nd|rd|th)", ""));
-                            g.secondDate = spaceFormat.parse(dates[1].replaceAll("(?<=\\d)(st|nd|rd|th)", ""));
-                            g.dateRaw = e.text();
-                        }
-                        else {
-                            g.date = format.parse(e.text().replaceAll("(?<=\\d)(st|nd|rd|th)", ""));
-                            g.dateRaw = e.text();
-                        }
+                        g.date = format.parse(e.text().replaceAll("(?<=\\d)(st|nd|rd|th)", ""));
+                        g.dateRaw = e.text();
                     }
-                    else if (e.child(0).hasClass("result_tile")) {
+                    else {
                         if (tile) {
-                            g.location = e.text();
+                            g.location = e.child(2).text();
                         }
                         else {
-                            g.description = e.text();
+                            g.description = e.child(1).text();
                             tile = true;
                         }
                     }
 
 
                 }
-                events.add(g);
+
+
             }
             catch (IOException e) {
                 Snackbar.make(findViewById(R.id.linearView),"Can't connect! Check if you are online", Snackbar.LENGTH_LONG).show();
@@ -266,8 +258,10 @@ public class Calender extends AppCompatActivity implements NavigationView.OnNavi
             if (!error) {
 
                 ListView listView = (ListView) findViewById(R.id.eventsList);
-                if (events.get(0).description != null)
+                if (events.size() != 0) {
                     listView.setAdapter(new CalenderAdapter(Calender.this, events));
+                    (findViewById(R.id.empty)).setVisibility(View.GONE);
+                }
                 else
                     (findViewById(R.id.empty)).setVisibility(View.VISIBLE);
 

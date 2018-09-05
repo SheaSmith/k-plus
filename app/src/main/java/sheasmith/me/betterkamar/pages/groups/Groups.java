@@ -192,32 +192,34 @@ public class Groups extends AppCompatActivity implements NavigationView.OnNaviga
         protected Void doInBackground(Void... params) {
             groupsList.clear();
             try {
-                Document d = Jsoup.connect(s.hostname + "/student/index.php/groups/").cookies(s.cookies).get();
-                Elements groups = d.getElementById("groups_table").children();
-                GroupsObject g = new GroupsObject();
+                Document d = Jsoup.connect(s.hostname + "/index.php/groups/").cookies(s.cookies).get();
+                Elements groups = d.getElementsByTag("table").first().children();
+                GroupsObject g = null;
                 for (Element e : groups) {
+                    if (e.tagName().equals("thead")) {
+                        lastyear = e.text();
+                    }
+                    else {
+                        Elements tr = e.children();
+                        for (Element e2 : tr) {
 
-                    Elements tr = e.getElementsByTag("tr");
-                    for (Element e2 : tr) {
-
-                        if (e2.child(0).className().equalsIgnoreCase("result_subject")) {
-                            lastyear = e2.child(0).text();
-                        }
-                        else if (e2.child(0).className().equalsIgnoreCase("result_increase")) {
-                            lastcategory = e2.child(0).text();
-                            categories.add(lastcategory + " - " + lastyear);
-                        }
-                        else if (e2.child(0).className().equalsIgnoreCase("result_tile")) {
-                            g = new GroupsObject();
-                            g.title = e2.child(0).text();
-                            g.section = lastcategory + " - " + lastyear;
-                            g.year = lastyear;
-                            g.teacher = e2.child(1).text();
-                        }
-                        else if (e2.child(0).className().equalsIgnoreCase("result_comment_left")) {
-                            g.leftComment = e2.child(0).text();
-                            g.rightComment = e2.child(1).text();
-                            groupsList.add(g);
+                            if (e2.className().equalsIgnoreCase("table-active")) {
+                                lastcategory = e2.child(0).text();
+                                categories.add(lastcategory + " - " + lastyear);
+                            } else if (e2.children().size() == 3) {
+                                if (g != null)
+                                    groupsList.add(g);
+                                g = new GroupsObject();
+                                g.title = e2.child(1).text();
+                                g.section = lastcategory + " - " + lastyear;
+                                g.year = lastyear;
+                                g.teacher = e2.child(2).text();
+                            } else if (e2.children().size() == 2) {
+                                g.leftComment = e2.text();
+                                g.rightComment = "";
+                                groupsList.add(g);
+                                g = null;
+                            }
                         }
                     }
                 }
@@ -229,6 +231,7 @@ public class Groups extends AppCompatActivity implements NavigationView.OnNaviga
 
             return null;
         }
+
         @Override
         protected void onPostExecute(Void result) {
             if (!error) {
@@ -251,7 +254,7 @@ public class Groups extends AppCompatActivity implements NavigationView.OnNaviga
 
                 for (int i = 0; i != categories.size(); i++) {
                     getSupportFragmentManager()
-                            .beginTransaction().add(R.id.groups, new SectionFragment(), categories.get(i)).commit();
+                            .beginTransaction().add(R.id.groups, new SectionFragment(), categories.get(i)).commitAllowingStateLoss();
                     getSupportFragmentManager().executePendingTransactions();
                     FragmentManager fm = getSupportFragmentManager();
 

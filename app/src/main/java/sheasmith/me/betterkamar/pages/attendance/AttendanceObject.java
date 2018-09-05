@@ -8,5 +8,5 @@ public class AttendanceObject {
     String classname;
     String attendance;
     boolean isEmpty;
-    int periodNumber;
+    int day;
 }

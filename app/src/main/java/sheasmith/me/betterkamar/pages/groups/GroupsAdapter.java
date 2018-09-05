@@ -37,13 +37,19 @@ public class GroupsAdapter extends ArrayAdapter<GroupsObject> {
 
             name.setText(n.title);
             teacher.setText(n.teacher);
-            if (n.leftComment.isEmpty() && n.rightComment.isEmpty()) {
-                leftComment.setVisibility(View.GONE);
-                rightComment.setVisibility(View.GONE);
+            if (n.leftComment != null && n.rightComment != null) {
+                if (!n.leftComment.isEmpty() && !n.rightComment.isEmpty()) {
+                    leftComment.setText(n.leftComment);
+                    rightComment.setText(n.rightComment);
+                }
+                else {
+                    leftComment.setVisibility(View.GONE);
+                    rightComment.setVisibility(View.GONE);
+                }
             }
             else {
-                leftComment.setText(n.leftComment);
-                rightComment.setText(n.rightComment);
+                leftComment.setVisibility(View.GONE);
+                rightComment.setVisibility(View.GONE);
             }
 
 

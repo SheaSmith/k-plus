@@ -196,49 +196,47 @@ public class Timetable extends AppCompatActivity
             try {
 
 
-                    Document d = Jsoup.connect(s.hostname + "/student/index.php/timetable/").cookies(s.cookies).get();
+                    Document d = Jsoup.connect(s.hostname + "/index.php/attendance/").cookies(s.cookies).get();
 
-                Elements tableItems = d.getElementById("timetable_table").child(0).children();
-                Elements days = tableItems.get(0).children();
-                week = Integer.parseInt(days.get(0).getElementById("week").attr("value"));
+                Elements tableItems = d.select("body > div > section > article > div.table-responsive > table > tbody").first().children();
+                week = Integer.parseInt(d.getElementsByAttributeValue("name", "week").first().attr("value"));
 
                 String[] dayNames = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
                 for (String s : dayNames) {
                     items.put(s, new ArrayList<TimetableObject>());
                 }
-                Elements times = tableItems.get(0).children();
-                for (int i = 1 ; i!=6 ; i++) {
-                    String[] items = times.get(i).text().split(" ");
-                    actualDates.put(items[0], items[1] + " " + items[2]);
-                }
-                for (int i = 1 ; i != 10 ; i++) {
-                    Elements periodSlots = tableItems.get(i).children();
-                    String time = periodSlots.get(0).getElementsByClass("tt_time").first().text();
-                    periodList.add(periodSlots.get(0).text().replace(" " + time, ""));
-                    timeList.add(time);
-                    for (Element e : periodSlots) {
-                        if (periodSlots.indexOf(e) != 0) {
-                            TimetableObject t = new TimetableObject();
-                            t.periodNumber = i;
-                            t.classname = e.getElementsByTag("strong").first().text();
-                            String[] classInfo = e.getElementsByClass("result").first().text().split(" ");
-                            t.teacher = classInfo[0];
-                            if (classInfo.length == 1) {
-                                t.isEmpty = true;
-                            }
-                            else {
-                                t.room = classInfo[1];
-                            }
-                            t.time = time;
+                int pNum = 1;
+                for (Element t : tableItems) {
+                    String period = t.child(0).getElementsByTag("h4").first().ownText();
+                    String tim = t.child(0).getElementsByTag("small").text();
 
-                            List<TimetableObject> timetableObjectList = items.get(dayNames[periodSlots.indexOf(e) - 1]);
-                            timetableObjectList.add(t);
-                            items.put(dayNames[periodSlots.indexOf(e) - 1], timetableObjectList);
+                    timeList.add(tim);
+                    periodList.add(period);
+
+                    List<TimetableObject> times = new ArrayList<>();
+
+                    for (int i = 1 ; i < 6 ; i++) {
+                        t.child(i);
+                        TimetableObject time = new TimetableObject();
+                        time.time = tim;
+                        time.day = i;
+                        try {
+                            time.classname = t.child(i).child(0).child(1).text();
+                            String[] testArray = t.child(i).child(0).getElementsByTag("small").first().text().split("-");
+
+                            time.teacher = t.child(i).child(0).getElementsByTag("small").first().text().split("-")[0];
+                            time.room = t.child(i).child(0).getElementsByTag("small").first().text().split("-")[1];
+
+                            time.isEmpty = false;
                         }
+                        catch (IndexOutOfBoundsException | NullPointerException e) {
+                            time.isEmpty = true;
+                        }
+                        times.add(time);
                     }
+                    items.put(Integer.toString(pNum), times);
+                    pNum++;
                 }
-
-
 
 
             }
@@ -270,65 +268,15 @@ public class Timetable extends AppCompatActivity
                         String key = entry.getKey();
                         List<TimetableObject> value = entry.getValue();
                         for (TimetableObject t : value) {
-                            int id = t.periodNumber;
+                            int id = t.day;
                             View root = findViewById(R.id.linearView);
-                            TextView textView = (TextView) root.findViewWithTag(id + key);
+                            TextView textView = (TextView) root.findViewWithTag(key + ";" + (id - 1));
                             if (t.room == null) {
                                 t.room = "";
                             }
-                            textView.setText(t.classname + "\n" + t.teacher + " " + t.room);
 
-                            if (t.room != null && !t.room.equals("")) {
-                                DateFormat input = new SimpleDateFormat("d MMM EEEE kk:mm a");
-                                Date first = new Date();
-                                int num = value.indexOf(t) + 1;
-                                try {
-                                    TimetableObject next = value.get(num);
-                                    first = input.parse(actualDates.get(key) + " " + key + " " + t.time);
-                                    Calendar c = Calendar.getInstance();
-                                    c.setTime(first);
-                                    Calendar now = Calendar.getInstance();
-                                    c.set(Calendar.YEAR, now.get(Calendar.YEAR));
-                                    first = c.getTime();
-                                    if (next.room != null) {
-                                        setOneTimeAlarm("You currently have " + t.classname + " with " + t.teacher + " in " + t.room + " (" + t.time + ")", "Next up you have " + next.classname + " with " + next.teacher + " in " + next.room + " at " + next.time, first.getTime());
-//                                    setOneTimeAlarm("You currently have " + t.classname + " with " + t.teacher + " in " + t.room + " (" + t.time + ")", "Next up you have " + next.classname + " with " + next.teacher + " in " + next.room + " at " + next.time, System.currentTimeMillis());
-                                    } else {
-                                        TimetableObject nextMore = value.get(num + 1);
-                                        setOneTimeAlarm("You currently have " + t.classname + " with " + t.teacher + " in " + t.room + " (" + t.time + ")", "Next up you have " + nextMore.classname + " with " + nextMore.teacher + " in " + nextMore.room + " at " + nextMore.time, first.getTime());
-//                                    setOneTimeAlarm("You currently have " + t.classname + " with " + t.teacher + " in " + t.room + " (" + t.time + ")", "Next up you have " + nextMore.classname + " with " + nextMore.teacher + " in " + nextMore.room + " at " + nextMore.time, System.currentTimeMillis());
-                                    }
-                                } catch (IndexOutOfBoundsException e) {
-                                    setOneTimeAlarm("You currently have " + t.classname + " with " + t.teacher + " in " + t.room + " (" + t.time + ")", "", first.getTime());
-//                                setOneTimeAlarm("You currently have " + t.classname + " with " + t.teacher + " in " + t.room + " (" + t.time + ")", "", System.currentTimeMillis());
-                                } catch (ParseException e) {
-                                    Log.e("TT ParseException", "stacktrace");
-                                    e.printStackTrace();
-                                }
-
-                            } else {
-                                DateFormat input = new SimpleDateFormat("d MMM EEEE kk:mm a");
-                                Date first;
-                                int num = value.indexOf(t) + 1;
-                                try {
-                                    TimetableObject next = value.get(num);
-                                    first = input.parse(actualDates.get(key) + " " + key + " " + next.time);
-                                    Calendar c = Calendar.getInstance();
-                                    c.setTime(first);
-                                    Calendar now = Calendar.getInstance();
-                                    c.set(Calendar.YEAR, now.get(Calendar.YEAR));
-                                    first = c.getTime();
-                                    if (next.room != null) {
-                                        setOneTimeAlarm("Next up you have " + next.classname + " with " + next.teacher + " in " + next.room + " at " + next.time, "", first.getTime());
-//                                    setOneTimeAlarm("Next up you have " + next.classname + " with " + next.teacher + " in " + next.room + " at " + next.time, "", System.currentTimeMillis());                                    setOneTimeAlarm("Next up you have " + next.classname + " with " + next.teacher + " in " + next.room + " at " + next.time, "", System.currentTimeMillis());
-                                    }
-                                } catch (IndexOutOfBoundsException e) {
-
-                                } catch (ParseException e) {
-                                    Log.e("TT ParseException", "stacktrace");
-                                    e.printStackTrace();
-                                }
-                            }
+                            if (!t.isEmpty)
+                                textView.setText(t.classname + "\n" + t.teacher + " " + t.room);
                         }
                     }
 

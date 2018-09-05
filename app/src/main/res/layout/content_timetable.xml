@@ -152,7 +152,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="1Monday" />
+                            android:tag="1;0" />
 
                         <TextView
                             android:id="@+id/period1tues"
@@ -161,7 +161,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="1Tuesday" />
+                            android:tag="1;1" />
 
                         <TextView
                             android:id="@+id/period1wed"
@@ -170,7 +170,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="1Wednesday" />
+                            android:tag="1;2" />
 
                         <TextView
                             android:id="@+id/period1thur"
@@ -179,7 +179,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="1Thursday" />
+                            android:tag="1;3" />
 
                         <TextView
                             android:id="@+id/period1fri"
@@ -188,7 +188,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="1Friday" />
+                            android:tag="1;4" />
 
                     </TableRow>
 
@@ -212,7 +212,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="2Monday" />
+                            android:tag="2;0" />
 
                         <TextView
                             android:id="@+id/fmTimetues"
@@ -221,7 +221,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="2Tuesday" />
+                            android:tag="2;1" />
 
                         <TextView
                             android:id="@+id/fmTimewed"
@@ -230,7 +230,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="2Wednesday" />
+                            android:tag="2;2" />
 
                         <TextView
                             android:id="@+id/fmTimethur"
@@ -239,7 +239,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="2Thursday" />
+                            android:tag="2;3" />
 
                         <TextView
                             android:id="@+id/fmTimefri"
@@ -248,7 +248,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="2Friday" />
+                            android:tag="2;4" />
 
                     </TableRow>
 
@@ -272,7 +272,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="3Monday" />
+                            android:tag="3;0" />
 
                         <TextView
                             android:id="@+id/period2tues"
@@ -281,7 +281,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="3Tuesday" />
+                            android:tag="3;1" />
 
                         <TextView
                             android:id="@+id/period2wed"
@@ -290,7 +290,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="3Wednesday" />
+                            android:tag="3;2" />
 
                         <TextView
                             android:id="@+id/period2thur"
@@ -299,7 +299,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="3Thursday" />
+                            android:tag="3;3" />
 
                         <TextView
                             android:id="@+id/period2fri"
@@ -308,7 +308,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="3Friday" />
+                            android:tag="3;4" />
 
                     </TableRow>
 
@@ -332,7 +332,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="4Monday" />
+                            android:tag="4;0" />
 
                         <TextView
                             android:id="@+id/intervaltues"
@@ -341,7 +341,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="4Tuesday" />
+                            android:tag="4;1" />
 
                         <TextView
                             android:id="@+id/intervalwed"
@@ -350,7 +350,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="4Wednesday" />
+                            android:tag="4;2" />
 
                         <TextView
                             android:id="@+id/intervalthur"
@@ -359,7 +359,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="4Thursday" />
+                            android:tag="4;3" />
 
                         <TextView
                             android:id="@+id/intervalfri"
@@ -368,7 +368,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="4Friday" />
+                            android:tag="4;4" />
 
                     </TableRow>
 
@@ -392,7 +392,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="5Monday" />
+                            android:tag="5;0" />
 
                         <TextView
                             android:id="@+id/period3tues"
@@ -401,7 +401,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="5Tuesday" />
+                            android:tag="5;1" />
 
                         <TextView
                             android:id="@+id/period3wed"
@@ -410,7 +410,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="5Wednesday" />
+                            android:tag="5;2" />
 
                         <TextView
                             android:id="@+id/period3thur"
@@ -419,7 +419,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="5Thursday" />
+                            android:tag="5;3" />
 
                         <TextView
                             android:id="@+id/period3fri"
@@ -428,7 +428,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="5Friday" />
+                            android:tag="5;4" />
 
                     </TableRow>
 
@@ -452,7 +452,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="6Monday" />
+                            android:tag="6;0" />
 
                         <TextView
                             android:id="@+id/period4tues"
@@ -461,7 +461,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="6Tuesday" />
+                            android:tag="6;1" />
 
                         <TextView
                             android:id="@+id/period4wed"
@@ -470,7 +470,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="6Wednesday" />
+                            android:tag="6;2" />
 
                         <TextView
                             android:id="@+id/period4thur"
@@ -479,7 +479,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="6Thursday" />
+                            android:tag="6;3" />
 
                         <TextView
                             android:id="@+id/period4fri"
@@ -488,7 +488,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="6Friday" />
+                            android:tag="6;4" />
 
                     </TableRow>
 
@@ -512,7 +512,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="7Monday" />
+                            android:tag="7;0" />
 
                         <TextView
                             android:id="@+id/lunchtues"
@@ -521,7 +521,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="7Tuesday" />
+                            android:tag="7;1" />
 
                         <TextView
                             android:id="@+id/lunchwed"
@@ -530,7 +530,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="7Wednesday" />
+                            android:tag="7;2" />
 
                         <TextView
                             android:id="@+id/lunchthur"
@@ -539,7 +539,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="7Thursday" />
+                            android:tag="7;3" />
 
                         <TextView
                             android:id="@+id/lunchfri"
@@ -548,7 +548,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="7Friday" />
+                            android:tag="7;4" />
 
                     </TableRow>
 
@@ -572,7 +572,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="8Monday" />
+                            android:tag="8;0" />
 
                         <TextView
                             android:id="@+id/period5tues"
@@ -581,7 +581,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="8Tuesday" />
+                            android:tag="8;1" />
 
                         <TextView
                             android:id="@+id/period5wed"
@@ -590,7 +590,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="8Wednesday" />
+                            android:tag="8;2" />
 
                         <TextView
                             android:id="@+id/period5thur"
@@ -599,7 +599,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="8Thursday" />
+                            android:tag="8;3" />
 
                         <TextView
                             android:id="@+id/period5fri"
@@ -608,7 +608,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="8Friday" />
+                            android:tag="8;4" />
 
                     </TableRow>
 
@@ -632,7 +632,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="9Monday" />
+                            android:tag="9;0" />
 
                         <TextView
                             android:id="@+id/period6tues"
@@ -641,7 +641,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="9Tuesday" />
+                            android:tag="9;1" />
 
                         <TextView
                             android:id="@+id/period6wed"
@@ -650,7 +650,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="9Wednesday" />
+                            android:tag="9;2" />
 
                         <TextView
                             android:id="@+id/period6thur"
@@ -659,7 +659,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="9Thursday" />
+                            android:tag="9;3" />
 
                         <TextView
                             android:id="@+id/period6fri"
@@ -668,7 +668,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/table_border"
                             android:padding="5dp"
-                            android:tag="9Friday" />
+                            android:tag="9;4" />
 
                     </TableRow>
                 </TableLayout>

@@ -177,11 +177,6 @@ public class Reports extends AppCompatActivity implements NavigationView.OnNavig
     }
 
     private class Connect extends AsyncTask<Void, Void, Void> {
-        String title;
-        String url;
-        String lastyear;
-        List<String> years = new ArrayList<>();
-        List<ReportsObject> reports = new ArrayList<>();
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -193,28 +188,14 @@ public class Reports extends AppCompatActivity implements NavigationView.OnNavig
         protected Void doInBackground(Void... params) {
             groupsList.clear();
             try {
-                Document d = Jsoup.connect(s.hostname + "/student/index.php/reports/").cookies(s.cookies).get();
-                Elements groups = d.getElementById("results_table").children();
+                Document d = Jsoup.connect(s.hostname + "/index.php/reports/").cookies(s.cookies).get();
+                Elements groups = d.getElementsByTag("tbody").first().children();
 
                 for (Element e : groups) {
-
-                    Elements tr = e.getElementsByTag("tr");
-                    for (Element e2 : tr) {
-
-                        if (e2.child(0).className().equalsIgnoreCase("result_subject")) {
-                            lastyear = e2.child(0).text();
-                            years.add(lastyear);
-                        }
-                        else if (e2.child(0).className().equalsIgnoreCase("result_increase")) {
-                            title = e2.child(0).text();
-                            url = e2.child(0).child(0).attr("href");
-                            ReportsObject g = new ReportsObject();
-                            g.title = title;
-                            g.url = url;
-                            g.year = lastyear;
-                            reports.add(g);
-                        }
-                    }
+                    ReportsObject r = new ReportsObject();
+                    r.title = e.child(1).text();
+                    r.url = e.child(2).child(0).attr("href");
+                    groupsList.add(r);
                 }
             }
             catch (Exception e) {
@@ -226,65 +207,24 @@ public class Reports extends AppCompatActivity implements NavigationView.OnNavig
         }
         @Override
         protected void onPostExecute(Void result) {
-            final HashMap<String, List<ReportsObject>> hashMap = new HashMap<>();
 
             if (!error) {
-
-
-
-                Fragment empty = getSupportFragmentManager().findFragmentByTag("empty");
-                int t = empty.getView().getVisibility();
-                empty.getView().setVisibility(View.GONE);
-                List<Fragment> al = getSupportFragmentManager().getFragments();
-                if (al != null) {
-                    for (Fragment z : al) {
-                        getSupportFragmentManager().beginTransaction().hide(z).commit();
-                    }
+                List<String> prettyNames = new ArrayList<>();
+                for (ReportsObject r : groupsList) {
+                    prettyNames.add(r.title);
                 }
-
-                for (int i = 0; i != years.size(); i++) {
-                    List<ReportsObject> z = new ArrayList<>();
-                    getSupportFragmentManager()
-                            .beginTransaction().add(R.id.container, new SectionFragment(), years.get(i)).commit();
-                    getSupportFragmentManager().executePendingTransactions();
-                    FragmentManager fm = getSupportFragmentManager();
-
-                    Fragment testtagFragment = fm.findFragmentByTag(years.get(i));
-                    testtagFragment.getView().setVisibility(t);
-
-                    TextView category = (TextView) testtagFragment.getView().findViewById(R.id.groupsSection);
-                    List<String> list = new ArrayList<>();
-                    for (ReportsObject r : reports) {
-                        if (r.year.equals(years.get(i))) {
-                            String title = r.title;
-                            list.add(title);
-                            z.add(r);
-
-                        }
-                    }
-                    hashMap.put(years.get(i), z);
-                    if (list.isEmpty()) {
-                        testtagFragment.getView().setVisibility(View.INVISIBLE);
-                    }
-                    final String y = years.get(i);
-                    ListView listView = (ListView) testtagFragment.getView().findViewById(R.id.groupsList);
-                    listView.setAdapter(new ArrayAdapter(context, android.R.layout.simple_list_item_1, list));
+                    ListView listView = (ListView) findViewById(R.id.reportsList);
+                    listView.setAdapter(new ArrayAdapter(context, android.R.layout.simple_list_item_1, prettyNames));
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> list, View v, int pos, long id) {
                             Intent k = new Intent(Reports.this, PDFViewer.class);
                             k.putExtra("listID", getIntent().getIntExtra("listID", -1));
-                            k.putExtra("name", hashMap.get(y).get(pos).title);
-                            k.putExtra("year", hashMap.get(y).get(pos).year);
-                            k.putExtra("url", hashMap.get(y).get(pos).url);
+                            k.putExtra("name", groupsList.get(pos).title);
+                            k.putExtra("url", groupsList.get(pos).url);
                             startActivity(k);
                         }
                     });
-                    category.setText(years.get(i));
-
-
-                }
-
                 findViewById(R.id.progressBar).setVisibility(View.GONE);
                 findViewById(R.id.mainArea).setVisibility(View.VISIBLE);
             }

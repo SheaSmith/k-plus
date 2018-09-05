@@ -118,6 +118,9 @@
         <receiver android:name=".pages.timetable.TimeAlarm" />
 
         <activity android:name=".EditServer"></activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="0f73ef781806f32d7cd8ed58bc3925758ed50644" />
     </application>
 
 </manifest>

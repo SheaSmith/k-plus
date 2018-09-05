@@ -12,5 +12,5 @@ public class TimetableObject {
     String teacher;
     String time;
     boolean isEmpty;
-    int periodNumber;
+    int day;
 }

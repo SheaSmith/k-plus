@@ -18,14 +18,17 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.securepreferences.SecurePreferences;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class EditServer extends AppCompatActivity {
@@ -163,20 +166,27 @@ public class EditServer extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                Document d = Jsoup.connect(hostname + "/student/index.php/process-login").data("username", uname, "password", password).post();
-                Elements span = d.select("div[class=success]");
-                //Elements auth = d.select("span[class=auth]");
-                if (span.size() != 0) {
-                    successful = true;
-                    Elements student = d.select("span[id=auth] > p > strong > a");
-                    name = student.text();
-
+                Connection.Response r = Jsoup.connect(hostname + "/index.php/login").method(Connection.Method.POST).data("username", uname, "password", password).execute();
+                Document d = Jsoup.connect(hostname + "/index.php/login").data("username", uname, "password", password).post();
+                Elements error = d.getElementsByClass("alert-danger");
+                if (error.size() != 0) {
+                    successful = false;
+                    this.error = error.text();
                 }
                 else {
-                    successful = false;
-                    Elements error = d.select("div[class=error]");
-                    if (error.size() != 0) {
-                        this.error = error.text();
+                    if (d.html().equals("<html>\n" +
+                            " <head></head>\n" +
+                            " <body></body>\n" +
+                            "</html>")) {
+                        Map<String, String> cookies = r.cookies();
+                        Document notices = Jsoup.connect(hostname + "/index.php/notices").cookies(cookies).get();
+                        Element title = notices.getElementsByClass("jumbotron").first().getElementsByClass("col-sm-7").first().child(0);
+                        successful = true;
+                        Elements student = notices.select("div[id=auth] > h4");
+                        name = student.text();
+                    }
+                    else {
+                        // not a valid KAMAR install
                     }
                 }
             }

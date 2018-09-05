@@ -202,7 +202,7 @@ public class Pathways extends AppCompatActivity
         protected Void doInBackground(Void... params) {
 
             try {
-                Document d = Jsoup.connect(s.hostname + "/student/index.php/pathways/").cookies(s.cookies).get();
+                Document d = Jsoup.connect(s.hostname + "/index.php/pathways/").cookies(s.cookies).get();
                 Elements items = d.getElementsByClass("table").first().child(1).children();
                 for (Element e : items) {
                     PathwaysObject p = new PathwaysObject();

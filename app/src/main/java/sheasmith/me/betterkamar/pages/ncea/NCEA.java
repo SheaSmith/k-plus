@@ -31,6 +31,7 @@ import com.github.mikephil.charting.data.PieEntry;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -209,7 +210,7 @@ public class NCEA extends AppCompatActivity
             try {
 
 
-                    Document d = Jsoup.connect(s.hostname + "/student/index.php/ncea-summary/").cookies(s.cookies).get();
+                    Document d = Jsoup.connect(s.hostname + "/index.php/ncea_summary/").cookies(s.cookies).get();
 
                 Element na = d.getElementsByClass("notachieved").first();
                 nach = na.text();
@@ -223,10 +224,9 @@ public class NCEA extends AppCompatActivity
                 Element e = d.getElementsByClass("excellence").first();
                 ex = e.text();
 
-                Elements tableChildren = d.getElementById("ncea-summary").child(0).children();
+                Elements tableChildren = d.select("body > div > section > article > div.row > div.col-sm-5.col-xs-12 > div > table:nth-child(2) > tbody").first().children();
                 int i = 0;
                 for (Element t : tableChildren) {
-                    if (i > 3 && i < 9) {
                         StandardObject o = new StandardObject();
                         o.year = t.child(0).text();
                         o.notAchieved = t.child(1).text();
@@ -239,8 +239,38 @@ public class NCEA extends AppCompatActivity
                         o.type = "year";
 
                         standardsThingie.add(o);
+
+
+                    i++;
+                }
+
+                Elements standardChildren = d.select("body > div > section > article > table.table.table-bordered.table-sm > tbody").first().children();
+                i = 0;
+                for (Element t : standardChildren) {
+                    if (i != 0) {
+                        StandardObject o = new StandardObject();
+                        o.year = t.child(0).text();
+                        o.notAchieved = t.child(1).text();
+                        o.achieved = t.child(2).text();
+                        o.merit = t.child(3).text();
+                        o.excellence = t.child(4).text();
+                        o.total = t.child(5).text();
+                        o.attempted = t.child(6).text();
+                        try {
+                            o.qualification = t.child(7).ownText();
+                        } catch (IndexOutOfBoundsException ex) {
+                            o.qualification = "";
+                        }
+
+                        o.type = "level";
+
+                        standardsThingie.add(o);
                     }
-                    else if (i > 10) {
+
+                    i++;
+                }
+                /*
+                else if (i > 10) {
                         StandardObject o = new StandardObject();
                         o.year = t.child(0).text();
                         o.notAchieved = t.child(1).text();
@@ -260,8 +290,8 @@ public class NCEA extends AppCompatActivity
 
                         standardsThingie.add(o);
                     }
-                    i++;
-                }
+
+                 */
 
                 Elements insertName = d.getElementsByAttributeValue("rowspan", "6").first().children();
                 ueLitNum.add(insertName.get(0).getElementsByTag("strong").first().text() + ": " + insertName.get(0).ownText());
@@ -273,9 +303,9 @@ public class NCEA extends AppCompatActivity
                 List<NCEAObject> list = new ArrayList<>();
                 HashMap<String, List<NCEAObject>> ncea = new HashMap<>();
 
-                Elements resultsTable = d.getElementById("results_table").child(0).children();
+                Elements resultsTable = d.select("body > div > section > article").first().getElementsByTag("table").last().children();
                 for (Element r : resultsTable) {
-                    if (r.child(0).className().contains("result-level")) {
+                    if (r.tag().equals(Tag.valueOf("thead"))) {
                         if (!list.isEmpty()) {
                             ncea.put(lastSubject, list);
                             list.clear();
@@ -284,24 +314,29 @@ public class NCEA extends AppCompatActivity
                             detailedResults.put(lastLevel, ncea);
                             ncea.clear();
                         }
-                        lastLevel = r.child(0).text();
-                        totalCredits.put(lastLevel, r.child(1).text());
+                        lastLevel = r.child(0).child(0).text();
+                        totalCredits.put(lastLevel, r.child(0).child(1).text());
                     }
-                    if (r.className().contains("result-subject")) {
-                        if (!list.isEmpty()) {
-                            ncea.put(lastSubject, list);
-                            list = new ArrayList<>();
-                        }
-                        lastSubject = r.text();
-                    }
-                    else if (r.child(0).className().contains("result_title")) {
-                        NCEAObject n = new NCEAObject();
-                        n.standard = r.child(0).text();
-                        n.credits = r.child(1).text();
-                        n.grade = r.child(2).text();
+                    else {
+                        for (Element z : r.children()) {
+                            if (z.className().contains("table-active")) {
+                                if (!list.isEmpty()) {
+                                    ncea.put(lastSubject, list);
+                                    list = new ArrayList<>();
+                                }
+                                lastSubject = z.text();
+                            }
+                            else {
+                                NCEAObject n = new NCEAObject();
+                                n.standard = z.child(0).text();
+                                n.credits = z.child(1).text();
+                                n.grade = z.child(2).text();
 
-                        list.add(n);
+                                list.add(n);
+                            }
+                        }
                     }
+
                 }
                 if (!list.isEmpty()) {
                     ncea.put(lastSubject, list);

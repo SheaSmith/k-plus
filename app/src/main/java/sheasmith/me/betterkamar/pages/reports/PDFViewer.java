@@ -51,7 +51,6 @@ import sheasmith.me.betterkamar.pages.notices.NoticesPage;
 public class PDFViewer extends Activity {
     ProgressDialog mProgressDialog;
     String reportName;
-    String reportYear;
 
 
     @SuppressLint("NewApi")
@@ -70,11 +69,10 @@ public class PDFViewer extends Activity {
         });
 
         reportName = getIntent().getStringExtra("name");
-        reportYear = getIntent().getStringExtra("year");
         ((TextView) findViewById(R.id.reportSchool)).setText(Servers.getServersList().get(getIntent().getIntExtra("listID", -1)).title);
         ((TextView) findViewById(R.id.reportName)).setText(reportName);
         String reportUrl = getIntent().getStringExtra("url");
-        File f = new File(getCacheDir() + "/betterkamar/" + Servers.getServersList().get(getIntent().getIntExtra("listID", -1)).title.replace(" ", "_"), reportYear.replace(" ", "_") + "_" + reportName.replace(" ", "_"));
+        File f = new File(getCacheDir() + "/betterkamar/" + Servers.getServersList().get(getIntent().getIntExtra("listID", -1)).title.replace(" ", "_"), reportName.replace(" ", "_"));
         if (!f.exists()) {
 
             mProgressDialog = new ProgressDialog(PDFViewer.this);
@@ -144,11 +142,10 @@ public class PDFViewer extends Activity {
                 // download the file
                 input = connection.getInputStream();
                 String sname = s.title.replace(" ", "_");
-                String category = reportYear.replace(" ", "_");
                 String name = reportName.replace(" ", "_");
                 File t = new File(getCacheDir(), "/betterkamar/" + sname);
                 t.mkdirs();
-                File fina = new File(t, category + "_" + name + ".pdf");
+                File fina = new File(t, name + ".pdf");
 
                 output = new FileOutputStream(fina);
 
@@ -220,9 +217,8 @@ public class PDFViewer extends Activity {
             else {
                 PDFView p = (PDFView) findViewById(R.id.webView);
                 String sname = s.title.replace(" ", "_");
-                String category = reportYear.replace(" ", "_");
                 String name = reportName.replace(" ", "_");
-                File f = new File(getCacheDir() + "/betterkamar/" + sname, category + "_" + name + ".pdf");
+                File f = new File(getCacheDir() + "/betterkamar/" + sname, name + ".pdf");
                 p.fromFile(f).load();
             }
         }

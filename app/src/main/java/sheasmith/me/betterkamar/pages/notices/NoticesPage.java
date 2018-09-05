@@ -306,42 +306,40 @@ public class NoticesPage extends AppCompatActivity
             notices.clear();
             try {
 //                if (s.cookies == null) {
-                    Connection.Response r = Jsoup.connect(s.hostname + "/student/index.php/process-login").method(Connection.Method.POST).data("username", s.username).data("password", s.password).execute();
+                Connection.Response r = Jsoup.connect(s.hostname + "/index.php/login").method(Connection.Method.POST).data("username", s.username, "password", s.password).execute();
                     s.cookies = r.cookies();
 //                }
-                Document d = Jsoup.connect(s.hostname + "/student/index.php/notices/" + date).get();
-                Elements meetings = d.getElementsByClass("meeting-notice");
-                for (Element e : meetings) {
-                    Elements title = e.getElementsByClass("subject");
-                    Elements teacher = e.getElementsByClass("teacher");
-                    Elements meeting = e.getElementsByClass("meet");
-                    Elements level = e.getElementsByClass("level");
-                    Elements body = e.getElementsByClass("body");
+                Document d = Jsoup.connect(s.hostname + "/index.php/notices/" + date).get();
+                Elements meetings = d.getElementsByClass("table-responsive").get(0).child(0).child(1).children();
+                int i = 0;
+                while (i < meetings.size()) {
+                    Element first = meetings.get(i);
+                    Element second = meetings.get(i + 1);
+
                     NoticesObject n = new NoticesObject();
-                    n.subject = title.text();
-                    n.teacher = teacher.text();
-                    n.level = level.text();
-                    n.meet = meeting.text();
-                    n.body = body.text();
+                    n.subject = first.child(1).text();
+                    n.teacher = first.child(4).text();
+                    n.level = first.child(0).text();
+                    n.meet = first.child(2).text();
+                    n.body = second.child(1).text();
                     notices.add(n);
 
+                    i = i + 2;
                 }
+                Elements general = d.getElementsByClass("table-responsive").get(1).child(0).child(1).children();
+                int iv = 0;
+                while (iv < general.size()) {
+                    Element first = general.get(iv);
+                    Element second = general.get(iv + 1);
 
-                Elements general = d.getElementsByClass("general-notice");
-                for (Element e : general) {
-                    Elements title = e.getElementsByClass("subject");
-
-                    Elements teacher = e.getElementsByClass("teacher");
-                    Elements level = e.getElementsByClass("level");
-                    Elements body = e.getElementsByClass("body");
                     NoticesObject n = new NoticesObject();
-                    n.subject = title.text();
-
-                    n.teacher = teacher.text();
-                    n.level = level.text();
-                    n.body = body.text();
+                    n.subject = first.child(1).text();
+                    n.teacher = first.child(2).text();
+                    n.level = first.child(0).text();
+                    n.body = second.child(1).text();
                     generalList.add(n);
 
+                    iv = iv + 2;
                 }
             }
             catch (IOException e) {

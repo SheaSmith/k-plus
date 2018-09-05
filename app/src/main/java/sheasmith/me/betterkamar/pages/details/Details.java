@@ -267,9 +267,9 @@ public class Details extends AppCompatActivity
             }
 
             try {
-                Document d = Jsoup.connect(s.hostname + "/student/index.php/details").cookies(s.cookies).get();
+                Document d = Jsoup.connect(s.hostname + "/index.php/details").cookies(s.cookies).get();
 
-                Elements details = d.getElementById("student_details_table").child(1).children();
+                Elements details = d.getElementById("StudentDetails").child(0).child(0).child(0).child(1).children();
                 int i = 0;
                 for (Element e : details) {
                     if (i==0) {
@@ -291,31 +291,31 @@ public class Details extends AppCompatActivity
                     i++;
                 }
 
-                Elements addressDetails = d.getElementById("student_address_details_table").child(0).children();
+                Elements addressDetails = d.getElementById("student_details").child(1).child(0).child(1).children();
                 i = 0;
                 // TODO handle br properly
                 for (Element e : addressDetails) {
                     if (i==1)
-                        studentDetailsObject.phone = e.child(0).child(0).child(0).child(0).child(0).child(0).html().replace("<br>", "\n");
-                    else if (i==4)
-                        studentDetailsObject.physicalAddress = e.child(0).child(0).child(0).child(0).child(0).child(0).html().replace("<br>", "\n");
-                    else if (i==6)
-                        studentDetailsObject.postalAddress = e.child(0).child(0).child(0).child(0).child(0).child(0).html().replace("<br>", "\n");
+                        studentDetailsObject.phone = e.child(0).html().replace("<br>", "\n");
+                    else if (i==3)
+                        studentDetailsObject.physicalAddress = e.child(0).html().replace("<br>", "\n");
+                    else if (i==5)
+                        studentDetailsObject.postalAddress = e.child(0).html().replace("<br>", "\n");
                     i++;
                 }
-                Elements phoneDetails = d.getElementById("student_phone_details_table").child(1).children();
+                Elements phoneDetails = d.getElementById("student_details").child(2).child(0).child(0).children();
                 i = 0;
                 for (Element e : phoneDetails) {
-                    if (i==0)
+                    if (i==1)
                         studentDetailsObject.homePhone = e.child(1).text();
 
-                    else if (i==1)
+                    else if (i==2)
                         studentDetailsObject.mobile = e.child(1).text();
 
                     i++;
                 }
 
-                Elements caregiverDetails = d.getElementById("student_caregivers_details_table").child(0).children();
+                Elements caregiverDetails = d.getElementById("CaregiversDetails").child(1).child(0).child(0).children();
                 i = 0;
                 for (Element e : caregiverDetails) {
                     if (i==1) {
@@ -353,7 +353,7 @@ public class Details extends AppCompatActivity
                     i++;
                 }
 
-                Elements emergencyContact = d.getElementById("student_emergancy_details_table").child(0).children();
+                Elements emergencyContact = d.getElementById("ContactDetails").child(1).child(0).child(0).children();
                 i = 0;
                 for (Element e : emergencyContact) {
                     if (i==1)
@@ -379,7 +379,7 @@ public class Details extends AppCompatActivity
                     i++;
                 }
 
-                Elements medicalDetails = d.getElementById("student_medical_details_table").child(0).children();
+                Elements medicalDetails = d.getElementById("MedicalDetails").child(1).child(0).child(0).children();
                 i = 0;
                 for (Element e : medicalDetails) {
                     if (i == 0)

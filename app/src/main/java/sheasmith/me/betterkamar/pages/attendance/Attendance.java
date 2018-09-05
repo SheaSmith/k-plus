@@ -179,6 +179,7 @@ public class Attendance extends AppCompatActivity
         List<String> periodList = new ArrayList<>();
         List<String> timeList = new ArrayList<>();
 
+        HashMap<String, String> actualDates = new HashMap<>();
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -192,36 +193,43 @@ public class Attendance extends AppCompatActivity
             try {
 
 
-                    Document d = Jsoup.connect(s.hostname + "/student/index.php/attendance/").cookies(s.cookies).get();
+                Document d = Jsoup.connect(s.hostname + "/index.php/attendance/").cookies(s.cookies).get();
 
-                Elements tableItems = d.getElementById("timetable_table").child(0).children();
-                Elements days = tableItems.get(0).children();
-                week = Integer.parseInt(days.get(0).getElementById("week").attr("value"));
+                Elements tableItems = d.select("body > div > section > article > div.table-responsive > table > tbody").first().children();
+                week = Integer.parseInt(d.getElementsByAttributeValue("name", "week").first().attr("value"));
 
                 String[] dayNames = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
                 for (String s : dayNames) {
                     items.put(s, new ArrayList<AttendanceObject>());
                 }
-                for (int i = 1 ; i != 10 ; i++) {
-                    Elements periodSlots = tableItems.get(i).children();
-                    String time = periodSlots.get(0).getElementsByClass("tt_time").first().text();
-                    periodList.add(periodSlots.get(0).text().replace(" " + time, ""));
-                    timeList.add(time);
-                    for (Element e : periodSlots) {
-                        if (periodSlots.indexOf(e) != 0) {
-                            AttendanceObject t = new AttendanceObject();
-                            t.periodNumber = i;
-                            t.attendance = e.getElementsByTag("strong").first().text();
-                            t.classname = e.getElementsByClass("result").first().text();
+                int pNum = 1;
+                for (Element t : tableItems) {
+                    String period = t.child(0).getElementsByTag("h4").first().ownText();
+                    String tim = t.child(0).getElementsByTag("small").text();
 
-                            List<AttendanceObject> timetableObjectList = items.get(dayNames[periodSlots.indexOf(e) - 1]);
-                            timetableObjectList.add(t);
-                            items.put(dayNames[periodSlots.indexOf(e) - 1], timetableObjectList);
+                    timeList.add(tim);
+                    periodList.add(period);
+
+                    List<AttendanceObject> times = new ArrayList<>();
+
+                    for (int i = 1 ; i < 6 ; i++) {
+                        t.child(i);
+                        AttendanceObject time = new AttendanceObject();
+                        time.day = i;
+                        try {
+                            time.classname = t.child(i).child(0).child(1).text();
+                            time.attendance = t.child(i).child(0).child(0).text();
+
+                            time.isEmpty = false;
                         }
+                        catch (IndexOutOfBoundsException | NullPointerException e) {
+                            time.isEmpty = true;
+                        }
+                        times.add(time);
                     }
+                    items.put(Integer.toString(pNum), times);
+                    pNum++;
                 }
-
-
 
 
             }
@@ -253,30 +261,33 @@ public class Attendance extends AppCompatActivity
                         String key = entry.getKey();
                         List<AttendanceObject> value = entry.getValue();
                         for (AttendanceObject t : value) {
-                            int id = t.periodNumber;
+                            int id = t.day;
                             View root = findViewById(R.id.linearView);
-                            TextView textView = (TextView) root.findViewWithTag(id + key);
-                            textView.setText(t.attendance + "\n" + t.classname);
-                            if (t.attendance.equals(" ") && !t.classname.isEmpty()) {
+                            TextView textView = (TextView) root.findViewWithTag(key + ";" + (id - 1));
+
+                            if (t.isEmpty) {
                                 textView.setBackgroundColor(getColor(R.color.dim_foreground_disabled_material_dark));
+                            }
+                            else {
+                                textView.setText(t.attendance + "\n" + t.classname);
+
                             }
                         }
                     }
 
 
                 }
-
                 findViewById(R.id.progressBar).setVisibility(View.GONE);
                 findViewById(R.id.mainArea).setVisibility(View.VISIBLE);
             }
             else {
                 findViewById(R.id.progressBar).setVisibility(View.GONE);
             }
-
             TextView schoolName = (TextView) findViewById(R.id.schoolName);
             schoolName.setText(s.title);
             TextView studentName = (TextView) findViewById(R.id.studentName);
             studentName.setText(s.student);
+
         }
 
 }

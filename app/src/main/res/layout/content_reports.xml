@@ -58,15 +58,10 @@
 
             </RelativeLayout>
 
-            <fragment
-                android:id="@+id/groupsFragment"
-                android:name="layout.SectionFragment"
+            <sheasmith.me.betterkamar.NestedListView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:tag="empty">
-
-            </fragment>
+                android:id="@+id/reportsList"/>
 
         </LinearLayout>
     </ScrollView>
