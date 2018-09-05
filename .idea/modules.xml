@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://D:\Users\Shea\Documents\kamar\BetterKAMAR.iml" filepath="D:\Users\Shea\Documents\kamar\BetterKAMAR.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/kamar-plus.iml" filepath="$PROJECT_DIR$/kamar-plus.iml" />
+      <module fileurl="file://D:\Users\Shea\Documents\kamar\app\app.iml" filepath="D:\Users\Shea\Documents\kamar\app\app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/kamar.iml" filepath="$PROJECT_DIR$/.idea/kamar.iml" />
     </modules>
   </component>
 </project>

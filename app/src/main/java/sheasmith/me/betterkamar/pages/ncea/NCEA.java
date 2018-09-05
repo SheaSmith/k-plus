@@ -224,7 +224,7 @@ public class NCEA extends AppCompatActivity
                 Element e = d.getElementsByClass("excellence").first();
                 ex = e.text();
 
-                Elements tableChildren = d.select("body > div > section > article > div.row > div.col-sm-5.col-xs-12 > div > table:nth-child(2) > tbody").first().children();
+                Elements tableChildren = d.select("table.table-sm:nth-child(1) > tbody").first().children();
                 int i = 0;
                 for (Element t : tableChildren) {
                         StandardObject o = new StandardObject();
@@ -244,7 +244,7 @@ public class NCEA extends AppCompatActivity
                     i++;
                 }
 
-                Elements standardChildren = d.select("body > div > section > article > table.table.table-bordered.table-sm > tbody").first().children();
+                Elements standardChildren = d.select("table.table:nth-child(1)").get(2).children();
                 i = 0;
                 for (Element t : standardChildren) {
                     if (i != 0) {
