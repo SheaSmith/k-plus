@@ -1,6 +1,6 @@
-package sheasmith.me.betterkamar.models
+package sheasmith.me.betterkamar.dataModels;
 
-public class NZQAObjects
+public class NZQAObject
 {
     private StudentOfficialResultsResults StudentOfficialResultsResults;
 

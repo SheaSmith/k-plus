@@ -1,4 +1,4 @@
-package sheasmith.me.betterkamar.models;
+package sheasmith.me.betterkamar.dataModels;
 
 /**
  * Created by TheDiamondPicks on 6/09/2018.

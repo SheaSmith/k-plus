@@ -1,4 +1,4 @@
-package sheasmith.me.betterkamar.models;
+package sheasmith.me.betterkamar.dataModels;
 
 public class NCEAObject
 {

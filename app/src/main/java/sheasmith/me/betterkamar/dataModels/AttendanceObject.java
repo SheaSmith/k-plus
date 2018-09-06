@@ -1,4 +1,4 @@
-package sheasmith.me.betterkamar.models;
+package sheasmith.me.betterkamar.dataModels;
 
 public class AttendanceObject
 {
@@ -197,7 +197,7 @@ public class AttendanceObject
             return Day;
         }
 
-        public void setDay (Day[] Day)
+        public void setDay (Day2[] Day)
         {
             this.Day = Day;
         }
