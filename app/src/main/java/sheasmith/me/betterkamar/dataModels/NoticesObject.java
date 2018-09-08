@@ -1,359 +1,144 @@
 package sheasmith.me.betterkamar.dataModels;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 /**
  * Created by TheDiamondPicks on 6/09/2018.
  */
 
 public class NoticesObject
 {
-    private NoticesResults NoticesResults;
+    public NoticesResults NoticesResults;
 
-    public NoticesResults getNoticesResults ()
-    {
-        return NoticesResults;
-    }
+    public NoticesObject(String xml) throws IOException, SAXException, ParserConfigurationException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(false);
+        factory.setIgnoringElementContentWhitespace(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
-    public void setNoticesResults (NoticesResults NoticesResults)
-    {
-        this.NoticesResults = NoticesResults;
-    }
+        Element root = (Element) doc.getElementsByTagName("NoticesResults").item(0);
+        Element meetingNoticesElement = (Element) root.getElementsByTagName("MeetingNotices");
+        Element generalNoticesElement = (Element) root.getElementsByTagName("GeneralNotices");
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [NoticesResults = "+NoticesResults+"]";
+        NoticesResults results = new NoticesResults();
+        results.AccessLevel = root.getElementsByTagName("AccessLevel").item(0).getTextContent();
+        results.ErrorCode = root.getElementsByTagName("ErrorCode").item(0).getTextContent();
+        results.NoticeDate = root.getElementsByTagName("NoticeDate").item(0).getTextContent();
+        results.NumberRecords = root.getElementsByTagName("NumberRecords").item(0).getTextContent();
+
+        results.MeetingNotices = new MeetingNotices();
+        results.MeetingNotices.NumberMeetingRecords = meetingNoticesElement.getElementsByTagName("NumberMeetingRecords").item(0).getTextContent();
+
+        NodeList meetings = meetingNoticesElement.getElementsByTagName("Meeting");
+        for (int i = 0; i != meetings.getLength(); i++) {
+            Element meetingElement = (Element) meetings.item(0);
+            Meeting meeting = new Meeting();
+
+            meeting.Level = meetingElement.getElementsByTagName("Level").item(0).getTextContent();
+            meeting.Subject = meetingElement.getElementsByTagName("Subject").item(0).getTextContent();
+            meeting.Body = meetingElement.getElementsByTagName("Body").item(0).getTextContent();
+            meeting.Teacher = meetingElement.getElementsByTagName("Teacher").item(0).getTextContent();
+            meeting.PlaceMeet = meetingElement.getElementsByTagName("PlaceMeet").item(0).getTextContent();
+            meeting.DateMeet = meetingElement.getElementsByTagName("DateMeet").item(0).getTextContent();
+            meeting.TimeMeet = meetingElement.getElementsByTagName("TimeMeet").item(0).getTextContent();
+            meeting.index = meetingElement.getAttribute("index");
+
+            results.MeetingNotices.Meeting.add(meeting);
+        }
+
+        results.GeneralNotices = new GeneralNotices();
+        results.GeneralNotices.NumberGeneralRecords = generalNoticesElement.getElementsByTagName("NumberGeneralRecords").item(0).getTextContent();
+
+        NodeList generals = meetingNoticesElement.getElementsByTagName("General");
+        for (int i = 0; i != generals.getLength(); i++) {
+            Element generalElement = (Element) meetings.item(0);
+            General general = new General();
+
+            general.Level = generalElement.getElementsByTagName("Level").item(0).getTextContent();
+            general.Subject = generalElement.getElementsByTagName("Subject").item(0).getTextContent();
+            general.Body = generalElement.getElementsByTagName("Body").item(0).getTextContent();
+            general.Teacher = generalElement.getElementsByTagName("Teacher").item(0).getTextContent();
+            general.index = generalElement.getAttribute("index");
+
+            results.GeneralNotices.General.add(general);
+        }
+
+        NoticesResults = results;
     }
 
     public class NoticesResults
     {
-        private String AccessLevel;
+        public String AccessLevel;
 
-        private GeneralNotices GeneralNotices;
+        public GeneralNotices GeneralNotices;
 
-        private String ErrorCode;
+        public String ErrorCode;
 
-        private String apiversion;
+        public String apiversion;
 
-        private String NumberRecords;
+        public String NumberRecords;
 
-        private String NoticeDate;
+        public String NoticeDate;
 
-        private MeetingNotices MeetingNotices;
-
-        public String getAccessLevel ()
-        {
-            return AccessLevel;
-        }
-
-        public void setAccessLevel (String AccessLevel)
-        {
-            this.AccessLevel = AccessLevel;
-        }
-
-        public GeneralNotices getGeneralNotices ()
-        {
-            return GeneralNotices;
-        }
-
-        public void setGeneralNotices (GeneralNotices GeneralNotices)
-        {
-            this.GeneralNotices = GeneralNotices;
-        }
-
-        public String getErrorCode ()
-        {
-            return ErrorCode;
-        }
-
-        public void setErrorCode (String ErrorCode)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        public String getApiversion ()
-        {
-            return apiversion;
-        }
-
-        public void setApiversion (String apiversion)
-        {
-            this.apiversion = apiversion;
-        }
-
-        public String getNumberRecords ()
-        {
-            return NumberRecords;
-        }
-
-        public void setNumberRecords (String NumberRecords)
-        {
-            this.NumberRecords = NumberRecords;
-        }
-
-        public String getNoticeDate ()
-        {
-            return NoticeDate;
-        }
-
-        public void setNoticeDate (String NoticeDate)
-        {
-            this.NoticeDate = NoticeDate;
-        }
-
-        public MeetingNotices getMeetingNotices ()
-        {
-            return MeetingNotices;
-        }
-
-        public void setMeetingNotices (MeetingNotices MeetingNotices)
-        {
-            this.MeetingNotices = MeetingNotices;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [AccessLevel = "+AccessLevel+", GeneralNotices = "+GeneralNotices+", ErrorCode = "+ErrorCode+", apiversion = "+apiversion+", NumberRecords = "+NumberRecords+", NoticeDate = "+NoticeDate+", MeetingNotices = "+MeetingNotices+"]";
-        }
+        public MeetingNotices MeetingNotices;
     }
 
     public class MeetingNotices
     {
-        private String NumberMeetingRecords;
+        public String NumberMeetingRecords;
 
-        private Meeting[] Meeting;
-
-        public String getNumberMeetingRecords ()
-        {
-            return NumberMeetingRecords;
-        }
-
-        public void setNumberMeetingRecords (String NumberMeetingRecords)
-        {
-            this.NumberMeetingRecords = NumberMeetingRecords;
-        }
-
-        public Meeting[] getMeeting ()
-        {
-            return Meeting;
-        }
-
-        public void setMeeting (Meeting[] Meeting)
-        {
-            this.Meeting = Meeting;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [NumberMeetingRecords = "+NumberMeetingRecords+", Meeting = "+Meeting+"]";
-        }
+        public List<Meeting> Meeting = new ArrayList<>();
     }
 
     public class Meeting
     {
-        private String PlaceMeet;
+        public String PlaceMeet;
 
-        private String index;
+        public String index;
 
-        private String Body;
+        public String Body;
 
-        private String Teacher;
+        public String Teacher;
 
-        private String Subject;
+        public String Subject;
 
-        private String DateMeet;
+        public String DateMeet;
 
-        private String TimeMeet;
+        public String TimeMeet;
 
-        private String Level;
-
-        public String getPlaceMeet ()
-        {
-            return PlaceMeet;
-        }
-
-        public void setPlaceMeet (String PlaceMeet)
-        {
-            this.PlaceMeet = PlaceMeet;
-        }
-
-        public String getIndex ()
-        {
-            return index;
-        }
-
-        public void setIndex (String index)
-        {
-            this.index = index;
-        }
-
-        public String getBody ()
-        {
-            return Body;
-        }
-
-        public void setBody (String Body)
-        {
-            this.Body = Body;
-        }
-
-        public String getTeacher ()
-        {
-            return Teacher;
-        }
-
-        public void setTeacher (String Teacher)
-        {
-            this.Teacher = Teacher;
-        }
-
-        public String getSubject ()
-        {
-            return Subject;
-        }
-
-        public void setSubject (String Subject)
-        {
-            this.Subject = Subject;
-        }
-
-        public String getDateMeet ()
-        {
-            return DateMeet;
-        }
-
-        public void setDateMeet (String DateMeet)
-        {
-            this.DateMeet = DateMeet;
-        }
-
-        public String getTimeMeet ()
-        {
-            return TimeMeet;
-        }
-
-        public void setTimeMeet (String TimeMeet)
-        {
-            this.TimeMeet = TimeMeet;
-        }
-
-        public String getLevel ()
-        {
-            return Level;
-        }
-
-        public void setLevel (String Level)
-        {
-            this.Level = Level;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [PlaceMeet = "+PlaceMeet+", index = "+index+", Body = "+Body+", Teacher = "+Teacher+", Subject = "+Subject+", DateMeet = "+DateMeet+", TimeMeet = "+TimeMeet+", Level = "+Level+"]";
-        }
+        public String Level;
     }
 
     public class GeneralNotices
     {
-        private General[] General;
+        public List<General> General = new ArrayList<>();
 
-        private String NumberGeneralRecords;
-
-        public General[] getGeneral ()
-        {
-            return General;
-        }
-
-        public void setGeneral (General[] General)
-        {
-            this.General = General;
-        }
-
-        public String getNumberGeneralRecords ()
-        {
-            return NumberGeneralRecords;
-        }
-
-        public void setNumberGeneralRecords (String NumberGeneralRecords)
-        {
-            this.NumberGeneralRecords = NumberGeneralRecords;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [General = "+General+", NumberGeneralRecords = "+NumberGeneralRecords+"]";
-        }
+        public String NumberGeneralRecords;
     }
 
     public class General
     {
-        private String index;
+        public String index;
 
-        private String Body;
+        public String Body;
 
-        private String Teacher;
+        public String Teacher;
 
-        private String Subject;
+        public String Subject;
 
-        private String Level;
-
-        public String getIndex ()
-        {
-            return index;
-        }
-
-        public void setIndex (String index)
-        {
-            this.index = index;
-        }
-
-        public String getBody ()
-        {
-            return Body;
-        }
-
-        public void setBody (String Body)
-        {
-            this.Body = Body;
-        }
-
-        public String getTeacher ()
-        {
-            return Teacher;
-        }
-
-        public void setTeacher (String Teacher)
-        {
-            this.Teacher = Teacher;
-        }
-
-        public String getSubject ()
-        {
-            return Subject;
-        }
-
-        public void setSubject (String Subject)
-        {
-            this.Subject = Subject;
-        }
-
-        public String getLevel ()
-        {
-            return Level;
-        }
-
-        public void setLevel (String Level)
-        {
-            this.Level = Level;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [index = "+index+", Body = "+Body+", Teacher = "+Teacher+", Subject = "+Subject+", Level = "+Level+"]";
-        }
+        public String Level;
     }
 }

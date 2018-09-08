@@ -1,330 +1,117 @@
 package sheasmith.me.betterkamar.dataModels;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 public class ResultObject
 {
-    private StudentResultsResults StudentResultsResults;
+    public StudentResultsResults StudentResultsResults;
 
-    public StudentResultsResults getStudentResultsResults ()
-    {
-        return StudentResultsResults;
-    }
+    public ResultObject(String xml) throws IOException, SAXException, ParserConfigurationException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(false);
+        factory.setIgnoringElementContentWhitespace(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
-    public void setStudentResultsResults (StudentResultsResults StudentResultsResults)
-    {
-        this.StudentResultsResults = StudentResultsResults;
-    }
+        Element root = (Element) doc.getElementsByTagName("StudentResultsResults").item(0);
+        NodeList levels = root.getElementsByTagName("ResultLevels").item(0).getChildNodes();
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [StudentResultsResults = "+StudentResultsResults+"]";
+        StudentResultsResults results = new StudentResultsResults();
+        results.AccessLevel = root.getElementsByTagName("AccessLevel").item(0).getTextContent();
+        results.ErrorCode = root.getElementsByTagName("ErrorCode").item(0).getTextContent();
+        results.NumberRecords = root.getElementsByTagName("NumberRecords").item(0).getTextContent();
+        results.NumberResultLevels = root.getElementsByTagName("NumberResultLevels").item(0).getTextContent();
+        results.StudentID = root.getElementsByTagName("StudentID").item(0).getTextContent();
+
+        for (int i = 0; i != levels.getLength(); i++) {
+            Element levelElement = (Element) levels.item(i);
+            ResultLevel resultLevel = new ResultLevel();
+            resultLevel.index = levelElement.getAttribute("index");
+            resultLevel.NumberResults = levelElement.getElementsByTagName("NumberResults").item(0).getTextContent();
+            resultLevel.NCEALevel = levelElement.getElementsByTagName("NCEALevel").item(0).getTextContent();
+
+            NodeList resultsNodes = levelElement.getElementsByTagName("Results").item(0).getChildNodes();
+            for (int j = 0; j != resultsNodes.getLength(); j++) {
+                Element resultElement = (Element) resultsNodes.item(j);
+                Result result = new Result();
+                result.index = resultElement.getAttribute("index");
+                result.Number = resultElement.getElementsByTagName("Result").item(0).getTextContent();
+                result.Version = resultElement.getElementsByTagName("Version").item(0).getTextContent();
+                result.Grade = resultElement.getElementsByTagName("Grade").item(0).getTextContent();
+                result.Title = resultElement.getElementsByTagName("Title").item(0).getTextContent();
+                result.SubField = resultElement.getElementsByTagName("SubField").item(0).getTextContent();
+                result.Credits = resultElement.getElementsByTagName("Credits").item(0).getTextContent();
+                result.CreditsPassed = resultElement.getElementsByTagName("CreditsPassed").item(0).getTextContent();
+                result.ResultPublished = resultElement.getElementsByTagName("ResultPublished").item(0).getTextContent();
+
+                resultLevel.Results.add(result);
+            }
+
+            results.ResultLevels.add(resultLevel);
+        }
+
+        StudentResultsResults = results;
     }
 
     public class StudentResultsResults
     {
-        private String AccessLevel;
+        public String AccessLevel;
 
-        private String NumberResultLevels;
+        public String NumberResultLevels;
 
-        private String ErrorCode;
+        public String ErrorCode;
 
-        private ResultLevels ResultLevels;
+        public List<ResultLevel> ResultLevels = new ArrayList<>();
 
-        private String apiversion;
+        public String apiversion;
 
-        private String NumberRecords;
+        public String NumberRecords;
 
-        private String StudentID;
-
-        public String getAccessLevel ()
-        {
-            return AccessLevel;
-        }
-
-        public void setAccessLevel (String AccessLevel)
-        {
-            this.AccessLevel = AccessLevel;
-        }
-
-        public String getNumberResultLevels ()
-        {
-            return NumberResultLevels;
-        }
-
-        public void setNumberResultLevels (String NumberResultLevels)
-        {
-            this.NumberResultLevels = NumberResultLevels;
-        }
-
-        public String getErrorCode ()
-        {
-            return ErrorCode;
-        }
-
-        public void setErrorCode (String ErrorCode)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        public ResultLevels getResultLevels ()
-        {
-            return ResultLevels;
-        }
-
-        public void setResultLevels (ResultLevels ResultLevels)
-        {
-            this.ResultLevels = ResultLevels;
-        }
-
-        public String getApiversion ()
-        {
-            return apiversion;
-        }
-
-        public void setApiversion (String apiversion)
-        {
-            this.apiversion = apiversion;
-        }
-
-        public String getNumberRecords ()
-        {
-            return NumberRecords;
-        }
-
-        public void setNumberRecords (String NumberRecords)
-        {
-            this.NumberRecords = NumberRecords;
-        }
-
-        public String getStudentID ()
-        {
-            return StudentID;
-        }
-
-        public void setStudentID (String StudentID)
-        {
-            this.StudentID = StudentID;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [AccessLevel = "+AccessLevel+", NumberResultLevels = "+NumberResultLevels+", ErrorCode = "+ErrorCode+", ResultLevels = "+ResultLevels+", apiversion = "+apiversion+", NumberRecords = "+NumberRecords+", StudentID = "+StudentID+"]";
-        }
-    }
-
-    public class ResultLevels
-    {
-        private ResultLevel[] ResultLevel;
-
-        public ResultLevel[] getResultLevel ()
-        {
-            return ResultLevel;
-        }
-
-        public void setResultLevel (ResultLevel[] ResultLevel)
-        {
-            this.ResultLevel = ResultLevel;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [ResultLevel = "+ResultLevel+"]";
-        }
+        public String StudentID;
     }
     public class Result
     {
-        private String SubField;
+        public String SubField;
 
-        private String CreditsPassed;
+        public String CreditsPassed;
 
-        private String index;
+        public String index;
 
-        private String Grade;
+        public String Grade;
 
-        private String Credits;
+        public String Credits;
 
-        private String Number;
+        public String Number;
 
-        private String ResultPublished;
+        public String ResultPublished;
 
-        private String Version;
+        public String Version;
 
-        private String Title;
-
-        public String getSubField ()
-        {
-            return SubField;
-        }
-
-        public void setSubField (String SubField)
-        {
-            this.SubField = SubField;
-        }
-
-        public String getCreditsPassed ()
-        {
-            return CreditsPassed;
-        }
-
-        public void setCreditsPassed (String CreditsPassed)
-        {
-            this.CreditsPassed = CreditsPassed;
-        }
-
-        public String getIndex ()
-        {
-            return index;
-        }
-
-        public void setIndex (String index)
-        {
-            this.index = index;
-        }
-
-        public String getGrade ()
-        {
-            return Grade;
-        }
-
-        public void setGrade (String Grade)
-        {
-            this.Grade = Grade;
-        }
-
-        public String getCredits ()
-        {
-            return Credits;
-        }
-
-        public void setCredits (String Credits)
-        {
-            this.Credits = Credits;
-        }
-
-        public String getNumber ()
-        {
-            return Number;
-        }
-
-        public void setNumber (String Number)
-        {
-            this.Number = Number;
-        }
-
-        public String getResultPublished ()
-        {
-            return ResultPublished;
-        }
-
-        public void setResultPublished (String ResultPublished)
-        {
-            this.ResultPublished = ResultPublished;
-        }
-
-        public String getVersion ()
-        {
-            return Version;
-        }
-
-        public void setVersion (String Version)
-        {
-            this.Version = Version;
-        }
-
-        public String getTitle ()
-        {
-            return Title;
-        }
-
-        public void setTitle (String Title)
-        {
-            this.Title = Title;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [SubField = "+SubField+", CreditsPassed = "+CreditsPassed+", index = "+index+", Grade = "+Grade+", Credits = "+Credits+", Number = "+Number+", ResultPublished = "+ResultPublished+", Version = "+Version+", Title = "+Title+"]";
-        }
+        public String Title;
     }
 
     public class ResultLevel
     {
-        private String NCEALevel;
+        public String NCEALevel;
 
-        private String index;
+        public String index;
 
-        private String NumberResults;
+        public String NumberResults;
 
-        private Results Results;
-
-        public String getNCEALevel ()
-        {
-            return NCEALevel;
-        }
-
-        public void setNCEALevel (String NCEALevel)
-        {
-            this.NCEALevel = NCEALevel;
-        }
-
-        public String getIndex ()
-        {
-            return index;
-        }
-
-        public void setIndex (String index)
-        {
-            this.index = index;
-        }
-
-        public String getNumberResults ()
-        {
-            return NumberResults;
-        }
-
-        public void setNumberResults (String NumberResults)
-        {
-            this.NumberResults = NumberResults;
-        }
-
-        public Results getResults ()
-        {
-            return Results;
-        }
-
-        public void setResults (Results Results)
-        {
-            this.Results = Results;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [NCEALevel = "+NCEALevel+", index = "+index+", NumberResults = "+NumberResults+", Results = "+Results+"]";
-        }
+        public List<Result> Results = new ArrayList<>();
     }
 
-    public class Results
-    {
-        private Result Result;
 
-        public Result getResult ()
-        {
-            return Result;
-        }
-
-        public void setResult (Result Result)
-        {
-            this.Result = Result;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [Result = "+Result+"]";
-        }
-    }
 }

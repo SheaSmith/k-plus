@@ -1,330 +1,113 @@
 package sheasmith.me.betterkamar.dataModels;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 /**
  * Created by TheDiamondPicks on 6/09/2018.
  */
 
 public class CalendarObject
 {
-    private EventsResults EventsResults;
+    public EventsResults EventsResults;
 
-    public EventsResults getEventsResults ()
-    {
-        return EventsResults;
-    }
+    public CalendarObject(String xml) throws IOException, SAXException, ParserConfigurationException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(false);
+        factory.setIgnoringElementContentWhitespace(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
-    public void setEventsResults (EventsResults EventsResults)
-    {
-        this.EventsResults = EventsResults;
-    }
+        Element root = (Element) doc.getElementsByTagName("EventsResults").item(0);
+        NodeList events = root.getElementsByTagName("Events").item(0).getChildNodes();
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [EventsResults = "+EventsResults+"]";
+        EventsResults results = new EventsResults();
+        results.AccessLevel = root.getElementsByTagName("AccessLevel").item(0).getTextContent();
+        results.ErrorCode = root.getElementsByTagName("ErrorCode").item(0).getTextContent();
+        results.NumberRecords = root.getElementsByTagName("NumberRecords").item(0).getTextContent();
+
+        for (int i = 0; i != events.getLength(); i++) {
+            Element eventElement = (Element) events.item(i);
+            Event event = new Event();
+            event.index = eventElement.getAttribute("index");
+            event.Title = eventElement.getElementsByTagName("Title").item(0).getTextContent();
+            event.Location = eventElement.getElementsByTagName("Location").item(0).getTextContent();
+            event.Details = eventElement.getElementsByTagName("Details").item(0).getTextContent();
+            event.Priority = eventElement.getElementsByTagName("Priority").item(0).getTextContent();
+            event.Public = eventElement.getElementsByTagName("Public").item(0).getTextContent();
+            event.Student = eventElement.getElementsByTagName("Student").item(0).getTextContent();
+            event.CG1 = eventElement.getElementsByTagName("CG1").item(0).getTextContent();
+            event.CG2 = eventElement.getElementsByTagName("CG2").item(0).getTextContent();
+            event.Staff = eventElement.getElementsByTagName("Staff").item(0).getTextContent();
+            event.Colour = eventElement.getElementsByTagName("Colour").item(0).getTextContent();
+            event.ColourLabel = eventElement.getElementsByTagName("ColourLabel").item(0).getTextContent();
+            event.DateTimeInfo = eventElement.getElementsByTagName("DateTimeInfo").item(0).getTextContent();
+            event.DateTimeStart = eventElement.getElementsByTagName("DateTimeStart").item(0).getTextContent();
+            event.DateTimeFinish = eventElement.getElementsByTagName("DateTimeFinish").item(0).getTextContent();
+            event.Start = eventElement.getElementsByTagName("Start").item(0).getTextContent();
+            event.Finish = eventElement.getElementsByTagName("Finish").item(0).getTextContent();
+        }
     }
 
     public class EventsResults
     {
-        private String AccessLevel;
+        public String AccessLevel;
 
-        private Events Events;
+        public List<Event> Events = new ArrayList<>();
 
-        private String ErrorCode;
+        public String ErrorCode;
 
-        private String apiversion;
+        public String apiversion;
 
-        private String NumberRecords;
-
-        public String getAccessLevel ()
-        {
-            return AccessLevel;
-        }
-
-        public void setAccessLevel (String AccessLevel)
-        {
-            this.AccessLevel = AccessLevel;
-        }
-
-        public Events getEvents ()
-        {
-            return Events;
-        }
-
-        public void setEvents (Events Events)
-        {
-            this.Events = Events;
-        }
-
-        public String getErrorCode ()
-        {
-            return ErrorCode;
-        }
-
-        public void setErrorCode (String ErrorCode)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        public String getApiversion ()
-        {
-            return apiversion;
-        }
-
-        public void setApiversion (String apiversion)
-        {
-            this.apiversion = apiversion;
-        }
-
-        public String getNumberRecords ()
-        {
-            return NumberRecords;
-        }
-
-        public void setNumberRecords (String NumberRecords)
-        {
-            this.NumberRecords = NumberRecords;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [AccessLevel = "+AccessLevel+", Events = "+Events+", ErrorCode = "+ErrorCode+", apiversion = "+apiversion+", NumberRecords = "+NumberRecords+"]";
-        }
-    }
-
-    public class Events
-    {
-        private Event[] Event;
-
-        public Event[] getEvent ()
-        {
-            return Event;
-        }
-
-        public void setEvent (Event[] Event)
-        {
-            this.Event = Event;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [Event = "+Event+"]";
-        }
+        public String NumberRecords;
     }
 
     public class Event
     {
-        private String index;
+        public String index;
 
-        private String Staff;
+        public String Staff;
 
-        private String Start;
+        public String Start;
 
-        private String Details;
+        public String Details;
 
-        private String DateTimeStart;
+        public String DateTimeStart;
 
-        private String Finish;
+        public String Finish;
 
-        private String Location;
+        public String Location;
 
-        private String Title;
+        public String Title;
 
-        private String Priority;
+        public String Priority;
 
-        private String Student;
+        public String Student;
 
-        private String CG1;
+        public String CG1;
 
-        private String Colour;
+        public String Colour;
 
-        private String ColourLabel;
+        public String ColourLabel;
 
-        private String CG2;
+        public String CG2;
 
-        private String DateTimeFinish;
+        public String DateTimeFinish;
 
-        private String DateTimeInfo;
+        public String DateTimeInfo;
 
-        private String Public;
-
-        public String getIndex ()
-        {
-            return index;
-        }
-
-        public void setIndex (String index)
-        {
-            this.index = index;
-        }
-
-        public String getStaff ()
-        {
-            return Staff;
-        }
-
-        public void setStaff (String Staff)
-        {
-            this.Staff = Staff;
-        }
-
-        public String getStart ()
-        {
-            return Start;
-        }
-
-        public void setStart (String Start)
-        {
-            this.Start = Start;
-        }
-
-        public String getDetails ()
-        {
-            return Details;
-        }
-
-        public void setDetails (String Details)
-        {
-            this.Details = Details;
-        }
-
-        public String getDateTimeStart ()
-        {
-            return DateTimeStart;
-        }
-
-        public void setDateTimeStart (String DateTimeStart)
-        {
-            this.DateTimeStart = DateTimeStart;
-        }
-
-        public String getFinish ()
-        {
-            return Finish;
-        }
-
-        public void setFinish (String Finish)
-        {
-            this.Finish = Finish;
-        }
-
-        public String getLocation ()
-        {
-            return Location;
-        }
-
-        public void setLocation (String Location)
-        {
-            this.Location = Location;
-        }
-
-        public String getTitle ()
-        {
-            return Title;
-        }
-
-        public void setTitle (String Title)
-        {
-            this.Title = Title;
-        }
-
-        public String getPriority ()
-        {
-            return Priority;
-        }
-
-        public void setPriority (String Priority)
-        {
-            this.Priority = Priority;
-        }
-
-        public String getStudent ()
-        {
-            return Student;
-        }
-
-        public void setStudent (String Student)
-        {
-            this.Student = Student;
-        }
-
-        public String getCG1 ()
-        {
-            return CG1;
-        }
-
-        public void setCG1 (String CG1)
-        {
-            this.CG1 = CG1;
-        }
-
-        public String getColour ()
-        {
-            return Colour;
-        }
-
-        public void setColour (String Colour)
-        {
-            this.Colour = Colour;
-        }
-
-        public String getColourLabel ()
-        {
-            return ColourLabel;
-        }
-
-        public void setColourLabel (String ColourLabel)
-        {
-            this.ColourLabel = ColourLabel;
-        }
-
-        public String getCG2 ()
-        {
-            return CG2;
-        }
-
-        public void setCG2 (String CG2)
-        {
-            this.CG2 = CG2;
-        }
-
-        public String getDateTimeFinish ()
-        {
-            return DateTimeFinish;
-        }
-
-        public void setDateTimeFinish (String DateTimeFinish)
-        {
-            this.DateTimeFinish = DateTimeFinish;
-        }
-
-        public String getDateTimeInfo ()
-        {
-            return DateTimeInfo;
-        }
-
-        public void setDateTimeInfo (String DateTimeInfo)
-        {
-            this.DateTimeInfo = DateTimeInfo;
-        }
-
-        public String getPublic ()
-        {
-            return Public;
-        }
-
-        public void setPublic (String Public)
-        {
-            this.Public = Public;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [index = "+index+", Staff = "+Staff+", Start = "+Start+", Details = "+Details+", DateTimeStart = "+DateTimeStart+", Finish = "+Finish+", Location = "+Location+", Title = "+Title+", Priority = "+Priority+", Student = "+Student+", CG1 = "+CG1+", Colour = "+Colour+", ColourLabel = "+ColourLabel+", CG2 = "+CG2+", DateTimeFinish = "+DateTimeFinish+", DateTimeInfo = "+DateTimeInfo+", Public = "+Public+"]";
-        }
+        public String Public;
     }
 }
 

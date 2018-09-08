@@ -6,7 +6,6 @@ import com.stanfy.gsonxml.XmlParserCreator;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -20,6 +19,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import sheasmith.me.betterkamar.dataModels.GlobalObject;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
 import sheasmith.me.betterkamar.dataModels.SettingsObject;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
@@ -84,7 +84,7 @@ public class ApiManager {
                     if (resultNode.getElementsByTagName("Success") != null) {
                         LoginObject.LogonResults login = gsonXml.fromXml(xml, LoginObject.LogonResults.class);
 
-                        TOKEN = login.getKey();
+//                        TOKEN = login.getKey();
                         ID = username;
                     }
                     else {
@@ -140,6 +140,55 @@ public class ApiManager {
             }
         });
         webThread.start();
+    }
+
+    public static void getGlobals(final ApiResponse<GlobalObject.GlobalsResults> callback) {
+        if (TOKEN != null) {
+            Thread webThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        OkHttpClient client = new OkHttpClient();
+
+                        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+                        RequestBody body = RequestBody.create(mediaType, "Command=GetGlobals&Key=" + TOKEN);
+                        Request request = new Request.Builder()
+                                .url(URL)
+                                .post(body)
+                                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                                .addHeader("User-Agent", "KAMAR Plus 2.0")
+                                .build();
+
+                        Response response = client.newCall(request).execute();
+
+                        String xml = response.body().string();
+
+                        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                        factory.setValidating(false);
+                        factory.setIgnoringElementContentWhitespace(true);
+                        DocumentBuilder builder = factory.newDocumentBuilder();
+                        Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
+                        Element resultNode = (Element) doc.getElementsByTagName("GlobalsResults").item(0);
+                        if (resultNode.getElementsByTagName("PeriodDefinitions") != null) {
+                            GlobalObject.GlobalsResults globals = gsonXml.fromXml(xml, GlobalObject.GlobalsResults.class);
+                            callback.success(globals);
+                        } else {
+                            String error = resultNode.getElementsByTagName("Error").item(0).getTextContent();
+                            if (error.equalsIgnoreCase("invalid key")) {
+                                callback.error(new Exceptions.ExpiredToken());
+                            } else {
+                                callback.error(new Exceptions.UnknownServerError());
+                            }
+                        }
+                    } catch (Exception e) {
+                        callback.error(e);
+                    }
+                }
+            });
+            webThread.start();
+        } else {
+            callback.error(new Exceptions.InvalidToken());
+        }
     }
 
 }

@@ -1,234 +1,90 @@
 package sheasmith.me.betterkamar.dataModels;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 public class AttendanceObject
 {
-    private StudentAttendanceResults StudentAttendanceResults;
+    public StudentAttendanceResults StudentAttendanceResults;
 
-    public StudentAttendanceResults getStudentAttendanceResults ()
-    {
-        return StudentAttendanceResults;
-    }
+    public AttendanceObject(String xml) throws IOException, SAXException, ParserConfigurationException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(false);
+        factory.setIgnoringElementContentWhitespace(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
-    public void setStudentAttendanceResults (StudentAttendanceResults StudentAttendanceResults)
-    {
-        this.StudentAttendanceResults = StudentAttendanceResults;
-    }
+        Element root = (Element) doc.getElementsByTagName("StudentAttendanceResults").item(0);
+        NodeList weeks = root.getElementsByTagName("Weeks").item(0).getChildNodes();
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [StudentAttendanceResults = "+StudentAttendanceResults+"]";
+        StudentAttendanceResults results = new StudentAttendanceResults();
+        results.AccessLevel = root.getElementsByTagName("AccessLevel").item(0).getTextContent();
+        results.ErrorCode = root.getElementsByTagName("ErrorCode").item(0).getTextContent();
+        results.NumberRecords = root.getElementsByTagName("NumberRecords").item(0).getTextContent();
+
+        for (int i = 0; i != weeks.getLength(); i++) {
+            Element weekElement = (Element) weeks.item(i);
+            Week week = new Week();
+            week.WeekStart = weekElement.getElementsByTagName("WeekStart").item(0).getTextContent();
+            week.index = weekElement.getAttribute("index");
+
+            NodeList days = weekElement.getElementsByTagName("Days").item(0).getChildNodes();
+            for (int j = 0; j != days.getLength(); j++) {
+                Element dayElement = (Element) days.item(j);
+                Day day = new Day();
+                day.content = dayElement.getTextContent();
+                day.index = dayElement.getAttribute("index");
+
+                week.Days.add(day);
+            }
+
+            results.Weeks.add(week);
+        }
+
+        StudentAttendanceResults = results;
     }
 
     public class StudentAttendanceResults
     {
-        private String AccessLevel;
+        public String AccessLevel;
 
-        private Weeks Weeks;
+        public List<Week> Weeks = new ArrayList<>();
 
-        private String ErrorCode;
+        public String ErrorCode;
 
-        private String apiversion;
+        public String apiversion;
 
-        private String NumberRecords;
-
-        public String getAccessLevel ()
-        {
-            return AccessLevel;
-        }
-
-        public void setAccessLevel (String AccessLevel)
-        {
-            this.AccessLevel = AccessLevel;
-        }
-
-        public Weeks getWeeks ()
-        {
-            return Weeks;
-        }
-
-        public void setWeeks (Weeks Weeks)
-        {
-            this.Weeks = Weeks;
-        }
-
-        public String getErrorCode ()
-        {
-            return ErrorCode;
-        }
-
-        public void setErrorCode (String ErrorCode)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        public String getApiversion ()
-        {
-            return apiversion;
-        }
-
-        public void setApiversion (String apiversion)
-        {
-            this.apiversion = apiversion;
-        }
-
-        public String getNumberRecords ()
-        {
-            return NumberRecords;
-        }
-
-        public void setNumberRecords (String NumberRecords)
-        {
-            this.NumberRecords = NumberRecords;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [AccessLevel = "+AccessLevel+", Weeks = "+Weeks+", ErrorCode = "+ErrorCode+", apiversion = "+apiversion+", NumberRecords = "+NumberRecords+"]";
-        }
+        public String NumberRecords;
     }
 
-    public class Weeks
-    {
-        private Week[] Week;
-
-        public Week[] getWeek ()
-        {
-            return Week;
-        }
-
-        public void setWeek (Week[] Week)
-        {
-            this.Week = Week;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [Week = "+Week+"]";
-        }
-    }
 
     public class Day
     {
-        private String content;
+        public String content;
 
-        private String index;
-
-        public String getContent ()
-        {
-            return content;
-        }
-
-        public void setContent (String content)
-        {
-            this.content = content;
-        }
-
-        public String getIndex ()
-        {
-            return index;
-        }
-
-        public void setIndex (String index)
-        {
-            this.index = index;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [content = "+content+", index = "+index+"]";
-        }
+        public String index;
     }
 
     public class Week
     {
-        private String index;
+        public String index;
 
-        private String WeekStart;
+        public String WeekStart;
 
-        private Days Days;
-
-        public String getIndex ()
-        {
-            return index;
-        }
-
-        public void setIndex (String index)
-        {
-            this.index = index;
-        }
-
-        public String getWeekStart ()
-        {
-            return WeekStart;
-        }
-
-        public void setWeekStart (String WeekStart)
-        {
-            this.WeekStart = WeekStart;
-        }
-
-        public Days getDays ()
-        {
-            return Days;
-        }
-
-        public void setDays (Days Days)
-        {
-            this.Days = Days;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [index = "+index+", WeekStart = "+WeekStart+", Days = "+Days+"]";
-        }
+        public List<Day> Days = new ArrayList<>();
     }
 
-    public class Days
-    {
-        private Day2[] Day;
-
-        public Day2[] getDay ()
-        {
-            return Day;
-        }
-
-        public void setDay (Day2[] Day)
-        {
-            this.Day = Day;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [Day = "+Day+"]";
-        }
-    }
-
-    public class Day2
-    {
-        private String index;
-
-        public String getIndex ()
-        {
-            return index;
-        }
-
-        public void setIndex (String index)
-        {
-            this.index = index;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [index = "+index+"]";
-        }
-    }
 
 
 }

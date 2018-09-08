@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/kamar.iml" filepath="$PROJECT_DIR$/kamar.iml" />
-      <module fileurl="file://D:\Users\Shea\Documents\kamar\kamar.iml" filepath="D:\Users\Shea\Documents\kamar\kamar.iml" />
     </modules>
   </component>
 </project>

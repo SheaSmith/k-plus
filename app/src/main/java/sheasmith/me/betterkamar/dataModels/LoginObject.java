@@ -1,119 +1,56 @@
 package sheasmith.me.betterkamar.dataModels;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 /**
  * Created by TheDiamondPicks on 6/09/2018.
  */
 
 public class LoginObject
 {
-    private LogonResults LogonResults;
+    public LogonResults LogonResults;
 
-    public LogonResults getLogonResults ()
-    {
-        return LogonResults;
-    }
+    public LoginObject(String xml) throws IOException, SAXException, ParserConfigurationException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(false);
+        factory.setIgnoringElementContentWhitespace(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
-    public void setLogonResults (LogonResults LogonResults)
-    {
-        this.LogonResults = LogonResults;
-    }
+        Element root = (Element) doc.getElementsByTagName("LogonResults").item(0);
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [LogonResults = "+LogonResults+"]";
+        LogonResults results = new LogonResults();
+        results.AccessLevel = root.getElementsByTagName("AccessLevel").item(0).getTextContent();
+        results.ErrorCode = root.getElementsByTagName("ErrorCode").item(0).getTextContent();
+        results.Success = root.getElementsByTagName("Success").item(0).getTextContent();
+        results.LogonLevel = root.getElementsByTagName("LogonLevel").item(0).getTextContent();
+        results.CurrentStudent = root.getElementsByTagName("CurrentStudent").item(0).getTextContent();
+        results.Key = root.getElementsByTagName("Key").item(0).getTextContent();
     }
 
     public class LogonResults
     {
-        private String AccessLevel;
+        public String AccessLevel;
 
-        private String Key;
+        public String Key;
 
-        private String LogonLevel;
+        public String LogonLevel;
 
-        private String ErrorCode;
+        public String ErrorCode;
 
-        private String Success;
+        public String Success;
 
-        private String CurrentStudent;
+        public String CurrentStudent;
 
-        private String apiversion;
-
-        public String getAccessLevel ()
-        {
-            return AccessLevel;
-        }
-
-        public void setAccessLevel (String AccessLevel)
-        {
-            this.AccessLevel = AccessLevel;
-        }
-
-        public String getKey ()
-        {
-            return Key;
-        }
-
-        public void setKey (String Key)
-        {
-            this.Key = Key;
-        }
-
-        public String getLogonLevel ()
-        {
-            return LogonLevel;
-        }
-
-        public void setLogonLevel (String LogonLevel)
-        {
-            this.LogonLevel = LogonLevel;
-        }
-
-        public String getErrorCode ()
-        {
-            return ErrorCode;
-        }
-
-        public void setErrorCode (String ErrorCode)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        public String getSuccess ()
-        {
-            return Success;
-        }
-
-        public void setSuccess (String Success)
-        {
-            this.Success = Success;
-        }
-
-        public String getCurrentStudent ()
-        {
-            return CurrentStudent;
-        }
-
-        public void setCurrentStudent (String CurrentStudent)
-        {
-            this.CurrentStudent = CurrentStudent;
-        }
-
-        public String getApiversion ()
-        {
-            return apiversion;
-        }
-
-        public void setApiversion (String apiversion)
-        {
-            this.apiversion = apiversion;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [AccessLevel = "+AccessLevel+", Key = "+Key+", LogonLevel = "+LogonLevel+", ErrorCode = "+ErrorCode+", Success = "+Success+", CurrentStudent = "+CurrentStudent+", apiversion = "+apiversion+"]";
-        }
+        public String apiversion;
     }
 }

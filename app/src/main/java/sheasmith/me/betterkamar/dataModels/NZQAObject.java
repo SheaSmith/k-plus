@@ -1,284 +1,105 @@
 package sheasmith.me.betterkamar.dataModels;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 public class NZQAObject
 {
-    private StudentOfficialResultsResults StudentOfficialResultsResults;
+    public StudentOfficialResultsResults StudentOfficialResultsResults;
 
-    public StudentOfficialResultsResults getStudentOfficialResultsResults ()
-    {
-        return StudentOfficialResultsResults;
-    }
+    public NZQAObject(String xml) throws IOException, SAXException, ParserConfigurationException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(false);
+        factory.setIgnoringElementContentWhitespace(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
-    public void setStudentOfficialResultsResults (StudentOfficialResultsResults StudentOfficialResultsResults)
-    {
-        this.StudentOfficialResultsResults = StudentOfficialResultsResults;
-    }
+        Element root = (Element) doc.getElementsByTagName("StudentOfficialResultsResults").item(0);
+        NodeList types = root.getElementsByTagName("Types").item(0).getChildNodes();
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [StudentOfficialResultsResults = "+StudentOfficialResultsResults+"]";
+        StudentOfficialResultsResults results = new StudentOfficialResultsResults();
+        results.AccessLevel = root.getElementsByTagName("AccessLevel").item(0).getTextContent();
+        results.ErrorCode = root.getElementsByTagName("ErrorCode").item(0).getTextContent();
+        results.NumberRecords = root.getElementsByTagName("NumberRecords").item(0).getTextContent();
+        results.NumberTypes = root.getElementsByTagName("NumberTypes").item(0).getTextContent();
+
+        for (int i = 0; i != types.getLength(); i++) {
+            Element typeElement = (Element) types.item(i);
+            Type type = new Type();
+            type.TypeCode = typeElement.getElementsByTagName("TypeCode").item(0).getTextContent();
+            type.NumberQuals = typeElement.getElementsByTagName("NumberQuals").item(0).getTextContent();
+            type.index = typeElement.getAttribute("index");
+
+            NodeList qualifications = typeElement.getElementsByTagName("Qualifications").item(0).getChildNodes();
+            for (int j = 0; j != qualifications.getLength(); j++) {
+                Element qualificationElement = (Element) qualifications.item(j);
+                Qualification qualification = new Qualification();
+
+                qualification.index = qualificationElement.getAttribute("index");
+                qualification.Year = qualificationElement.getElementsByTagName("Year").item(0).getTextContent();
+                qualification.Ref = qualificationElement.getElementsByTagName("Ref").item(0).getTextContent();
+                qualification.Endorse = qualificationElement.getElementsByTagName("Endorse").item(0).getTextContent();
+                qualification.Level = qualificationElement.getElementsByTagName("Level").item(0).getTextContent();
+                qualification.Title = qualificationElement.getElementsByTagName("Title").item(0).getTextContent();
+
+                type.Qualifications.add(qualification);
+            }
+
+            results.Types.add(type);
+        }
+
+        StudentOfficialResultsResults = results;
     }
 
     public class StudentOfficialResultsResults
     {
-        private String AccessLevel;
+        public String AccessLevel;
 
-        private String NumberTypes;
+        public String NumberTypes;
 
-        private Types Types;
+        public List<Type> Types = new ArrayList<>();
 
-        private String ErrorCode;
+        public String ErrorCode;
 
-        private String apiversion;
+        public String apiversion;
 
-        private String NumberRecords;
-
-        public String getAccessLevel ()
-        {
-            return AccessLevel;
-        }
-
-        public void setAccessLevel (String AccessLevel)
-        {
-            this.AccessLevel = AccessLevel;
-        }
-
-        public String getNumberTypes ()
-        {
-            return NumberTypes;
-        }
-
-        public void setNumberTypes (String NumberTypes)
-        {
-            this.NumberTypes = NumberTypes;
-        }
-
-        public Types getTypes ()
-        {
-            return Types;
-        }
-
-        public void setTypes (Types Types)
-        {
-            this.Types = Types;
-        }
-
-        public String getErrorCode ()
-        {
-            return ErrorCode;
-        }
-
-        public void setErrorCode (String ErrorCode)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        public String getApiversion ()
-        {
-            return apiversion;
-        }
-
-        public void setApiversion (String apiversion)
-        {
-            this.apiversion = apiversion;
-        }
-
-        public String getNumberRecords ()
-        {
-            return NumberRecords;
-        }
-
-        public void setNumberRecords (String NumberRecords)
-        {
-            this.NumberRecords = NumberRecords;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [AccessLevel = "+AccessLevel+", NumberTypes = "+NumberTypes+", Types = "+Types+", ErrorCode = "+ErrorCode+", apiversion = "+apiversion+", NumberRecords = "+NumberRecords+"]";
-        }
-    }
-
-
-    public class Types
-    {
-        private Type[] Type;
-
-        public Type[] getType ()
-        {
-            return Type;
-        }
-
-        public void setType (Type[] Type)
-        {
-            this.Type = Type;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [Type = "+Type+"]";
-        }
+        public String NumberRecords;
     }
 
     public class Qualification
     {
-        private String Year;
+        public String Year;
 
-        private String Ref;
+        public String Ref;
 
-        private String index;
+        public String index;
 
-        private String Level;
+        public String Level;
 
-        private String Endorse;
+        public String Endorse;
 
-        private String Title;
-
-        public String getYear ()
-        {
-            return Year;
-        }
-
-        public void setYear (String Year)
-        {
-            this.Year = Year;
-        }
-
-        public String getRef ()
-        {
-            return Ref;
-        }
-
-        public void setRef (String Ref)
-        {
-            this.Ref = Ref;
-        }
-
-        public String getIndex ()
-        {
-            return index;
-        }
-
-        public void setIndex (String index)
-        {
-            this.index = index;
-        }
-
-        public String getLevel ()
-        {
-            return Level;
-        }
-
-        public void setLevel (String Level)
-        {
-            this.Level = Level;
-        }
-
-        public String getEndorse ()
-        {
-            return Endorse;
-        }
-
-        public void setEndorse (String Endorse)
-        {
-            this.Endorse = Endorse;
-        }
-
-        public String getTitle ()
-        {
-            return Title;
-        }
-
-        public void setTitle (String Title)
-        {
-            this.Title = Title;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [Year = "+Year+", Ref = "+Ref+", index = "+index+", Level = "+Level+", Endorse = "+Endorse+", Title = "+Title+"]";
-        }
+        public String Title;
     }
 
     public class Type
     {
-        private String index;
+        public String index;
 
-        private String TypeCode;
+        public String TypeCode;
 
-        private String NumberQuals;
+        public String NumberQuals;
 
-        private Qualifications Qualifications;
-
-        public String getIndex ()
-        {
-            return index;
-        }
-
-        public void setIndex (String index)
-        {
-            this.index = index;
-        }
-
-        public String getTypeCode ()
-        {
-            return TypeCode;
-        }
-
-        public void setTypeCode (String TypeCode)
-        {
-            this.TypeCode = TypeCode;
-        }
-
-        public String getNumberQuals ()
-        {
-            return NumberQuals;
-        }
-
-        public void setNumberQuals (String NumberQuals)
-        {
-            this.NumberQuals = NumberQuals;
-        }
-
-        public Qualifications getQualifications ()
-        {
-            return Qualifications;
-        }
-
-        public void setQualifications (Qualifications Qualifications)
-        {
-            this.Qualifications = Qualifications;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [index = "+index+", TypeCode = "+TypeCode+", NumberQuals = "+NumberQuals+", Qualifications = "+Qualifications+"]";
-        }
-    }
-
-    public class Qualifications
-    {
-        private Qualification[] Qualification;
-
-        public Qualification[] getQualification ()
-        {
-            return Qualification;
-        }
-
-        public void setQualification (Qualification[] Qualification)
-        {
-            this.Qualification = Qualification;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [Qualification = "+Qualification+"]";
-        }
+        public List<Qualification> Qualifications = new ArrayList<>();
     }
 }

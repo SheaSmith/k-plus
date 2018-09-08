@@ -214,34 +214,24 @@ public class SettingsObject
     }
     public class UserAccess
     {
-        private User[] User;
+        //        ArrayList < Object > User = new ArrayList< Object >();
+        CalendarSettings CalendarSettings;
 
-        private CalendarSettings CalendarSettings;
 
-        public User[] getUser ()
-        {
-            return User;
-        }
-
-        public void setUser (User[] User)
-        {
-            this.User = User;
-        }
-
-        public CalendarSettings getCalendarSettings ()
-        {
-            return CalendarSettings;
-        }
-
-        public void setCalendarSettings (CalendarSettings CalendarSettings)
-        {
-            this.CalendarSettings = CalendarSettings;
-        }
+//        public CalendarSettings getCalendarSettings ()
+//        {
+//            return CalendarSettings;
+//        }
+//
+//        public void setCalendarSettings (CalendarSettings CalendarSettings)
+//        {
+//            this.CalendarSettings = CalendarSettings;
+//        }
 
         @Override
         public String toString()
         {
-            return "ClassPojo [User = "+User+", CalendarSettings = "+CalendarSettings+"]";
+            return "ClassPojo [User = " + ", CalendarSettings = " + "]";
         }
     }
     public class CalendarSettings

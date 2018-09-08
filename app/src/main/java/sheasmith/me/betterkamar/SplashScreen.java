@@ -5,12 +5,11 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.ImageView;
+
 import com.crashlytics.android.Crashlytics;
+
 import io.fabric.sdk.android.Fabric;
-import sheasmith.me.betterkamar.dataModels.LoginObject;
-import sheasmith.me.betterkamar.internalModels.ApiResponse;
 
 
 /**

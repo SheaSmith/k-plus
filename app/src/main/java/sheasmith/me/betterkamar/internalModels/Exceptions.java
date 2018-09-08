@@ -9,4 +9,10 @@ public class Exceptions {
     public static class InvalidUsernamePassword extends Exception {}
     public static class UnknownServerError extends Exception {}
     public static class InvalidServer extends Exception {}
+
+    public static class InvalidToken extends Exception {
+    }
+
+    public static class ExpiredToken extends Exception {
+    }
 }
