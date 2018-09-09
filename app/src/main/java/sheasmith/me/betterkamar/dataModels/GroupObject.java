@@ -14,6 +14,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import sheasmith.me.betterkamar.internalModels.Exceptions;
+
 /**
  * Created by TheDiamondPicks on 8/09/2018.
  */
@@ -21,7 +23,7 @@ import javax.xml.parsers.ParserConfigurationException;
 public class GroupObject {
     public StudentGroupsResults StudentGroupsResults;
 
-    public GroupObject(String xml) throws IOException, SAXException, ParserConfigurationException {
+    public GroupObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.ExpiredToken, Exceptions.UnknownServerError {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setIgnoringElementContentWhitespace(true);
@@ -29,6 +31,16 @@ public class GroupObject {
         Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
         Element root = (Element) doc.getElementsByTagName("StudentGroupsResults").item(0);
+
+        if (root.getElementsByTagName("NumberRecords").getLength() == 0) {
+            String error = root.getElementsByTagName("Error").item(0).getTextContent();
+            if (error.equalsIgnoreCase("invalid key")) {
+                throw new Exceptions.ExpiredToken();
+            } else {
+                throw new Exceptions.UnknownServerError();
+            }
+        }
+
         NodeList years = root.getElementsByTagName("Years").item(0).getChildNodes();
 
         StudentGroupsResults results = new StudentGroupsResults();

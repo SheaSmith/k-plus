@@ -1,434 +1,152 @@
 package sheasmith.me.betterkamar.dataModels;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import sheasmith.me.betterkamar.internalModels.Exceptions;
+
 /**
  * Created by TheDiamondPicks on 6/09/2018.
  */
 
 public class SettingsObject
 {
-    private SettingsResults SettingsResults;
+    public SettingsResults SettingsResults;
 
-    public SettingsResults getSettingsResults ()
-    {
-        return SettingsResults;
-    }
+    public SettingsObject(String xml) throws IOException, SAXException, ParserConfigurationException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(false);
+        factory.setIgnoringElementContentWhitespace(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
-    public void setSettingsResults (SettingsResults SettingsResults)
-    {
-        this.SettingsResults = SettingsResults;
-    }
+        Element root = (Element) doc.getElementsByTagName("SettingsResults").item(0);
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [SettingsResults = "+SettingsResults+"]";
+        SettingsResults results = new SettingsResults();
+        results.AccessLevel = root.getElementsByTagName("AccessLevel").item(0).getTextContent();
+        results.ErrorCode = root.getElementsByTagName("ErrorCode").item(0).getTextContent();
+        results.SettingsVersion = root.getElementsByTagName("SettingsVersion").item(0).getTextContent();
+        results.MiniOSVersion = root.getElementsByTagName("MiniOSVersion").item(0).getTextContent();
+        results.MinAndroidVersion = root.getElementsByTagName("MinAndroidVersion").item(0).getTextContent();
+        results.StudentsAllowed = root.getElementsByTagName("StudentsAllowed").item(0).getTextContent();
+        results.StaffAllowed = root.getElementsByTagName("StaffAllowed").item(0).getTextContent();
+        results.StudentsSavedPasswords = root.getElementsByTagName("StudentsSavedPasswords").item(0).getTextContent();
+        results.StaffSavedPasswords = root.getElementsByTagName("StaffSavedPasswords").item(0).getTextContent();
+        results.SchoolName = root.getElementsByTagName("SchoolName").item(0).getTextContent();
+        results.LogoPath = root.getElementsByTagName("LogoPath").item(0).getTextContent();
+        results.AssessmentTypesShown = root.getElementsByTagName("AssessmentTypesShown").item(0).getTextContent();
+        results.ShowEnrolledEntries = root.getElementsByTagName("ShowEnrolledEntries").item(0).getTextContent();
+
+        Element userAccess = (Element) root.getElementsByTagName("UserAccess").item(0);
+        NodeList users = userAccess.getElementsByTagName("User");
+        for (int i = 0 ; i != users.getLength() ; i++) {
+            Element userElement = (Element) users.item(i);
+            User user = new User();
+
+            user.Notices = userElement.getElementsByTagName("Notices").getLength() == 0 ? "0" : userElement.getElementsByTagName("Notices").item(0).getTextContent();
+            user.Events = userElement.getElementsByTagName("Events").getLength() == 0 ? "0" : userElement.getElementsByTagName("Events").item(0).getTextContent();
+            user.Details = userElement.getElementsByTagName("Details").getLength() == 0 ? "0" : userElement.getElementsByTagName("Details").item(0).getTextContent();
+            user.Timetable = userElement.getElementsByTagName("Timetable").getLength() == 0 ? "0" : userElement.getElementsByTagName("Timetable").item(0).getTextContent();
+            user.Attendance = userElement.getElementsByTagName("Attendance").getLength() == 0 ? "0" : userElement.getElementsByTagName("Attendance").item(0).getTextContent();
+            user.NCEA = userElement.getElementsByTagName("NCEA").getLength() == 0 ? "0" : userElement.getElementsByTagName("NCEA").item(0).getTextContent();
+            user.Results = userElement.getElementsByTagName("Results").getLength() == 0 ? "0" : userElement.getElementsByTagName("Results").item(0).getTextContent();
+            user.Groups = userElement.getElementsByTagName("Groups").getLength() == 0 ? "0" : userElement.getElementsByTagName("Groups").item(0).getTextContent();
+            user.Awards = userElement.getElementsByTagName("Awards").getLength() == 0 ? "0" : userElement.getElementsByTagName("Awards").item(0).getTextContent();
+            user.Pastoral = userElement.getElementsByTagName("Pastoral").getLength() == 0 ? "0" : userElement.getElementsByTagName("Pastoral").item(0).getTextContent();
+        }
+
+        SettingsResults = results;
     }
 
     public class SettingsResults
     {
-        private String AccessLevel;
+        public String AccessLevel;
 
-        private String AssessmentTypesShown;
+        public String AssessmentTypesShown;
 
-        private String MinAndroidVersion;
+        public String MinAndroidVersion;
 
-        private String StaffAllowed;
+        public String StaffAllowed;
 
-        private String StaffSavedPasswords;
+        public String StaffSavedPasswords;
 
-        private String SchoolName;
+        public String SchoolName;
 
-        private String StudentsAllowed;
+        public String StudentsAllowed;
 
-        private String apiversion;
+        public String apiversion;
 
-        private String MiniOSVersion;
+        public String MiniOSVersion;
 
-        private String LogoPath;
+        public String LogoPath;
 
-        private String StudentsSavedPasswords;
+        public String StudentsSavedPasswords;
 
-        private String SettingsVersion;
+        public String SettingsVersion;
 
-        private String ShowEnrolledEntries;
+        public String ShowEnrolledEntries;
 
-        private String ErrorCode;
+        public String ErrorCode;
 
-        private UserAccess UserAccess;
-
-        public String getAccessLevel ()
-        {
-            return AccessLevel;
-        }
-
-        public void setAccessLevel (String AccessLevel)
-        {
-            this.AccessLevel = AccessLevel;
-        }
-
-        public String getAssessmentTypesShown ()
-        {
-            return AssessmentTypesShown;
-        }
-
-        public void setAssessmentTypesShown (String AssessmentTypesShown)
-        {
-            this.AssessmentTypesShown = AssessmentTypesShown;
-        }
-
-        public String getMinAndroidVersion ()
-        {
-            return MinAndroidVersion;
-        }
-
-        public void setMinAndroidVersion (String MinAndroidVersion)
-        {
-            this.MinAndroidVersion = MinAndroidVersion;
-        }
-
-        public String getStaffAllowed ()
-        {
-            return StaffAllowed;
-        }
-
-        public void setStaffAllowed (String StaffAllowed)
-        {
-            this.StaffAllowed = StaffAllowed;
-        }
-
-        public String getStaffSavedPasswords ()
-        {
-            return StaffSavedPasswords;
-        }
-
-        public void setStaffSavedPasswords (String StaffSavedPasswords)
-        {
-            this.StaffSavedPasswords = StaffSavedPasswords;
-        }
-
-        public String getSchoolName ()
-        {
-            return SchoolName;
-        }
-
-        public void setSchoolName (String SchoolName)
-        {
-            this.SchoolName = SchoolName;
-        }
-
-        public String getStudentsAllowed ()
-        {
-            return StudentsAllowed;
-        }
-
-        public void setStudentsAllowed (String StudentsAllowed)
-        {
-            this.StudentsAllowed = StudentsAllowed;
-        }
-
-        public String getApiversion ()
-        {
-            return apiversion;
-        }
-
-        public void setApiversion (String apiversion)
-        {
-            this.apiversion = apiversion;
-        }
-
-        public String getMiniOSVersion ()
-        {
-            return MiniOSVersion;
-        }
-
-        public void setMiniOSVersion (String MiniOSVersion)
-        {
-            this.MiniOSVersion = MiniOSVersion;
-        }
-
-        public String getLogoPath ()
-        {
-            return LogoPath;
-        }
-
-        public void setLogoPath (String LogoPath)
-        {
-            this.LogoPath = LogoPath;
-        }
-
-        public String getStudentsSavedPasswords ()
-        {
-            return StudentsSavedPasswords;
-        }
-
-        public void setStudentsSavedPasswords (String StudentsSavedPasswords)
-        {
-            this.StudentsSavedPasswords = StudentsSavedPasswords;
-        }
-
-        public String getSettingsVersion ()
-        {
-            return SettingsVersion;
-        }
-
-        public void setSettingsVersion (String SettingsVersion)
-        {
-            this.SettingsVersion = SettingsVersion;
-        }
-
-        public String getShowEnrolledEntries ()
-        {
-            return ShowEnrolledEntries;
-        }
-
-        public void setShowEnrolledEntries (String ShowEnrolledEntries)
-        {
-            this.ShowEnrolledEntries = ShowEnrolledEntries;
-        }
-
-        public String getErrorCode ()
-        {
-            return ErrorCode;
-        }
-
-        public void setErrorCode (String ErrorCode)
-        {
-            this.ErrorCode = ErrorCode;
-        }
-
-        public UserAccess getUserAccess ()
-        {
-            return UserAccess;
-        }
-
-        public void setUserAccess (UserAccess UserAccess)
-        {
-            this.UserAccess = UserAccess;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [AccessLevel = "+AccessLevel+", AssessmentTypesShown = "+AssessmentTypesShown+", MinAndroidVersion = "+MinAndroidVersion+", StaffAllowed = "+StaffAllowed+", StaffSavedPasswords = "+StaffSavedPasswords+", SchoolName = "+SchoolName+", StudentsAllowed = "+StudentsAllowed+", apiversion = "+apiversion+", MiniOSVersion = "+MiniOSVersion+", LogoPath = "+LogoPath+", StudentsSavedPasswords = "+StudentsSavedPasswords+", SettingsVersion = "+SettingsVersion+", ShowEnrolledEntries = "+ShowEnrolledEntries+", ErrorCode = "+ErrorCode+", UserAccess = "+UserAccess+"]";
-        }
+        public UserAccess UserAccess;
     }
     public class UserAccess
     {
-        //        ArrayList < Object > User = new ArrayList< Object >();
-        CalendarSettings CalendarSettings;
-
-
-//        public CalendarSettings getCalendarSettings ()
-//        {
-//            return CalendarSettings;
-//        }
-//
-//        public void setCalendarSettings (CalendarSettings CalendarSettings)
-//        {
-//            this.CalendarSettings = CalendarSettings;
-//        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [User = " + ", CalendarSettings = " + "]";
-        }
+        public List<User> User = new ArrayList<>();
+        public CalendarSettings CalendarSettings;
     }
     public class CalendarSettings
     {
-        private String orange;
+        public String orange;
 
-        private String auburn;
+        public String auburn;
 
-        private String red;
+        public String red;
 
-        private String purple;
+        public String purple;
 
-        private String aero;
+        public String aero;
 
-        private String blue;
+        public String blue;
 
-        private String green;
+        public String green;
 
-        private String tangerine;
+        public String tangerine;
 
-        private String violet;
+        public String violet;
 
-        private String teal;
+        public String teal;
 
-        private String black;
+        public String black;
 
-        private String amazon;
-
-        public String getOrange ()
-        {
-            return orange;
-        }
-
-        public void setOrange (String orange)
-        {
-            this.orange = orange;
-        }
-
-        public String getAuburn ()
-        {
-            return auburn;
-        }
-
-        public void setAuburn (String auburn)
-        {
-            this.auburn = auburn;
-        }
-
-        public String getRed ()
-        {
-            return red;
-        }
-
-        public void setRed (String red)
-        {
-            this.red = red;
-        }
-
-        public String getPurple ()
-        {
-            return purple;
-        }
-
-        public void setPurple (String purple)
-        {
-            this.purple = purple;
-        }
-
-        public String getAero ()
-        {
-            return aero;
-        }
-
-        public void setAero (String aero)
-        {
-            this.aero = aero;
-        }
-
-        public String getBlue ()
-        {
-            return blue;
-        }
-
-        public void setBlue (String blue)
-        {
-            this.blue = blue;
-        }
-
-        public String getGreen ()
-        {
-            return green;
-        }
-
-        public void setGreen (String green)
-        {
-            this.green = green;
-        }
-
-        public String getTangerine ()
-        {
-            return tangerine;
-        }
-
-        public void setTangerine (String tangerine)
-        {
-            this.tangerine = tangerine;
-        }
-
-        public String getViolet ()
-        {
-            return violet;
-        }
-
-        public void setViolet (String violet)
-        {
-            this.violet = violet;
-        }
-
-        public String getTeal ()
-        {
-            return teal;
-        }
-
-        public void setTeal (String teal)
-        {
-            this.teal = teal;
-        }
-
-        public String getBlack ()
-        {
-            return black;
-        }
-
-        public void setBlack (String black)
-        {
-            this.black = black;
-        }
-
-        public String getAmazon ()
-        {
-            return amazon;
-        }
-
-        public void setAmazon (String amazon)
-        {
-            this.amazon = amazon;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [orange = "+orange+", auburn = "+auburn+", red = "+red+", purple = "+purple+", aero = "+aero+", blue = "+blue+", green = "+green+", tangerine = "+tangerine+", violet = "+violet+", teal = "+teal+", black = "+black+", amazon = "+amazon+"]";
-        }
+        public String amazon;
     }
     public class User
     {
-        private String index;
+        public String index;
 
-        private String Notices;
+        public String Notices;
 
-        private String Events;
-
-        public String getIndex ()
-        {
-            return index;
-        }
-
-        public void setIndex (String index)
-        {
-            this.index = index;
-        }
-
-        public String getNotices ()
-        {
-            return Notices;
-        }
-
-        public void setNotices (String Notices)
-        {
-            this.Notices = Notices;
-        }
-
-        public String getEvents ()
-        {
-            return Events;
-        }
-
-        public void setEvents (String Events)
-        {
-            this.Events = Events;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ClassPojo [index = "+index+", Notices = "+Notices+", Events = "+Events+"]";
-        }
+        public String Events;
+        public String Details;
+        public String Timetable;
+        public String Attendance;
+        public String NCEA;
+        public String Results;
+        public String Groups;
+        public String Awards;
+        public String Pastoral;
     }
 
 }

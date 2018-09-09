@@ -11,7 +11,7 @@
     android:paddingRight="0dp"
     android:paddingTop="0dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="sheasmith.me.betterkamar.pages.pathways.Pathways"
+    tools:context=".old.pages.pathways.Pathways"
     tools:showIn="@layout/app_bar_pathways">
 
 
@@ -58,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="400dp" />
 
-            <sheasmith.me.betterkamar.NestedListView
+            <sheasmith.me.betterkamar.old.NestedListView
                 android:id="@+id/list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

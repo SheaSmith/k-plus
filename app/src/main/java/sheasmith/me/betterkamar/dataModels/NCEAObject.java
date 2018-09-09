@@ -14,11 +14,13 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import sheasmith.me.betterkamar.internalModels.Exceptions;
+
 public class NCEAObject
 {
     public StudentNCEASummaryResults StudentNCEASummaryResults;
 
-    public NCEAObject(String xml) throws IOException, SAXException, ParserConfigurationException {
+    public NCEAObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.ExpiredToken, Exceptions.UnknownServerError {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setIgnoringElementContentWhitespace(true);
@@ -26,6 +28,16 @@ public class NCEAObject
         Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
         Element root = (Element) doc.getElementsByTagName("StudentNCEASummaryResults").item(0);
+
+        if (root.getElementsByTagName("NumberRecords").getLength() == 0) {
+            String error = root.getElementsByTagName("Error").item(0).getTextContent();
+            if (error.equalsIgnoreCase("invalid key")) {
+                throw new Exceptions.ExpiredToken();
+            } else {
+                throw new Exceptions.UnknownServerError();
+            }
+        }
+
         Element studentElement = (Element) ((Element) root.getElementsByTagName("Students").item(0)).getElementsByTagName("Student").item(0);
 
         StudentNCEASummaryResults results = new StudentNCEASummaryResults();

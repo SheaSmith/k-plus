@@ -11,7 +11,7 @@
     android:paddingRight="0dp"
     android:paddingTop="0dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".pages.notices.NoticesPage"
+    tools:context=".old.pages.notices.NoticesPage"
     tools:showIn="@layout/app_bar_notices_page">
 
     <ProgressBar
@@ -108,7 +108,7 @@
                     android:textSize="20dp" />
             </TableRow>
 
-            <sheasmith.me.betterkamar.NestedListView
+            <sheasmith.me.betterkamar.old.NestedListView
                 android:id="@+id/meetingsList"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -141,7 +141,7 @@
                     android:textSize="20dp" />
             </TableRow>
 
-            <sheasmith.me.betterkamar.NestedListView
+            <sheasmith.me.betterkamar.old.NestedListView
                 android:id="@+id/generalList"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

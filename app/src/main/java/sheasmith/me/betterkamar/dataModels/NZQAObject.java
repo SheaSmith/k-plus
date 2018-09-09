@@ -14,11 +14,13 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import sheasmith.me.betterkamar.internalModels.Exceptions;
+
 public class NZQAObject
 {
     public StudentOfficialResultsResults StudentOfficialResultsResults;
 
-    public NZQAObject(String xml) throws IOException, SAXException, ParserConfigurationException {
+    public NZQAObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.UnknownServerError, Exceptions.ExpiredToken {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setIgnoringElementContentWhitespace(true);
@@ -26,6 +28,16 @@ public class NZQAObject
         Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
         Element root = (Element) doc.getElementsByTagName("StudentOfficialResultsResults").item(0);
+
+        if (root.getElementsByTagName("NumberRecords").getLength() == 0) {
+            String error = root.getElementsByTagName("Error").item(0).getTextContent();
+            if (error.equalsIgnoreCase("invalid key")) {
+                throw new Exceptions.ExpiredToken();
+            } else {
+                throw new Exceptions.UnknownServerError();
+            }
+        }
+
         NodeList types = root.getElementsByTagName("Types").item(0).getChildNodes();
 
         StudentOfficialResultsResults results = new StudentOfficialResultsResults();

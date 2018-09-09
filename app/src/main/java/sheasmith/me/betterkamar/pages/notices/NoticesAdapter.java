@@ -1,56 +1,93 @@
 package sheasmith.me.betterkamar.pages.notices;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
 import sheasmith.me.betterkamar.R;
+import sheasmith.me.betterkamar.dataModels.NoticesObject;
+import sheasmith.me.betterkamar.internalModels.PortalObject;
 
-public class NoticesAdapter extends ArrayAdapter<NoticesObject> {
+/**
+ * Created by TheDiamondPicks on 9/09/2018.
+ */
 
-    public NoticesAdapter(Context context, List<NoticesObject> items) {
-        super(context, R.layout.activity_notices_adapter, items);
+public class NoticesAdapter extends RecyclerView.Adapter<NoticesAdapter.PortalViewHolder> {
+
+    private List<NoticesObject.GeneralNotices> generalNotices;
+    private List<NoticesObject.MeetingNotices> meetingNotices;
+    private Context mContext;
+
+    public static class PortalViewHolder extends RecyclerView.ViewHolder {
+        // each data item is just a string in this case
+        public RelativeLayout mView;
+        public ImageView studentPhoto;
+        public ImageView schoolPhoto;
+        public TextView schoolName;
+        public TextView studentName;
+
+        public PortalViewHolder(RelativeLayout v) {
+            super(v);
+            mView = v;
+
+            studentPhoto = (ImageView) mView.findViewById(R.id.studentImage);
+            schoolPhoto = (ImageView) mView.findViewById(R.id.schoolLogo);
+            schoolName = (TextView) mView.findViewById(R.id.schoolName);
+            studentName = (TextView) mView.findViewById(R.id.studentName);
+        }
     }
+
+    public NoticesAdapter(List<NoticesObject.MeetingNotices> meetings, List<NoticesObject.GeneralNotices> general, Context context) {
+        meetingNotices = meetings;
+        generalNotices = general;
+        mContext = context;
+    }
+
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public PortalViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.adapter_portal, parent, false);
+        PortalViewHolder vh = new PortalViewHolder(v);
+        return vh;
 
-        View v = convertView;
-
-        if (v == null) {
-            v = LayoutInflater.from(getContext()).inflate(R.layout.activity_notices_adapter, parent, false);
-        }
-
-        NoticesObject n = getItem(position);
-
-        if (n != null) {
-
-            TextView body = (TextView) v.findViewById(R.id.Body);
-            TextView subject = (TextView) v.findViewById(R.id.standardName);
-            TextView meet = (TextView) v.findViewById(R.id.meet);
-            TextView teacher = (TextView) v.findViewById(R.id.description);
-            TextView group = (TextView) v.findViewById(R.id.Group);
-
-            body.setText(n.body);
-            subject.setText(n.subject);
-            if (n.meet == null) {
-                meet.setVisibility(View.GONE);
-            }
-            else {
-                meet.setText(n.meet);
-            }
-            teacher.setText(n.teacher);
-            group.setText(n.level);
-
-
-
-        }
-
-        return v;
     }
+
+    // Replace the contents of a view (invoked by the layout manager)
+    @Override
+    public void onBindViewHolder(PortalViewHolder holder, int position) {
+        // - get element from your dataset at this position
+        // - replace the contents of the view with that element
+
+        PortalObject portal = mDataset.get(position);
+        String studentPathName = mContext.getFilesDir().toString() + "/" + portal.studentFile;
+        String schoolPathName = mContext.getFilesDir().toString() + "/" + portal.schoolFile;
+        holder.studentPhoto.setImageDrawable(Drawable.createFromPath(studentPathName));
+        holder.schoolPhoto.setImageDrawable(Drawable.createFromPath(schoolPathName));
+
+        holder.schoolName.setText(portal.schoolName);
+        holder.studentName.setText(portal.student);
+    }
+
+    // Return the size of your dataset (invoked by the layout manager)
+    @Override
+    public int getItemCount() {
+        return meetingNotices.size() + generalNotices.size() + 2;
+    }
+
+    private boolean isHeader(int position) {
+        return position == 0 || position == meetingNotices.size();
+    }
+
+    private boolean isGeneral(int position) {
+        return position > meetingNotices.size();
+    }
+
 }

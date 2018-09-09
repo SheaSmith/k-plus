@@ -16,6 +16,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import sheasmith.me.betterkamar.internalModels.Exceptions;
+
 /**
  * Created by TheDiamondPicks on 8/09/2018.
  */
@@ -23,7 +25,7 @@ import javax.xml.parsers.ParserConfigurationException;
 public class TimetableObject {
     public StudentTimetableResults StudentTimetableResults;
 
-    public TimetableObject(String xml) throws IOException, SAXException, ParserConfigurationException {
+    public TimetableObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.ExpiredToken, Exceptions.UnknownServerError {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setIgnoringElementContentWhitespace(true);
@@ -31,6 +33,16 @@ public class TimetableObject {
         Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
         Element root = (Element) doc.getElementsByTagName("StudentTimetableResults").item(0);
+
+        if (root.getElementsByTagName("NumberRecords").getLength() == 0) {
+            String error = root.getElementsByTagName("Error").item(0).getTextContent();
+            if (error.equalsIgnoreCase("invalid key")) {
+                throw new Exceptions.ExpiredToken();
+            } else {
+                throw new Exceptions.UnknownServerError();
+            }
+        }
+
         Element studentElement = (Element) root.getElementsByTagName("Students").item(0).getFirstChild();
         NodeList weeks = studentElement.getElementsByTagName("TimetableData").item(0).getChildNodes();
 

@@ -11,22 +11,34 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import sheasmith.me.betterkamar.internalModels.Exceptions;
+
 /**
  * Created by TheDiamondPicks on 8/09/2018.
  */
 
 public class DetailsObject {
-    private StudentDetailsResults StudentDetailsResults;
+    public StudentDetailsResults StudentDetailsResults;
 
-    public DetailsObject(String xml) throws IOException, SAXException, ParserConfigurationException {
+    public DetailsObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.ExpiredToken, Exceptions.UnknownServerError {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setIgnoringElementContentWhitespace(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
-        Element root = (Element) doc.getElementsByTagName("StudentTimetableResults").item(0);
-        Element studentElement = (Element) root.getElementsByTagName("StudentDetailsResults").item(0).getFirstChild();
+        Element root = (Element) doc.getElementsByTagName("StudentDetailsResults").item(0);
+
+        if (root.getElementsByTagName("NumberRecords").getLength() == 0) {
+            String error = root.getElementsByTagName("Error").item(0).getTextContent();
+            if (error.equalsIgnoreCase("invalid key")) {
+                throw new Exceptions.ExpiredToken();
+            } else {
+                throw new Exceptions.UnknownServerError();
+            }
+        }
+
+        Element studentElement = (Element) root.getElementsByTagName("Students").item(0).getFirstChild();
 
         StudentDetailsResults results = new StudentDetailsResults();
         results.AccessLevel = root.getElementsByTagName("AccessLevel").item(0).getTextContent();
@@ -112,152 +124,152 @@ public class DetailsObject {
     }
 
     public class StudentDetailsResults {
-        private String AccessLevel;
+        public String AccessLevel;
 
-        private String ErrorCode;
+        public String ErrorCode;
 
-        private Student Student;
+        public Student Student;
 
-        private String apiversion;
+        public String apiversion;
 
-        private String NumberRecords;
+        public String NumberRecords;
     }
 
     public class Student {
-        private String ParentSalutation;
+        public String ParentSalutation;
 
-        private String HealthNotes;
+        public String HealthNotes;
 
-        private String EmergencyName;
+        public String EmergencyName;
 
-        private String HomePhoneB;
+        public String HomePhoneB;
 
-        private String LastName;
+        public String LastName;
 
-        private String HomePhone;
+        public String HomePhone;
 
-        private String ParentTitleB;
+        public String ParentTitleB;
 
-        private String StudentID;
+        public String StudentID;
 
-        private String SpecialCircumstances;
+        public String SpecialCircumstances;
 
-        private String ForeNames;
+        public String ForeNames;
 
-        private String NSN;
+        public String NSN;
 
-        private String MotherPhoneHome;
+        public String MotherPhoneHome;
 
-        private String Medical;
+        public String Medical;
 
-        private String ParentEmailB;
+        public String ParentEmailB;
 
-        private String MotherPhoneWork;
+        public String MotherPhoneWork;
 
-        private String EmergencyPhoneWork;
+        public String EmergencyPhoneWork;
 
-        private String EmergencyNotes;
+        public String EmergencyNotes;
 
-        private String HomeAddressB;
+        public String HomeAddressB;
 
-        private String index;
+        public String index;
 
-        private String DentistName;
+        public String DentistName;
 
-        private String FatherEmail;
+        public String FatherEmail;
 
-        private String GeneralNotes;
+        public String GeneralNotes;
 
-        private String Reactions;
+        public String Reactions;
 
-        private String FatherName;
+        public String FatherName;
 
-        private String MotherName;
+        public String MotherName;
 
-        private String MotherPhoneExtn;
+        public String MotherPhoneExtn;
 
-        private String FatherWorkAddress;
+        public String FatherWorkAddress;
 
-        private String HealthFlag;
+        public String HealthFlag;
 
-        private String FatherPhoneHome;
+        public String FatherPhoneHome;
 
-        private String FatherPhoneExtn;
+        public String FatherPhoneExtn;
 
-        private String LastNameLegal;
+        public String LastNameLegal;
 
-        private String DentistAddress;
+        public String DentistAddress;
 
-        private String Gender;
+        public String Gender;
 
-        private String EmergencyPhoneCell;
+        public String EmergencyPhoneCell;
 
-        private String EmergencyPhoneHome;
+        public String EmergencyPhoneHome;
 
-        private String ForeNamesLegal;
+        public String ForeNamesLegal;
 
-        private String EmergencyPhoneExtn;
+        public String EmergencyPhoneExtn;
 
-        private String FatherOccupation;
+        public String FatherOccupation;
 
-        private String Age;
+        public String Age;
 
-        private String ParentSalutationB;
+        public String ParentSalutationB;
 
-        private String FatherRelation;
+        public String FatherRelation;
 
-        private String Vaccinations;
+        public String Vaccinations;
 
-        private String StudentEmail;
+        public String StudentEmail;
 
-        private String FatherNotes;
+        public String FatherNotes;
 
-        private String DentistPhone;
+        public String DentistPhone;
 
-        private String ParentTitle;
+        public String ParentTitle;
 
-        private String FirstNameLegal;
+        public String FirstNameLegal;
 
-        private String DoctorPhone;
+        public String DoctorPhone;
 
-        private String DoctorAddress;
+        public String DoctorAddress;
 
-        private String FirstName;
+        public String FirstName;
 
-        private String FatherPhoneWork;
+        public String FatherPhoneWork;
 
-        private String MotherOccupation;
+        public String MotherOccupation;
 
-        private String MotherRelation;
+        public String MotherRelation;
 
-        private String HomeAddress;
+        public String HomeAddress;
 
-        private String MotherNotes;
+        public String MotherNotes;
 
-        private String Ethnicity;
+        public String Ethnicity;
 
-        private String ParentEmail;
+        public String ParentEmail;
 
-        private String AllowedIbuprofen;
+        public String AllowedIbuprofen;
 
-        private String DoctorName;
+        public String DoctorName;
 
-        private String MotherEmail;
+        public String MotherEmail;
 
-        private String StudentSchoolEmail;
+        public String StudentSchoolEmail;
 
-        private String FatherPhoneCell;
+        public String FatherPhoneCell;
 
-        private String MotherPhoneCell;
+        public String MotherPhoneCell;
 
-        private String DateBirth;
+        public String DateBirth;
 
-        private String MotherWorkAddress;
+        public String MotherWorkAddress;
 
-        private String AllowedPanadol;
+        public String AllowedPanadol;
 
-        private String FatherStatus;
+        public String FatherStatus;
 
-        private String MotherStatus;
+        public String MotherStatus;
     }
 }

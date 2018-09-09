@@ -14,6 +14,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import sheasmith.me.betterkamar.internalModels.Exceptions;
+
 /**
  * Created by TheDiamondPicks on 6/09/2018.
  */
@@ -22,7 +24,7 @@ public class GlobalObject
 {
     public GlobalsResults GlobalsResults;
 
-    public GlobalObject(String xml) throws IOException, SAXException, ParserConfigurationException {
+    public GlobalObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.ExpiredToken, Exceptions.UnknownServerError {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setIgnoringElementContentWhitespace(true);
@@ -30,6 +32,16 @@ public class GlobalObject
         Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
         Element root = (Element) doc.getElementsByTagName("GlobalsResults").item(0);
+
+        if (root.getElementsByTagName("NumberRecords").getLength() == 0) {
+            String error = root.getElementsByTagName("Error").item(0).getTextContent();
+            if (error.equalsIgnoreCase("invalid key")) {
+                throw new Exceptions.ExpiredToken();
+            } else {
+                throw new Exceptions.UnknownServerError();
+            }
+        }
+
         NodeList periodDefinitions = root.getElementsByTagName("PeriodDefinitions").item(0).getChildNodes();
 
         GlobalsResults results = new GlobalsResults();

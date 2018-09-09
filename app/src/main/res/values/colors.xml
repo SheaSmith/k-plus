@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#4caf50</color>
-    <color name="colorPrimaryDark">#388E3C</color>
+    <color name="colorPrimary">#E65100</color>
+    <color name="colorPrimaryDark">#E65100</color>
     <color name="colorPrimaryLight">#C8E6C9</color>
-    <color name="colorAccent">#66bb6a</color>
+    <color name="colorAccent">#E65100</color>
     <color name="colorPrimaryText">#212121</color>
     <color name="colorSecondaryText">#757575</color>
     <color name="colorIcons">#ffffff</color>
     <color name="colorDivider">#BDBDBD</color>
+    <color name="grey">#eee</color>
 
     <color name="black_overlay">#66000000</color>
 

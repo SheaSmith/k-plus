@@ -14,6 +14,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import sheasmith.me.betterkamar.internalModels.Exceptions;
+
 /**
  * Created by TheDiamondPicks on 6/09/2018.
  */
@@ -22,7 +24,7 @@ public class CalendarObject
 {
     public EventsResults EventsResults;
 
-    public CalendarObject(String xml) throws IOException, SAXException, ParserConfigurationException {
+    public CalendarObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.ExpiredToken, Exceptions.UnknownServerError {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setIgnoringElementContentWhitespace(true);
@@ -30,6 +32,16 @@ public class CalendarObject
         Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
         Element root = (Element) doc.getElementsByTagName("EventsResults").item(0);
+
+        if (root.getElementsByTagName("NumberRecords").getLength() == 0) {
+            String error = root.getElementsByTagName("Error").item(0).getTextContent();
+            if (error.equalsIgnoreCase("invalid key")) {
+                throw new Exceptions.ExpiredToken();
+            } else {
+                throw new Exceptions.UnknownServerError();
+            }
+        }
+
         NodeList events = root.getElementsByTagName("Events").item(0).getChildNodes();
 
         EventsResults results = new EventsResults();
@@ -58,6 +70,8 @@ public class CalendarObject
             event.Start = eventElement.getElementsByTagName("Start").item(0).getTextContent();
             event.Finish = eventElement.getElementsByTagName("Finish").item(0).getTextContent();
         }
+
+        EventsResults = results;
     }
 
     public class EventsResults

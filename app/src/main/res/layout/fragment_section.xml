@@ -20,7 +20,7 @@
             android:textSize="20dp" />
     </TableRow>
 
-    <sheasmith.me.betterkamar.NestedListView
+    <sheasmith.me.betterkamar.old.NestedListView
         android:id="@+id/groupsList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

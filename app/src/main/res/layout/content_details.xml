@@ -10,7 +10,7 @@
     android:paddingRight="0dp"
     android:paddingTop="0dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="sheasmith.me.betterkamar.pages.details.Details"
+    tools:context=".old.pages.details.Details"
     tools:showIn="@layout/app_bar_details">
 
     <ProgressBar
