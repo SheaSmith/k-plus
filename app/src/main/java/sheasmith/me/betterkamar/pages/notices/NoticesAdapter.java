@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,28 +20,35 @@ import sheasmith.me.betterkamar.internalModels.PortalObject;
  * Created by TheDiamondPicks on 9/09/2018.
  */
 
-public class NoticesAdapter extends RecyclerView.Adapter<NoticesAdapter.PortalViewHolder> {
+public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_ITEM = 1;
 
     private List<NoticesObject.GeneralNotices> generalNotices;
     private List<NoticesObject.MeetingNotices> meetingNotices;
     private Context mContext;
 
-    public static class PortalViewHolder extends RecyclerView.ViewHolder {
+    public static class NoticeViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public RelativeLayout mView;
-        public ImageView studentPhoto;
-        public ImageView schoolPhoto;
-        public TextView schoolName;
-        public TextView studentName;
+        public TextView teacher;
+        public TextView title;
+        public TextView group;
+        public TextView details;
+        public TextView description;
+        public LinearLayout subItems;
 
-        public PortalViewHolder(RelativeLayout v) {
+        public NoticeViewHolder(RelativeLayout v) {
             super(v);
             mView = v;
 
-            studentPhoto = (ImageView) mView.findViewById(R.id.studentImage);
-            schoolPhoto = (ImageView) mView.findViewById(R.id.schoolLogo);
-            schoolName = (TextView) mView.findViewById(R.id.schoolName);
-            studentName = (TextView) mView.findViewById(R.id.studentName);
+            teacher = (TextView) mView.findViewById(R.id.teacher);
+            title = (TextView) mView.findViewById(R.id.title);
+            group = (TextView) mView.findViewById(R.id.group);
+            details = (TextView) mView.findViewById(R.id.details);
+            description = (TextView) mView.findViewById(R.id.description);
+            subItems = (LinearLayout) mView.findViewById(R.id.subItem);
         }
     }
 
@@ -52,17 +60,23 @@ public class NoticesAdapter extends RecyclerView.Adapter<NoticesAdapter.PortalVi
 
 
     @Override
-    public PortalViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.adapter_portal, parent, false);
-        PortalViewHolder vh = new PortalViewHolder(v);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TYPE_ITEM) {
+            RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.adapter_portal, parent, false);
+            NoticeViewHolder vh = new NoticeViewHolder(v);
+        } else if (viewType == TYPE_HEADER) {
+            //inflate your layout and pass it to view holder
+            return new VHHeader(null);
+        }
+
         return vh;
 
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(PortalViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
