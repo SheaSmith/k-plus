@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,8 +26,8 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
-    private List<NoticesObject.GeneralNotices> generalNotices;
-    private List<NoticesObject.MeetingNotices> meetingNotices;
+    private List<NoticesObject.General> generalNotices;
+    private List<NoticesObject.Meeting> meetingNotices;
     private Context mContext;
 
     public static class NoticeViewHolder extends RecyclerView.ViewHolder {
@@ -37,6 +38,7 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public TextView group;
         public TextView details;
         public TextView description;
+        public ImageView expandArrow;
         public LinearLayout subItems;
 
         public NoticeViewHolder(RelativeLayout v) {
@@ -48,11 +50,25 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             group = (TextView) mView.findViewById(R.id.group);
             details = (TextView) mView.findViewById(R.id.details);
             description = (TextView) mView.findViewById(R.id.description);
+            expandArrow = (ImageView) mView.findViewById(R.id.expandArrow);
             subItems = (LinearLayout) mView.findViewById(R.id.subItem);
         }
     }
 
-    public NoticesAdapter(List<NoticesObject.MeetingNotices> meetings, List<NoticesObject.GeneralNotices> general, Context context) {
+    public static class HeadingViewHolder extends RecyclerView.ViewHolder {
+        // each data item is just a string in this case
+        public LinearLayout mView;
+        public TextView heading;
+
+        public HeadingViewHolder(LinearLayout v) {
+            super(v);
+            mView = v;
+
+            heading = (TextView) mView.findViewById(R.id.heading);
+        }
+    }
+
+    public NoticesAdapter(List<NoticesObject.Meeting> meetings, List<NoticesObject.General> general, Context context) {
         meetingNotices = meetings;
         generalNotices = general;
         mContext = context;
@@ -63,45 +79,108 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_ITEM) {
             RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.adapter_portal, parent, false);
+                    .inflate(R.layout.adapter_notice, parent, false);
             NoticeViewHolder vh = new NoticeViewHolder(v);
+            return vh;
         } else if (viewType == TYPE_HEADER) {
             //inflate your layout and pass it to view holder
-            return new VHHeader(null);
+            LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.adapter_heading, parent, false);
+            HeadingViewHolder vh = new HeadingViewHolder(v);
+            return vh;
         }
-
-        return vh;
-
+        return null;
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        PortalObject portal = mDataset.get(position);
-        String studentPathName = mContext.getFilesDir().toString() + "/" + portal.studentFile;
-        String schoolPathName = mContext.getFilesDir().toString() + "/" + portal.schoolFile;
-        holder.studentPhoto.setImageDrawable(Drawable.createFromPath(studentPathName));
-        holder.schoolPhoto.setImageDrawable(Drawable.createFromPath(schoolPathName));
+        if (holder instanceof NoticeViewHolder) {
+            if (position <= meetingNotices.size()) {
+                final NoticesObject.Meeting notice = meetingNotices.get(position - 1);
+                ((NoticeViewHolder) holder).title.setText(notice.Subject);
+                ((NoticeViewHolder) holder).group.setText(notice.Level);
+                ((NoticeViewHolder) holder).teacher.setText(notice.Teacher);
+                ((NoticeViewHolder) holder).description.setText(notice.Body);
+                ((NoticeViewHolder) holder).details.setText("Location: " + notice.PlaceMeet + " • When: " + notice.DateMeet);
+                ((NoticeViewHolder) holder).details.setVisibility(View.VISIBLE);
 
-        holder.schoolName.setText(portal.schoolName);
-        holder.studentName.setText(portal.student);
+                boolean expanded = notice.expanded;
+                // Set the visibility based on state
+                ((NoticeViewHolder) holder).subItems.setVisibility(expanded ? View.VISIBLE : View.GONE);
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        notice.angle = notice.angle == 0 ? 180 : 0;  //toggle
+                        ((NoticeViewHolder) holder).expandArrow.animate().rotation(notice.angle).setDuration(300).start();
+
+                        // Get the current state of the item
+                        boolean expanded = notice.expanded;
+                        // Change the state
+                        notice.expanded = !expanded;
+                        // Notify the adapter that item has changed
+                        notifyItemChanged(position);
+                    }
+                });
+            }
+            else {
+                final NoticesObject.General notice = generalNotices.get(position - meetingNotices.size() - 1);
+                ((NoticeViewHolder) holder).title.setText(notice.Subject);
+                ((NoticeViewHolder) holder).group.setText(notice.Level);
+                ((NoticeViewHolder) holder).teacher.setText(notice.Teacher);
+                ((NoticeViewHolder) holder).description.setText(notice.Body);
+                ((NoticeViewHolder) holder).details.setVisibility(View.GONE);
+
+                boolean expanded = notice.expanded;
+                // Set the visibility based on state
+                ((NoticeViewHolder) holder).subItems.setVisibility(expanded ? View.VISIBLE : View.GONE);
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        notice.angle = notice.angle == 0 ? 180 : 0;  //toggle
+                        ((NoticeViewHolder) holder).expandArrow.animate().rotation(notice.angle).setDuration(300).start();
+
+                        // Get the current state of the item
+                        boolean expanded = notice.expanded;
+                        // Change the state
+                        notice.expanded = !expanded;
+                        // Notify the adapter that item has changed
+                        notifyItemChanged(position);
+                    }
+                });
+            }
+        }
+        else if (holder instanceof HeadingViewHolder) {
+            if (position == 0) {
+                ((HeadingViewHolder) holder).heading.setText("Meeting Notices");
+            }
+            else {
+                ((HeadingViewHolder) holder).heading.setText("General Notices");
+            }
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (isHeader(position))
+            return TYPE_HEADER;
+
+        return TYPE_ITEM;
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return meetingNotices.size() + generalNotices.size() + 2;
+        return meetingNotices.size() + generalNotices.size() + 1;
     }
 
     private boolean isHeader(int position) {
         return position == 0 || position == meetingNotices.size();
-    }
-
-    private boolean isGeneral(int position) {
-        return position > meetingNotices.size();
     }
 
 }

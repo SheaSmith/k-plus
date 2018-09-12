@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_notices"
+            android:icon="@drawable/ic_library_books_black_24dp"
+            android:title="Notices" />
+        <item
+            android:id="@+id/nav_calender"
+            android:icon="@drawable/ic_event_black_24dp"
+            android:title="Timetable" />
+        <item
+            android:id="@+id/nav_details"
+            android:icon="@drawable/ic_assignment_black_24dp"
+            android:title="Details" />
+        <item
+            android:id="@+id/nav_ncea"
+            android:icon="@drawable/ic_assessment_black_24dp"
+            android:title="Results" />
+        <item
+            android:id="@+id/nav_groups"
+            android:icon="@drawable/ic_people_black_24dp"
+            android:title="Groups" />
+
+
+    </group>
+
+
+
+</menu>

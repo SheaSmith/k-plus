@@ -42,8 +42,8 @@ public class NoticesObject
             }
         }
 
-        Element meetingNoticesElement = (Element) root.getElementsByTagName("MeetingNotices");
-        Element generalNoticesElement = (Element) root.getElementsByTagName("GeneralNotices");
+        Element meetingNoticesElement = (Element) root.getElementsByTagName("MeetingNotices").item(0);
+        Element generalNoticesElement = (Element) root.getElementsByTagName("GeneralNotices").item(0);
 
         NoticesResults results = new NoticesResults();
         results.AccessLevel = root.getElementsByTagName("AccessLevel").item(0).getTextContent();
@@ -56,7 +56,7 @@ public class NoticesObject
 
         NodeList meetings = meetingNoticesElement.getElementsByTagName("Meeting");
         for (int i = 0; i != meetings.getLength(); i++) {
-            Element meetingElement = (Element) meetings.item(0);
+            Element meetingElement = (Element) meetings.item(i);
             Meeting meeting = new Meeting();
 
             meeting.Level = meetingElement.getElementsByTagName("Level").item(0).getTextContent();
@@ -74,9 +74,9 @@ public class NoticesObject
         results.GeneralNotices = new GeneralNotices();
         results.GeneralNotices.NumberGeneralRecords = generalNoticesElement.getElementsByTagName("NumberGeneralRecords").item(0).getTextContent();
 
-        NodeList generals = meetingNoticesElement.getElementsByTagName("General");
+        NodeList generals = generalNoticesElement.getElementsByTagName("General");
         for (int i = 0; i != generals.getLength(); i++) {
-            Element generalElement = (Element) meetings.item(0);
+            Element generalElement = (Element) generals.item(i);
             General general = new General();
 
             general.Level = generalElement.getElementsByTagName("Level").item(0).getTextContent();
@@ -132,6 +132,10 @@ public class NoticesObject
         public String TimeMeet;
 
         public String Level;
+
+        public boolean expanded = false;
+
+        public int angle = 0;
     }
 
     public class GeneralNotices
@@ -152,5 +156,9 @@ public class NoticesObject
         public String Subject;
 
         public String Level;
+
+        public boolean expanded = false;
+
+        public int angle = 0;
     }
 }

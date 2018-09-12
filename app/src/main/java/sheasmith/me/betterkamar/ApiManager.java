@@ -58,6 +58,13 @@ public class ApiManager {
     public static String PASSWORD;
     public static String URL;
 
+    public static void setVariables(final PortalObject portal) {
+        TOKEN = portal.key;
+        ID = portal.username;
+        PASSWORD = portal.password;
+        URL = portal.hostname + "/api/api.php";
+    }
+
     public static void setVariables(final PortalObject portal, final ApiResponse<PortalObject> callback, final Context context) {
         ID = portal.username;
         PASSWORD = portal.password;

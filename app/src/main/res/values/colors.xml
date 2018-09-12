@@ -10,6 +10,8 @@
     <color name="colorDivider">#BDBDBD</color>
     <color name="grey">#eee</color>
     <color name="white">#fff</color>
+    <color name="icons">#FFFFFF</color>
+    <color name="secondary_text">#757575</color>
 
     <color name="black_overlay">#66000000</color>
 
