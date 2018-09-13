@@ -136,6 +136,8 @@ public class NoticesObject
         public boolean expanded = false;
 
         public int angle = 0;
+
+        public boolean justRotated = false;
     }
 
     public class GeneralNotices
@@ -160,5 +162,8 @@ public class NoticesObject
         public boolean expanded = false;
 
         public int angle = 0;
+
+        public boolean justRotated = false;
+
     }
 }

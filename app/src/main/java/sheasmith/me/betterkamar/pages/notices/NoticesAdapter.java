@@ -112,6 +112,11 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 // Set the visibility based on state
                 ((NoticeViewHolder) holder).subItems.setVisibility(expanded ? View.VISIBLE : View.GONE);
 
+                if (!notice.justRotated)
+                    ((NoticeViewHolder) holder).expandArrow.setRotation(notice.angle);
+
+                notice.justRotated = false;
+
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -122,6 +127,7 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         boolean expanded = notice.expanded;
                         // Change the state
                         notice.expanded = !expanded;
+                        notice.justRotated = true;
                         // Notify the adapter that item has changed
                         notifyItemChanged(position);
                     }
@@ -139,6 +145,11 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 // Set the visibility based on state
                 ((NoticeViewHolder) holder).subItems.setVisibility(expanded ? View.VISIBLE : View.GONE);
 
+                if (!notice.justRotated)
+                    ((NoticeViewHolder) holder).expandArrow.setRotation(notice.angle);
+
+                notice.justRotated = false;
+
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -149,6 +160,7 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         boolean expanded = notice.expanded;
                         // Change the state
                         notice.expanded = !expanded;
+                        notice.justRotated = true;
                         // Notify the adapter that item has changed
                         notifyItemChanged(position);
                     }

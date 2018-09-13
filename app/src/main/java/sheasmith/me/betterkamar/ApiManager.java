@@ -45,7 +45,6 @@ import sheasmith.me.betterkamar.dataModels.htmlModels.ReportsObject;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
-import sheasmith.me.betterkamar.old.ServersObject;
 
 /**
  * Created by TheDiamondPicks on 5/09/2018.
