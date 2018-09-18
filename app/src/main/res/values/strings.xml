@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">KAMAR+</string>
+    <string name="notices">Notices</string>
+    <string name="timetable">Timetable</string>
+    <string name="details">Details</string>
+    <string name="results">Results</string>
+    <string name="groups">Groups</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 

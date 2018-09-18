@@ -80,13 +80,16 @@ public class TimetableObject {
                         classPeriod.GridType = parts[0];
                         classPeriod.SubjectNumber = parts[1];
                         classPeriod.SubjectCode = parts[2];
-                        classPeriod.Teacher = parts[3];
-                        classPeriod.Room = parts[4];
+                        if (parts.length > 3)
+                            classPeriod.Teacher = parts[3];
+
+                        if (parts.length > 4)
+                            classPeriod.Room = parts[4];
 
                         week.Classes.get(dayNumber).add(classPeriod);
                     }
 
-                    week.Term = Integer.parseInt(parts[0].split("-")[1]);
+                    week.Term = Integer.parseInt(periods[0].split("-")[1]);
                 }
             }
 

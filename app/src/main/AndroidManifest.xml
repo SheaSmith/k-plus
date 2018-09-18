@@ -17,7 +17,9 @@
             android:name="io.fabric.ApiKey"
             android:value="0f73ef781806f32d7cd8ed58bc3925758ed50644" />
 
-        <activity android:name=".pages.portals.PortalActivity">
+        <activity
+            android:name=".pages.portals.PortalActivity"
+            android:label="Portals">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,8 +28,12 @@
         </activity>
         <activity
             android:name=".pages.addPortal.AddPortalActivity"
+            android:label="Add New Portal"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".pages.notices.NoticesActivity"></activity>
+        <activity
+            android:name=".pages.notices.NoticesActivity"
+            android:label="@string/notices" />
+        <activity android:name=".pages.timetable.TimetableActivity"></activity>
     </application>
 
 </manifest>

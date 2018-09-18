@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Set;
 
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.NoticesObject;
@@ -26,9 +27,10 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
-    private List<NoticesObject.General> generalNotices;
-    private List<NoticesObject.Meeting> meetingNotices;
+    public List<NoticesObject.General> generalNotices;
+    public List<NoticesObject.Meeting> meetingNotices;
     private Context mContext;
+    public Set<String> enabled;
 
     public static class NoticeViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
@@ -68,10 +70,11 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    public NoticesAdapter(List<NoticesObject.Meeting> meetings, List<NoticesObject.General> general, Context context) {
+    public NoticesAdapter(List<NoticesObject.Meeting> meetings, List<NoticesObject.General> general, Context context, Set<String> shownGroups) {
         meetingNotices = meetings;
         generalNotices = general;
         mContext = context;
+        enabled = shownGroups;
     }
 
 
@@ -101,11 +104,17 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (holder instanceof NoticeViewHolder) {
             if (position <= meetingNotices.size()) {
                 final NoticesObject.Meeting notice = meetingNotices.get(position - 1);
+
+                if (!enabled.contains(notice.Level)) {
+                    ((NoticeViewHolder) holder).mView.setVisibility(View.GONE);
+                    return;
+                }
+
                 ((NoticeViewHolder) holder).title.setText(notice.Subject);
                 ((NoticeViewHolder) holder).group.setText(notice.Level);
                 ((NoticeViewHolder) holder).teacher.setText(notice.Teacher);
                 ((NoticeViewHolder) holder).description.setText(notice.Body);
-                ((NoticeViewHolder) holder).details.setText("Location: " + notice.PlaceMeet + " • When: " + notice.DateMeet);
+                ((NoticeViewHolder) holder).details.setText(String.format("Location: %s • When: %s", notice.PlaceMeet, notice.DateMeet));
                 ((NoticeViewHolder) holder).details.setVisibility(View.VISIBLE);
 
                 boolean expanded = notice.expanded;
@@ -135,6 +144,12 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
             else {
                 final NoticesObject.General notice = generalNotices.get(position - meetingNotices.size() - 1);
+
+                if (!enabled.contains(notice.Level)) {
+                    ((NoticeViewHolder) holder).mView.setVisibility(View.GONE);
+                    return;
+                }
+
                 ((NoticeViewHolder) holder).title.setText(notice.Subject);
                 ((NoticeViewHolder) holder).group.setText(notice.Level);
                 ((NoticeViewHolder) holder).teacher.setText(notice.Teacher);
