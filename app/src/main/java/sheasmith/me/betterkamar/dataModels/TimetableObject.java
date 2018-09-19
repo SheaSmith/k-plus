@@ -82,9 +82,13 @@ public class TimetableObject {
                         classPeriod.SubjectCode = parts[2];
                         if (parts.length > 3)
                             classPeriod.Teacher = parts[3];
+                        else
+                            classPeriod.Teacher = "--";
 
                         if (parts.length > 4)
                             classPeriod.Room = parts[4];
+                        else
+                            classPeriod.Room = "--";
 
                         week.Classes.get(dayNumber).add(classPeriod);
                     }
@@ -122,7 +126,7 @@ public class TimetableObject {
 
         public String Tutor;
 
-        public List<Week> Timetable = new ArrayList<>();
+        public ArrayList<Week> Timetable = new ArrayList<>();
 
         public String Level;
     }

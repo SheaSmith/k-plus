@@ -6,11 +6,16 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
+import com.google.gson.reflect.TypeToken;
+import com.iainconnor.objectcache.DiskCache;
+
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -57,14 +62,47 @@ public class ApiManager {
     public static String PASSWORD;
     public static String URL;
 
-    public static void setVariables(final PortalObject portal) {
+    private static DiskCache diskCache;
+    private static com.iainconnor.objectcache.CacheManager cacheManager;
+
+    public static void setVariables(final PortalObject portal, Context context) {
         TOKEN = portal.key;
         ID = portal.username;
         PASSWORD = portal.password;
         URL = portal.hostname + "/api/api.php";
+
+        String cachePath = context.getCacheDir().getPath();
+        final String fileName = UUID.randomUUID().toString() + ".jpg";
+        File cacheFile;
+        if (portal.schoolFile != null)
+            cacheFile = new File(cachePath + File.separator + BuildConfig.APPLICATION_ID + File.separator + portal.schoolFile.replace(".jpg", ""));
+        else
+            cacheFile = new File(cachePath + File.separator + BuildConfig.APPLICATION_ID + File.separator + fileName.replace(".jpg", ""));
+
+        try {
+            diskCache = new DiskCache(cacheFile, BuildConfig.VERSION_CODE, 1024 * 1024 * 10);
+            cacheManager = com.iainconnor.objectcache.CacheManager.getInstance(diskCache);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void setVariables(final PortalObject portal, final ApiResponse<PortalObject> callback, final Context context) {
+        String cachePath = context.getCacheDir().getPath();
+        final String fileName = UUID.randomUUID().toString() + ".jpg";
+        File cacheFile;
+        if (portal.schoolFile != null)
+            cacheFile = new File(cachePath + File.separator + BuildConfig.APPLICATION_ID + File.separator + portal.schoolFile.replace(".jpg", ""));
+        else
+            cacheFile = new File(cachePath + File.separator + BuildConfig.APPLICATION_ID + File.separator + fileName.replace(".jpg", ""));
+
+        try {
+            diskCache = new DiskCache(cacheFile, BuildConfig.VERSION_CODE, 1024 * 1024 * 10);
+            cacheManager = com.iainconnor.objectcache.CacheManager.getInstance(diskCache);
+        } catch (IOException e) {
+            callback.error(e);
+        }
+
         ID = portal.username;
         PASSWORD = portal.password;
         URL = portal.hostname + "/api/api.php";
@@ -100,7 +138,6 @@ public class ApiManager {
                             downloadImage(value.SettingsResults.LogoPath, new ApiResponse<Bitmap>() {
                                 @Override
                                 public void success(Bitmap value) {
-                                    String fileName = UUID.randomUUID().toString() + ".jpg";
                                     portal.schoolFile = fileName;
                                     CacheManager.saveBitmapToFile(context.getFilesDir(), fileName, value, Bitmap.CompressFormat.JPEG, 100);
 
@@ -193,6 +230,12 @@ public class ApiManager {
     }
 
     public static void getSettings(final ApiResponse<SettingsObject> callback) {
+        SettingsObject cache = (SettingsObject) cacheManager.get("SettingsObject", SettingsObject.class, new TypeToken<SettingsObject>(){}.getType());
+        if (cache != null) {
+            callback.success(cache);
+            return;
+        }
+
         Thread webThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -213,6 +256,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         SettingsObject settings = new SettingsObject(xml);
                         callback.success(settings);
+                        cacheManager.put("SettingsObject", settings, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_MONTH.asSeconds(), true);
 
                         URL = request.url().toString();
                     } else {
@@ -227,6 +271,12 @@ public class ApiManager {
     }
 
     public static void getGlobals(final ApiResponse<GlobalObject> callback) {
+        GlobalObject cache = (GlobalObject) cacheManager.get("GlobalObject", GlobalObject.class, new TypeToken<GlobalObject>(){}.getType());
+        if (cache != null) {
+            callback.success(cache);
+            return;
+        }
+
         if (TOKEN != null) {
             Thread webThread = new Thread(new Runnable() {
                 @Override
@@ -248,6 +298,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         GlobalObject globals = new GlobalObject(xml);
                         callback.success(globals);
+                        cacheManager.put("GlobalObject", globals, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_MONTH.asSeconds(), true);
 
                     } catch (Exception e) {
                         callback.error(e);
@@ -261,6 +312,12 @@ public class ApiManager {
     }
 
     public static void getEvents(final ApiResponse<CalendarObject> callback, final int year) {
+        CalendarObject cache = (CalendarObject) cacheManager.get("CalendarObject", CalendarObject.class, new TypeToken<CalendarObject>(){}.getType());
+        if (cache != null) {
+            callback.success(cache);
+            return;
+        }
+
         if (TOKEN != null) {
             Thread webThread = new Thread(new Runnable() {
                 @Override
@@ -296,6 +353,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         CalendarObject calendarObject = new CalendarObject(xml);
                         callback.success(calendarObject);
+                        cacheManager.put("CalendarObject", calendarObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), true);
 
                     } catch (Exception e) {
                         callback.error(e);
@@ -334,6 +392,7 @@ public class ApiManager {
                         NoticesObject noticesObject = new NoticesObject(xml);
                         callback.success(noticesObject);
 
+
                     } catch (Exception e) {
                         callback.error(e);
                     }
@@ -346,6 +405,12 @@ public class ApiManager {
     }
 
     public static void getAbsenceStats(final ApiResponse<AbsenceObject> callback) {
+        AbsenceObject cache = (AbsenceObject) cacheManager.get("AbsenceObject", AbsenceObject.class, new TypeToken<AbsenceObject>(){}.getType());
+        if (cache != null) {
+            callback.success(cache);
+            return;
+        }
+
         if (TOKEN != null) {
             Thread webThread = new Thread(new Runnable() {
                 @Override
@@ -370,6 +435,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         AbsenceObject absenceObject = new AbsenceObject(xml);
                         callback.success(absenceObject);
+                        cacheManager.put("AbsenceObject", absenceObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), true);
 
                     } catch (Exception e) {
                         callback.error(e);
@@ -383,6 +449,12 @@ public class ApiManager {
     }
 
     public static void getAttendance(final ApiResponse<AttendanceObject> callback) {
+        AttendanceObject cache = (AttendanceObject) cacheManager.get("AttendanceObject", AttendanceObject.class, new TypeToken<AttendanceObject>(){}.getType());
+        if (cache != null) {
+            callback.success(cache);
+            return;
+        }
+
         if (TOKEN != null) {
             Thread webThread = new Thread(new Runnable() {
                 @Override
@@ -407,6 +479,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         AttendanceObject attendanceObject = new AttendanceObject(xml);
                         callback.success(attendanceObject);
+                        cacheManager.put("AttendanceObject", attendanceObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), true);
 
                     } catch (Exception e) {
                         callback.error(e);
@@ -420,6 +493,12 @@ public class ApiManager {
     }
 
     public static void getNCEADetails(final ApiResponse<NCEAObject> callback) {
+        NCEAObject cache = (NCEAObject) cacheManager.get("NCEAObject", NCEAObject.class, new TypeToken<NCEAObject>(){}.getType());
+        if (cache != null) {
+            callback.success(cache);
+            return;
+        }
+
         if (TOKEN != null) {
             Thread webThread = new Thread(new Runnable() {
                 @Override
@@ -441,6 +520,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         NCEAObject nceaObject = new NCEAObject(xml);
                         callback.success(nceaObject);
+                        cacheManager.put("NCEAObject", nceaObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_DAY.asSeconds(), true);
 
                     } catch (Exception e) {
                         callback.error(e);
@@ -454,6 +534,12 @@ public class ApiManager {
     }
 
     public static void getNZQAResults(final ApiResponse<NZQAObject> callback) {
+        NZQAObject cache = (NZQAObject) cacheManager.get("NZQAObject", NZQAObject.class, new TypeToken<NZQAObject>(){}.getType());
+        if (cache != null) {
+            callback.success(cache);
+            return;
+        }
+
         if (TOKEN != null) {
             Thread webThread = new Thread(new Runnable() {
                 @Override
@@ -475,6 +561,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         NZQAObject nzqaObject = new NZQAObject(xml);
                         callback.success(nzqaObject);
+                        cacheManager.put("NZQAObject", nzqaObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_DAY.asSeconds(), true);
 
                     } catch (Exception e) {
                         callback.error(e);
@@ -488,6 +575,12 @@ public class ApiManager {
     }
 
     public static void getAllResults(final ApiResponse<ResultObject> callback) {
+        ResultObject cache = (ResultObject) cacheManager.get("ResultObject", ResultObject.class, new TypeToken<ResultObject>(){}.getType());
+        if (cache != null) {
+            callback.success(cache);
+            return;
+        }
+
         if (TOKEN != null) {
             Thread webThread = new Thread(new Runnable() {
                 @Override
@@ -512,6 +605,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         ResultObject resultObject = new ResultObject(xml);
                         callback.success(resultObject);
+                        cacheManager.put("ResultObject", resultObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_DAY.asSeconds(), true);
 
                     } catch (Exception e) {
                         callback.error(e);
@@ -525,6 +619,12 @@ public class ApiManager {
     }
 
     public static void getTimetable(final ApiResponse<TimetableObject> callback) {
+        TimetableObject cache = (TimetableObject) cacheManager.get("TimetableObject", TimetableObject.class, new TypeToken<TimetableObject>(){}.getType());
+        if (cache != null) {
+            callback.success(cache);
+            return;
+        }
+
         if (TOKEN != null) {
             Thread webThread = new Thread(new Runnable() {
                 @Override
@@ -549,6 +649,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         TimetableObject timetableObject = new TimetableObject(xml);
                         callback.success(timetableObject);
+                        cacheManager.put("TimetableObject", timetableObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), true);
 
                     } catch (Exception e) {
                         callback.error(e);
@@ -562,6 +663,12 @@ public class ApiManager {
     }
 
     public static void getGroupsApi(final ApiResponse<GroupObject> callback) {
+        GroupObject cache = (GroupObject) cacheManager.get("GroupObject", GroupObject.class, new TypeToken<GroupObject>(){}.getType());
+        if (cache != null) {
+            callback.success(cache);
+            return;
+        }
+
         if (TOKEN != null) {
             Thread webThread = new Thread(new Runnable() {
                 @Override
@@ -583,6 +690,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         GroupObject groupObject = new GroupObject(xml);
                         callback.success(groupObject);
+                        cacheManager.put("GroupObject", groupObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_DAY.asSeconds(), true);
 
                     } catch (Exception e) {
                         callback.error(e);
@@ -596,6 +704,12 @@ public class ApiManager {
     }
 
     public static void getDetails(final ApiResponse<DetailsObject> callback) {
+        DetailsObject cache = (DetailsObject) cacheManager.get("DetailsObject", DetailsObject.class, new TypeToken<DetailsObject>(){}.getType());
+        if (cache != null) {
+            callback.success(cache);
+            return;
+        }
+
         if (TOKEN != null) {
             Thread webThread = new Thread(new Runnable() {
                 @Override
@@ -617,6 +731,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         DetailsObject detailsObject = new DetailsObject(xml);
                         callback.success(detailsObject);
+                        cacheManager.put("DetailsObject", detailsObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), true);
 
                     } catch (Exception e) {
                         callback.error(e);
@@ -679,6 +794,12 @@ public class ApiManager {
     }
 
     public static void getReports(final ApiResponse<List<ReportsObject>> callback) {
+        List<ReportsObject> cache = (List<ReportsObject>) cacheManager.get("ReportsObject", ArrayList.class, new TypeToken<List<ReportsObject>>(){}.getType());
+        if (cache != null) {
+            callback.success(cache);
+            return;
+        }
+
         Thread webThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -699,6 +820,7 @@ public class ApiManager {
                     }
 
                     callback.success(reports);
+                    cacheManager.put("ReportsObject", reports, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), true);
                 } catch (Exception e) {
                     callback.error(e);
                 }
@@ -708,6 +830,12 @@ public class ApiManager {
     }
 
     public static void getGroupsHtml(final ApiResponse<List<GroupsObject>> callback) {
+        List<GroupsObject> cache = (List<GroupsObject>) cacheManager.get("GroupsObjectHTML", ArrayList.class, new TypeToken<List<GroupsObject>>(){}.getType());
+        if (cache != null) {
+            callback.success(cache);
+            return;
+        }
+
         Thread webThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -751,6 +879,7 @@ public class ApiManager {
                     }
 
                     callback.success(groupsList);
+                    cacheManager.put("GroupsObjectHTML", groupsList, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), true);
                 } catch (Exception e) {
                     callback.error(e);
                 }

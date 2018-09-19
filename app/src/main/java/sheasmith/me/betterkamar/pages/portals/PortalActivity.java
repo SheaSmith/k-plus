@@ -17,11 +17,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import sheasmith.me.betterkamar.DataActivity;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.RecyclerItemClickListener;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
 import sheasmith.me.betterkamar.pages.addPortal.AddPortalActivity;
-import sheasmith.me.betterkamar.pages.notices.NoticesActivity;
+import sheasmith.me.betterkamar.pages.notices.NoticesFragment;
 
 public class PortalActivity extends AppCompatActivity {
 
@@ -72,7 +73,7 @@ public class PortalActivity extends AppCompatActivity {
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(PortalActivity.this, mRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent i = new Intent(PortalActivity.this, NoticesActivity.class);
+                Intent i = new Intent(PortalActivity.this, DataActivity.class);
                 i.putExtra("portal", servers.get(position));
                 startActivity(i);
             }

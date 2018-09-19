@@ -69,6 +69,8 @@ public class CalendarObject
             event.DateTimeFinish = eventElement.getElementsByTagName("DateTimeFinish").item(0).getTextContent();
             event.Start = eventElement.getElementsByTagName("Start").item(0).getTextContent();
             event.Finish = eventElement.getElementsByTagName("Finish").item(0).getTextContent();
+
+            results.Events.add(event);
         }
 
         EventsResults = results;
@@ -78,7 +80,7 @@ public class CalendarObject
     {
         public String AccessLevel;
 
-        public List<Event> Events = new ArrayList<>();
+        public ArrayList<Event> Events = new ArrayList<>();
 
         public String ErrorCode;
 

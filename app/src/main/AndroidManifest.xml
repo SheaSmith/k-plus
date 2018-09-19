@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="sheasmith.me.betterkamar">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -9,6 +10,7 @@
 
     <application
         android:allowBackup="true"
+        tools:replace="android:icon"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -20,7 +22,7 @@
         <activity
             android:name=".pages.portals.PortalActivity"
             android:label="Portals">
-            <intent-filter>
+            <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -31,9 +33,11 @@
             android:label="Add New Portal"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".pages.notices.NoticesActivity"
+            android:name=".DataActivity"
+            android:configChanges="keyboardHidden|orientation"
             android:label="@string/notices" />
-        <activity android:name=".pages.timetable.TimetableActivity"></activity>
+        <!--<activity android:name=".pages.timetable.TimetableFragment"-->
+            <!--android:label="Timetable"/>-->
     </application>
 
 </manifest>

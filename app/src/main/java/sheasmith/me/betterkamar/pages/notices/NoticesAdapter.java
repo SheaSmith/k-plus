@@ -105,10 +105,10 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (position <= meetingNotices.size()) {
                 final NoticesObject.Meeting notice = meetingNotices.get(position - 1);
 
-                if (!enabled.contains(notice.Level)) {
-                    ((NoticeViewHolder) holder).mView.setVisibility(View.GONE);
-                    return;
-                }
+//                if (!enabled.contains(notice.Level)) {
+//                    ((NoticeViewHolder) holder).mView.setVisibility(View.GONE);
+//                    return;
+//                }
 
                 ((NoticeViewHolder) holder).title.setText(notice.Subject);
                 ((NoticeViewHolder) holder).group.setText(notice.Level);
@@ -145,10 +145,10 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             else {
                 final NoticesObject.General notice = generalNotices.get(position - meetingNotices.size() - 1);
 
-                if (!enabled.contains(notice.Level)) {
-                    ((NoticeViewHolder) holder).mView.setVisibility(View.GONE);
-                    return;
-                }
+//                if (!enabled.contains(notice.Level)) {
+//                    ((NoticeViewHolder) holder).mView.setVisibility(View.GONE);
+//                    return;
+//                }
 
                 ((NoticeViewHolder) holder).title.setText(notice.Subject);
                 ((NoticeViewHolder) holder).group.setText(notice.Level);

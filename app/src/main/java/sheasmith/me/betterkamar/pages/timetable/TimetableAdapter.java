@@ -12,6 +12,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import sheasmith.me.betterkamar.R;
@@ -77,26 +80,40 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (position < mEvents.size()) {
             final CalendarObject.Event event = mEvents.get(position);
 
+            DateFormat timeFormat = DateFormat.getTimeInstance();
+            SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+
             ((TimetableViewHolder) holder).title.setText(event.Title);
             String time = "All day";
-            if (!event.Start.equals("") && !event.Finish.equals(""))
-                time = event.Start + " - " + event.Finish;
-            else if (!event.Start.equals(""))
-                time = event.Start;
+            if (!event.DateTimeStart.equals("") && !event.DateTimeFinish.equals("")) {
+                try {
+                    String start = timeFormat.format(format.parse(event.DateTimeStart));
+                    String end = timeFormat.format(format.parse(event.DateTimeFinish));
+                    time = start + " - " + end;
+
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+            else if (!event.DateTimeStart.equals("")) {
+                try {
+                    time = timeFormat.format(format.parse(event.DateTimeStart));
+
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
             ((TimetableViewHolder) holder).details.setText(time);
-            TypedArray colors = mContext.getResources().obtainTypedArray(R.array.mdcolor_500);
-            int number = Math.abs(event.Title.hashCode()) % colors.length();
-            ((TimetableViewHolder) holder).item.getBackground().mutate().setColorFilter(colors.getColor(number, Color.BLACK), PorterDuff.Mode.SRC_ATOP);
+            ((TimetableViewHolder) holder).item.getBackground().mutate().setColorFilter(Color.parseColor("#5677fc"), PorterDuff.Mode.SRC_ATOP);
 
             if (position == 0)
                 ((TimetableViewHolder) holder).periodName.setText("Events");
-        } else {
-            int pos;
-            if (mEvents.size() == 0)
-                pos = position;
             else
-                pos = position - mEvents.size() + 1;
+                ((TimetableViewHolder) holder).periodName.setText("");
+        } else {
+            int pos = position - mEvents.size();
 
             final TimetableObject.Class period = mClasses.get(pos);
             GlobalObject.PeriodDefinition periodDefinition = mPeriodDefinitions.get(pos);

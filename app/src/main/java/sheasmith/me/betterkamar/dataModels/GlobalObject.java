@@ -69,7 +69,7 @@ public class GlobalObject
 
         public String ErrorCode;
 
-        public List<PeriodDefinition> PeriodDefinitions = new ArrayList<>();
+        public ArrayList<PeriodDefinition> PeriodDefinitions = new ArrayList<>();
 
         public String apiversion;
 

@@ -6,4 +6,9 @@
     <color name="grey">#eee</color>
     <color name="white">#fff</color>
 
+    <color name="achieved">#008000</color>
+    <color name="merit">#0275d8</color>
+    <color name="excellence">#ffcc33</color>
+    <color name="notachieved">#d9534f</color>
+
 </resources>

@@ -71,7 +71,7 @@ public class AttendanceObject
     {
         public String AccessLevel;
 
-        public List<Week> Weeks = new ArrayList<>();
+        public ArrayList<Week> Weeks = new ArrayList<>();
 
         public String ErrorCode;
 
