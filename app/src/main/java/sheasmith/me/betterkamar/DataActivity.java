@@ -16,9 +16,25 @@ import sheasmith.me.betterkamar.pages.timetable.TimetableFragment;
 
 public class DataActivity extends AppCompatActivity {
 
+    Integer lastFragment = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            //Manually displaying the first fragment - one time only
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.frame_layout, getFragment(savedInstanceState.getInt("lastFragment")));
+            transaction.commit();
+        } else {
+            //Manually displaying the first fragment - one time only
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.frame_layout, NoticesFragment.newInstance());
+            transaction.commit();
+            lastFragment = R.id.nav_notices;
+        }
+
         setContentView(R.layout.activity_data);
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.navigation);
@@ -29,15 +45,8 @@ public class DataActivity extends AppCompatActivity {
                 (new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        Fragment selectedFragment = null;
-                        switch (item.getItemId()) {
-                            case R.id.nav_notices:
-                                selectedFragment = NoticesFragment.newInstance();
-                                break;
-                            case R.id.nav_calender:
-                                selectedFragment = TimetableFragment.newInstance();
-                                break;
-                        }
+                        Fragment selectedFragment = getFragment(item.getItemId());
+
                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.frame_layout, selectedFragment);
                         transaction.commit();
@@ -45,12 +54,27 @@ public class DataActivity extends AppCompatActivity {
                     }
                 });
 
-        //Manually displaying the first fragment - one time only
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame_layout, NoticesFragment.newInstance());
-        transaction.commit();
 
         //Used to select an item programmatically
         //bottomNavigationView.getMenu().getItem(2).setChecked(true);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (lastFragment != null)
+            outState.putInt("lastFragment", lastFragment);
+        super.onSaveInstanceState(outState);
+    }
+
+    private Fragment getFragment(int id) {
+        lastFragment = id;
+        switch (id) {
+            case R.id.nav_notices:
+                return NoticesFragment.newInstance();
+            case R.id.nav_calender:
+                return TimetableFragment.newInstance();
+            default:
+                return null;
+        }
     }
 }

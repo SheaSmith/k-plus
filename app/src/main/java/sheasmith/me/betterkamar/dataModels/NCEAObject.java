@@ -49,29 +49,51 @@ public class NCEAObject
 
         CreditsTotal creditsTotal = new CreditsTotal();
         Element creditsTotalElement = (Element) studentElement.getElementsByTagName("CreditsTotal").item(0);
-        creditsTotal.Achieved = creditsTotalElement.getElementsByTagName("Achieved").item(0).getTextContent();
-        creditsTotal.Merit = creditsTotalElement.getElementsByTagName("Merit").item(0).getTextContent();
-        creditsTotal.Excellence = creditsTotalElement.getElementsByTagName("Excellence").item(0).getTextContent();
-        creditsTotal.Total = creditsTotalElement.getElementsByTagName("Total").item(0).getTextContent();
-        creditsTotal.Attempted = creditsTotalElement.getElementsByTagName("Attempted").item(0).getTextContent();
+        if (creditsTotalElement.getElementsByTagName("Achieved").getLength() != 0)
+            creditsTotal.Excellence = creditsTotalElement.getElementsByTagName("Achieved").item(0).getTextContent();
+        if (creditsTotalElement.getElementsByTagName("Merit").getLength() != 0)
+            creditsTotal.Excellence = creditsTotalElement.getElementsByTagName("Merit").item(0).getTextContent();
+        if (creditsTotalElement.getElementsByTagName("Excellence").getLength() != 0)
+            creditsTotal.Excellence = creditsTotalElement.getElementsByTagName("Excellence").item(0).getTextContent();
+        if (creditsTotalElement.getElementsByTagName("Total").getLength() != 0)
+            creditsTotal.Total = creditsTotalElement.getElementsByTagName("Total").item(0).getTextContent();
+        if (creditsTotalElement.getElementsByTagName("Attempted").getLength() != 0)
+            creditsTotal.Attempted = creditsTotalElement.getElementsByTagName("Attempted").item(0).getTextContent();
+        if (creditsTotalElement.getElementsByTagName("NotAchieved").getLength() != 0)
+            creditsTotal.NotAchieved = creditsTotalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
         student.CreditsTotal = creditsTotal;
 
         CreditsInternal creditsInternal = new CreditsInternal();
         Element creditsInternalElement = (Element) studentElement.getElementsByTagName("CreditsInternal").item(0);
-        creditsInternal.Achieved = creditsInternalElement.getElementsByTagName("Achieved").item(0).getTextContent();
-        creditsInternal.Merit = creditsInternalElement.getElementsByTagName("Merit").item(0).getTextContent();
-        creditsInternal.Excellence = creditsInternalElement.getElementsByTagName("Excellence").item(0).getTextContent();
-        creditsInternal.Total = creditsInternalElement.getElementsByTagName("Total").item(0).getTextContent();
-        creditsInternal.Attempted = creditsInternalElement.getElementsByTagName("Attempted").item(0).getTextContent();
+        if (creditsInternalElement.getElementsByTagName("Achieved").getLength() != 0)
+            creditsInternal.Excellence = creditsInternalElement.getElementsByTagName("Achieved").item(0).getTextContent();
+        if (creditsInternalElement.getElementsByTagName("Merit").getLength() != 0)
+            creditsInternal.Excellence = creditsInternalElement.getElementsByTagName("Merit").item(0).getTextContent();
+        if (creditsInternalElement.getElementsByTagName("Excellence").getLength() != 0)
+            creditsInternal.Excellence = creditsInternalElement.getElementsByTagName("Excellence").item(0).getTextContent();
+        if (creditsInternalElement.getElementsByTagName("Total").getLength() != 0)
+            creditsInternal.Total = creditsInternalElement.getElementsByTagName("Total").item(0).getTextContent();
+        if (creditsInternalElement.getElementsByTagName("Attempted").getLength() != 0)
+            creditsInternal.Attempted = creditsInternalElement.getElementsByTagName("Attempted").item(0).getTextContent();
+        if (creditsInternalElement.getElementsByTagName("NotAchieved").getLength() != 0)
+            creditsInternal.NotAchieved = creditsInternalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
         student.CreditsInternal = creditsInternal;
 
         CreditsExternal creditsExternal = new CreditsExternal();
         Element creditsExternalElement = (Element) studentElement.getElementsByTagName("CreditsExternal").item(0);
-        creditsExternal.Achieved = creditsExternalElement.getElementsByTagName("Achieved").item(0).getTextContent();
-        creditsExternal.Merit = creditsExternalElement.getElementsByTagName("Merit").item(0).getTextContent();
-        creditsExternal.Excellence = creditsExternalElement.getElementsByTagName("Excellence").item(0).getTextContent();
-        creditsExternal.Total = creditsExternalElement.getElementsByTagName("Total").item(0).getTextContent();
-        creditsExternal.Attempted = creditsExternalElement.getElementsByTagName("Attempted").item(0).getTextContent();
+        if (creditsExternalElement.getElementsByTagName("Achieved").getLength() != 0)
+            creditsExternal.Excellence = creditsExternalElement.getElementsByTagName("Achieved").item(0).getTextContent();
+        if (creditsExternalElement.getElementsByTagName("Merit").getLength() != 0)
+            creditsExternal.Excellence = creditsExternalElement.getElementsByTagName("Merit").item(0).getTextContent();
+        if (creditsExternalElement.getElementsByTagName("Excellence").getLength() != 0)
+            creditsExternal.Excellence = creditsExternalElement.getElementsByTagName("Excellence").item(0).getTextContent();
+        if (creditsExternalElement.getElementsByTagName("Total").getLength() != 0)
+            creditsExternal.Total = creditsExternalElement.getElementsByTagName("Total").item(0).getTextContent();
+        if (creditsExternalElement.getElementsByTagName("Attempted").getLength() != 0)
+            creditsExternal.Attempted = creditsExternalElement.getElementsByTagName("Attempted").item(0).getTextContent();
+        if (creditsExternalElement.getElementsByTagName("NotAchieved").getLength() != 0)
+            creditsExternal.NotAchieved = creditsExternalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
+
         student.CreditsExternal = creditsExternal;
 
         NCEA ncea = new NCEA();
@@ -103,6 +125,9 @@ public class NCEAObject
             if (yearTotalElement.getElementsByTagName("Attempted").getLength() != 0)
                 yearTotal.Achieved = yearTotalElement.getElementsByTagName("Attempted").item(0).getTextContent();
 
+            if (yearTotalElement.getElementsByTagName("NotAchieved").getLength() != 0)
+                yearTotal.NotAchieved = yearTotalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
+
             yearTotal.Year = yearTotalElement.getElementsByTagName("Year").item(0).getTextContent();
 
             student.YearTotals.add(yearTotal);
@@ -126,6 +151,9 @@ public class NCEAObject
 
             if (levelTotalElement.getElementsByTagName("Attempted").getLength() != 0)
                 levelTotal.Achieved = levelTotalElement.getElementsByTagName("Attempted").item(0).getTextContent();
+
+            if (levelTotalElement.getElementsByTagName("NotAchieved").getLength() != 0)
+                levelTotal.NotAchieved = levelTotalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
 
             levelTotal.Level = levelTotalElement.getElementsByTagName("Level").item(0).getTextContent();
 
@@ -178,6 +206,8 @@ public class NCEAObject
         public String Total;
 
         public String Attempted;
+
+        public String NotAchieved;
     }
 
     public class CreditsTotal
@@ -191,6 +221,8 @@ public class NCEAObject
         public String Total;
 
         public String Attempted;
+
+        public String NotAchieved;
     }
 
     public class LevelTotal
@@ -208,6 +240,8 @@ public class NCEAObject
         public String Total;
 
         public String Attempted;
+
+        public String NotAchieved;
     }
 
     public class NCEA
@@ -240,6 +274,8 @@ public class NCEAObject
         public String Total;
 
         public String Attempted;
+
+        public String NotAchieved;
     }
 
     public class CreditsExternal
@@ -253,5 +289,7 @@ public class NCEAObject
         public String Total;
 
         public String Attempted;
+
+        public String NotAchieved;
     }
 }
