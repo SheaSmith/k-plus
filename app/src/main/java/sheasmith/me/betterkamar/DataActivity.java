@@ -12,6 +12,7 @@ import android.view.MenuItem;
 
 import sheasmith.me.betterkamar.internalModels.PortalObject;
 import sheasmith.me.betterkamar.pages.notices.NoticesFragment;
+import sheasmith.me.betterkamar.pages.results.NCEAFragment;
 import sheasmith.me.betterkamar.pages.timetable.TimetableFragment;
 
 public class DataActivity extends AppCompatActivity {
@@ -73,6 +74,8 @@ public class DataActivity extends AppCompatActivity {
                 return NoticesFragment.newInstance();
             case R.id.nav_calender:
                 return TimetableFragment.newInstance();
+            case R.id.nav_ncea:
+                return NCEAFragment.newInstance();
             default:
                 return null;
         }

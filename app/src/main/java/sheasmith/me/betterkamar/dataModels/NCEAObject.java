@@ -50,9 +50,9 @@ public class NCEAObject
         CreditsTotal creditsTotal = new CreditsTotal();
         Element creditsTotalElement = (Element) studentElement.getElementsByTagName("CreditsTotal").item(0);
         if (creditsTotalElement.getElementsByTagName("Achieved").getLength() != 0)
-            creditsTotal.Excellence = creditsTotalElement.getElementsByTagName("Achieved").item(0).getTextContent();
+            creditsTotal.Achieved = creditsTotalElement.getElementsByTagName("Achieved").item(0).getTextContent();
         if (creditsTotalElement.getElementsByTagName("Merit").getLength() != 0)
-            creditsTotal.Excellence = creditsTotalElement.getElementsByTagName("Merit").item(0).getTextContent();
+            creditsTotal.Merit = creditsTotalElement.getElementsByTagName("Merit").item(0).getTextContent();
         if (creditsTotalElement.getElementsByTagName("Excellence").getLength() != 0)
             creditsTotal.Excellence = creditsTotalElement.getElementsByTagName("Excellence").item(0).getTextContent();
         if (creditsTotalElement.getElementsByTagName("Total").getLength() != 0)
@@ -66,9 +66,9 @@ public class NCEAObject
         CreditsInternal creditsInternal = new CreditsInternal();
         Element creditsInternalElement = (Element) studentElement.getElementsByTagName("CreditsInternal").item(0);
         if (creditsInternalElement.getElementsByTagName("Achieved").getLength() != 0)
-            creditsInternal.Excellence = creditsInternalElement.getElementsByTagName("Achieved").item(0).getTextContent();
+            creditsInternal.Achieved = creditsInternalElement.getElementsByTagName("Achieved").item(0).getTextContent();
         if (creditsInternalElement.getElementsByTagName("Merit").getLength() != 0)
-            creditsInternal.Excellence = creditsInternalElement.getElementsByTagName("Merit").item(0).getTextContent();
+            creditsInternal.Merit = creditsInternalElement.getElementsByTagName("Merit").item(0).getTextContent();
         if (creditsInternalElement.getElementsByTagName("Excellence").getLength() != 0)
             creditsInternal.Excellence = creditsInternalElement.getElementsByTagName("Excellence").item(0).getTextContent();
         if (creditsInternalElement.getElementsByTagName("Total").getLength() != 0)
@@ -82,9 +82,9 @@ public class NCEAObject
         CreditsExternal creditsExternal = new CreditsExternal();
         Element creditsExternalElement = (Element) studentElement.getElementsByTagName("CreditsExternal").item(0);
         if (creditsExternalElement.getElementsByTagName("Achieved").getLength() != 0)
-            creditsExternal.Excellence = creditsExternalElement.getElementsByTagName("Achieved").item(0).getTextContent();
+            creditsExternal.Achieved = creditsExternalElement.getElementsByTagName("Achieved").item(0).getTextContent();
         if (creditsExternalElement.getElementsByTagName("Merit").getLength() != 0)
-            creditsExternal.Excellence = creditsExternalElement.getElementsByTagName("Merit").item(0).getTextContent();
+            creditsExternal.Merit = creditsExternalElement.getElementsByTagName("Merit").item(0).getTextContent();
         if (creditsExternalElement.getElementsByTagName("Excellence").getLength() != 0)
             creditsExternal.Excellence = creditsExternalElement.getElementsByTagName("Excellence").item(0).getTextContent();
         if (creditsExternalElement.getElementsByTagName("Total").getLength() != 0)
@@ -114,16 +114,16 @@ public class NCEAObject
             if (yearTotalElement.getElementsByTagName("Achieved").getLength() != 0)
                 yearTotal.Achieved = yearTotalElement.getElementsByTagName("Achieved").item(0).getTextContent();
             if (yearTotalElement.getElementsByTagName("Merit").getLength() != 0)
-                yearTotal.Achieved = yearTotalElement.getElementsByTagName("Merit").item(0).getTextContent();
+                yearTotal.Merit = yearTotalElement.getElementsByTagName("Merit").item(0).getTextContent();
 
             if (yearTotalElement.getElementsByTagName("Excellence").getLength() != 0)
-                yearTotal.Achieved = yearTotalElement.getElementsByTagName("Excellence").item(0).getTextContent();
+                yearTotal.Excellence = yearTotalElement.getElementsByTagName("Excellence").item(0).getTextContent();
 
             if (yearTotalElement.getElementsByTagName("Total").getLength() != 0)
-                yearTotal.Achieved = yearTotalElement.getElementsByTagName("Total").item(0).getTextContent();
+                yearTotal.Total = yearTotalElement.getElementsByTagName("Total").item(0).getTextContent();
 
             if (yearTotalElement.getElementsByTagName("Attempted").getLength() != 0)
-                yearTotal.Achieved = yearTotalElement.getElementsByTagName("Attempted").item(0).getTextContent();
+                yearTotal.Attempted = yearTotalElement.getElementsByTagName("Attempted").item(0).getTextContent();
 
             if (yearTotalElement.getElementsByTagName("NotAchieved").getLength() != 0)
                 yearTotal.NotAchieved = yearTotalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
@@ -141,16 +141,16 @@ public class NCEAObject
             if (levelTotalElement.getElementsByTagName("Achieved").getLength() != 0)
                 levelTotal.Achieved = levelTotalElement.getElementsByTagName("Achieved").item(0).getTextContent();
             if (levelTotalElement.getElementsByTagName("Merit").getLength() != 0)
-                levelTotal.Achieved = levelTotalElement.getElementsByTagName("Merit").item(0).getTextContent();
+                levelTotal.Merit = levelTotalElement.getElementsByTagName("Merit").item(0).getTextContent();
 
             if (levelTotalElement.getElementsByTagName("Excellence").getLength() != 0)
-                levelTotal.Achieved = levelTotalElement.getElementsByTagName("Excellence").item(0).getTextContent();
+                levelTotal.Excellence = levelTotalElement.getElementsByTagName("Excellence").item(0).getTextContent();
 
             if (levelTotalElement.getElementsByTagName("Total").getLength() != 0)
-                levelTotal.Achieved = levelTotalElement.getElementsByTagName("Total").item(0).getTextContent();
+                levelTotal.Total = levelTotalElement.getElementsByTagName("Total").item(0).getTextContent();
 
             if (levelTotalElement.getElementsByTagName("Attempted").getLength() != 0)
-                levelTotal.Achieved = levelTotalElement.getElementsByTagName("Attempted").item(0).getTextContent();
+                levelTotal.Attempted = levelTotalElement.getElementsByTagName("Attempted").item(0).getTextContent();
 
             if (levelTotalElement.getElementsByTagName("NotAchieved").getLength() != 0)
                 levelTotal.NotAchieved = levelTotalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
@@ -197,51 +197,51 @@ public class NCEAObject
 
     public class CreditsInternal
     {
-        public String Achieved;
+        public String Achieved = "0";
 
-        public String Merit;
+        public String Merit = "0";
 
-        public String Excellence;
+        public String Excellence = "0";
 
-        public String Total;
+        public String Total = "0";
 
-        public String Attempted;
+        public String Attempted = "0";
 
-        public String NotAchieved;
+        public String NotAchieved = "0";
     }
 
     public class CreditsTotal
     {
-        public String Achieved;
+        public String Achieved = "0";
 
-        public String Merit;
+        public String Merit = "0";
 
-        public String Excellence;
+        public String Excellence = "0";
 
-        public String Total;
+        public String Total = "0";
 
-        public String Attempted;
+        public String Attempted = "0";
 
-        public String NotAchieved;
+        public String NotAchieved = "0";
     }
 
     public class LevelTotal
     {
         public String index;
 
-        public String Achieved;
+        public String Achieved = "0";
 
-        public String Merit;
+        public String Merit = "0";
 
-        public String Excellence;
+        public String Excellence = "0";
 
         public String Level;
 
-        public String Total;
+        public String Total = "0";
 
-        public String Attempted;
+        public String Attempted = "0";
 
-        public String NotAchieved;
+        public String NotAchieved = "0";
     }
 
     public class NCEA
@@ -265,31 +265,31 @@ public class NCEAObject
 
         public String index;
 
-        public String Merit;
+        public String Merit = "0";
 
-        public String Achieved;
+        public String Achieved = "0";
 
-        public String Excellence;
+        public String Excellence = "0";
 
-        public String Total;
+        public String Total = "0";
 
-        public String Attempted;
+        public String Attempted = "0";
 
-        public String NotAchieved;
+        public String NotAchieved = "0";
     }
 
     public class CreditsExternal
     {
-        public String Achieved;
+        public String Achieved = "0";
 
-        public String Merit;
+        public String Merit = "0";
 
-        public String Excellence;
+        public String Excellence = "0";
 
-        public String Total;
+        public String Total = "0";
 
-        public String Attempted;
+        public String Attempted = "0";
 
-        public String NotAchieved;
+        public String NotAchieved = "0";
     }
 }
