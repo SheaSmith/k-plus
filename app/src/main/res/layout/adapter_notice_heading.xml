@@ -11,5 +11,5 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:text="Heading"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 </LinearLayout>

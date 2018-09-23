@@ -29,6 +29,7 @@
             android:weightSum="1">
 
             <RelativeLayout
+                android:id="@+id/chartLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="300dp"
                 android:layout_weight="1"
@@ -405,7 +406,7 @@
                         android:layout_gravity="center"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="credits needed to pass"
+                        android:text="credits needed to pass (including 20 from last year)"
                         android:textColor="@color/achieved" />
 
                     <TextView

@@ -101,8 +101,8 @@ public class TimetableObject {
 
             results.Student = student;
 
-            StudentTimetableResults = results;
         }
+        StudentTimetableResults = results;
     }
 
     public class StudentTimetableResults {

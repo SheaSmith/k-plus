@@ -48,52 +48,57 @@ public class NCEAObject
         Student student = new Student();
 
         CreditsTotal creditsTotal = new CreditsTotal();
-        Element creditsTotalElement = (Element) studentElement.getElementsByTagName("CreditsTotal").item(0);
-        if (creditsTotalElement.getElementsByTagName("Achieved").getLength() != 0)
-            creditsTotal.Achieved = creditsTotalElement.getElementsByTagName("Achieved").item(0).getTextContent();
-        if (creditsTotalElement.getElementsByTagName("Merit").getLength() != 0)
-            creditsTotal.Merit = creditsTotalElement.getElementsByTagName("Merit").item(0).getTextContent();
-        if (creditsTotalElement.getElementsByTagName("Excellence").getLength() != 0)
-            creditsTotal.Excellence = creditsTotalElement.getElementsByTagName("Excellence").item(0).getTextContent();
-        if (creditsTotalElement.getElementsByTagName("Total").getLength() != 0)
-            creditsTotal.Total = creditsTotalElement.getElementsByTagName("Total").item(0).getTextContent();
-        if (creditsTotalElement.getElementsByTagName("Attempted").getLength() != 0)
-            creditsTotal.Attempted = creditsTotalElement.getElementsByTagName("Attempted").item(0).getTextContent();
-        if (creditsTotalElement.getElementsByTagName("NotAchieved").getLength() != 0)
-            creditsTotal.NotAchieved = creditsTotalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
+        if (studentElement.getElementsByTagName("CreditsTotal").getLength() > 0) {
+            Element creditsTotalElement = (Element) studentElement.getElementsByTagName("CreditsTotal").item(0);
+            if (creditsTotalElement.getElementsByTagName("Achieved").getLength() != 0)
+                creditsTotal.Achieved = creditsTotalElement.getElementsByTagName("Achieved").item(0).getTextContent();
+            if (creditsTotalElement.getElementsByTagName("Merit").getLength() != 0)
+                creditsTotal.Merit = creditsTotalElement.getElementsByTagName("Merit").item(0).getTextContent();
+            if (creditsTotalElement.getElementsByTagName("Excellence").getLength() != 0)
+                creditsTotal.Excellence = creditsTotalElement.getElementsByTagName("Excellence").item(0).getTextContent();
+            if (creditsTotalElement.getElementsByTagName("Total").getLength() != 0)
+                creditsTotal.Total = creditsTotalElement.getElementsByTagName("Total").item(0).getTextContent();
+            if (creditsTotalElement.getElementsByTagName("Attempted").getLength() != 0)
+                creditsTotal.Attempted = creditsTotalElement.getElementsByTagName("Attempted").item(0).getTextContent();
+            if (creditsTotalElement.getElementsByTagName("NotAchieved").getLength() != 0)
+                creditsTotal.NotAchieved = creditsTotalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
+        }
         student.CreditsTotal = creditsTotal;
 
         CreditsInternal creditsInternal = new CreditsInternal();
-        Element creditsInternalElement = (Element) studentElement.getElementsByTagName("CreditsInternal").item(0);
-        if (creditsInternalElement.getElementsByTagName("Achieved").getLength() != 0)
-            creditsInternal.Achieved = creditsInternalElement.getElementsByTagName("Achieved").item(0).getTextContent();
-        if (creditsInternalElement.getElementsByTagName("Merit").getLength() != 0)
-            creditsInternal.Merit = creditsInternalElement.getElementsByTagName("Merit").item(0).getTextContent();
-        if (creditsInternalElement.getElementsByTagName("Excellence").getLength() != 0)
-            creditsInternal.Excellence = creditsInternalElement.getElementsByTagName("Excellence").item(0).getTextContent();
-        if (creditsInternalElement.getElementsByTagName("Total").getLength() != 0)
-            creditsInternal.Total = creditsInternalElement.getElementsByTagName("Total").item(0).getTextContent();
-        if (creditsInternalElement.getElementsByTagName("Attempted").getLength() != 0)
-            creditsInternal.Attempted = creditsInternalElement.getElementsByTagName("Attempted").item(0).getTextContent();
-        if (creditsInternalElement.getElementsByTagName("NotAchieved").getLength() != 0)
-            creditsInternal.NotAchieved = creditsInternalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
+        if (studentElement.getElementsByTagName("CreditsInternal").getLength() > 0) {
+            Element creditsInternalElement = (Element) studentElement.getElementsByTagName("CreditsInternal").item(0);
+            if (creditsInternalElement.getElementsByTagName("Achieved").getLength() != 0)
+                creditsInternal.Achieved = creditsInternalElement.getElementsByTagName("Achieved").item(0).getTextContent();
+            if (creditsInternalElement.getElementsByTagName("Merit").getLength() != 0)
+                creditsInternal.Merit = creditsInternalElement.getElementsByTagName("Merit").item(0).getTextContent();
+            if (creditsInternalElement.getElementsByTagName("Excellence").getLength() != 0)
+                creditsInternal.Excellence = creditsInternalElement.getElementsByTagName("Excellence").item(0).getTextContent();
+            if (creditsInternalElement.getElementsByTagName("Total").getLength() != 0)
+                creditsInternal.Total = creditsInternalElement.getElementsByTagName("Total").item(0).getTextContent();
+            if (creditsInternalElement.getElementsByTagName("Attempted").getLength() != 0)
+                creditsInternal.Attempted = creditsInternalElement.getElementsByTagName("Attempted").item(0).getTextContent();
+            if (creditsInternalElement.getElementsByTagName("NotAchieved").getLength() != 0)
+                creditsInternal.NotAchieved = creditsInternalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
+        }
         student.CreditsInternal = creditsInternal;
 
         CreditsExternal creditsExternal = new CreditsExternal();
-        Element creditsExternalElement = (Element) studentElement.getElementsByTagName("CreditsExternal").item(0);
-        if (creditsExternalElement.getElementsByTagName("Achieved").getLength() != 0)
-            creditsExternal.Achieved = creditsExternalElement.getElementsByTagName("Achieved").item(0).getTextContent();
-        if (creditsExternalElement.getElementsByTagName("Merit").getLength() != 0)
-            creditsExternal.Merit = creditsExternalElement.getElementsByTagName("Merit").item(0).getTextContent();
-        if (creditsExternalElement.getElementsByTagName("Excellence").getLength() != 0)
-            creditsExternal.Excellence = creditsExternalElement.getElementsByTagName("Excellence").item(0).getTextContent();
-        if (creditsExternalElement.getElementsByTagName("Total").getLength() != 0)
-            creditsExternal.Total = creditsExternalElement.getElementsByTagName("Total").item(0).getTextContent();
-        if (creditsExternalElement.getElementsByTagName("Attempted").getLength() != 0)
-            creditsExternal.Attempted = creditsExternalElement.getElementsByTagName("Attempted").item(0).getTextContent();
-        if (creditsExternalElement.getElementsByTagName("NotAchieved").getLength() != 0)
-            creditsExternal.NotAchieved = creditsExternalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
-
+        if (studentElement.getElementsByTagName("CreditsExternal").getLength() > 0) {
+            Element creditsExternalElement = (Element) studentElement.getElementsByTagName("CreditsExternal").item(0);
+            if (creditsExternalElement.getElementsByTagName("Achieved").getLength() != 0)
+                creditsExternal.Achieved = creditsExternalElement.getElementsByTagName("Achieved").item(0).getTextContent();
+            if (creditsExternalElement.getElementsByTagName("Merit").getLength() != 0)
+                creditsExternal.Merit = creditsExternalElement.getElementsByTagName("Merit").item(0).getTextContent();
+            if (creditsExternalElement.getElementsByTagName("Excellence").getLength() != 0)
+                creditsExternal.Excellence = creditsExternalElement.getElementsByTagName("Excellence").item(0).getTextContent();
+            if (creditsExternalElement.getElementsByTagName("Total").getLength() != 0)
+                creditsExternal.Total = creditsExternalElement.getElementsByTagName("Total").item(0).getTextContent();
+            if (creditsExternalElement.getElementsByTagName("Attempted").getLength() != 0)
+                creditsExternal.Attempted = creditsExternalElement.getElementsByTagName("Attempted").item(0).getTextContent();
+            if (creditsExternalElement.getElementsByTagName("NotAchieved").getLength() != 0)
+                creditsExternal.NotAchieved = creditsExternalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
+        }
         student.CreditsExternal = creditsExternal;
 
         NCEA ncea = new NCEA();

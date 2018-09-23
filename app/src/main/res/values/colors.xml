@@ -4,7 +4,12 @@
     <color name="colorPrimaryDark">#E65100</color>
     <color name="colorAccent">#E65100</color>
     <color name="grey">#eee</color>
+    <color name="darkgray">#A5A5A5</color>
     <color name="white">#fff</color>
+
+    <color name="colorHintTextLight">#80FFFFFF</color>
+    <color name="colorHintTextLightish">#b6ffffff</color>
+    <color name="colorPrimaryTextLight">#FFFFFF</color>
 
     <color name="achieved">#008000</color>
     <color name="merit">#0275d8</color>

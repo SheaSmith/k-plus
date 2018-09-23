@@ -21,7 +21,7 @@
 
         <activity
             android:name=".pages.portals.PortalActivity"
-            android:label="Portals">
+            android:label="@string/app_name">
             <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,11 +33,14 @@
             android:label="Add New Portal"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".pages.editPortal.EditPortalActivity"
+            android:label="Add New Portal"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".DataActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/notices" />
-        <!--<activity android:name=".pages.timetable.TimetableFragment"-->
-            <!--android:label="Timetable"/>-->
+        <activity android:name=".pages.results.PDFViewer" />
     </application>
 
 </manifest>

@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,6 +31,7 @@ import sheasmith.me.betterkamar.dataModels.NoticesObject;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
+import sheasmith.me.betterkamar.pages.editPortal.EditPortalActivity;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -59,6 +62,16 @@ public class NoticesFragment extends Fragment {
         outState.putSerializable("groups", groups);
         outState.putSerializable("enabled", mEnabled);
         outState.putSerializable("lastDate", lastDate);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(10);
+        getActivity().setTitle("Notices");
+
+        if (mAdapter == null ||  mAdapter.getItemCount() == 0)
+            doRequest(mPortal, new Date(System.currentTimeMillis()));
     }
 
     @Override
@@ -106,9 +119,6 @@ public class NoticesFragment extends Fragment {
             mRecyclerView.setAdapter(mAdapter);
             mLoader.setVisibility(View.GONE);
         }
-
-        if (mAdapter == null ||  mAdapter.getItemCount() == 0)
-            doRequest(mPortal, new Date(System.currentTimeMillis()));
 
         return view;
     }
@@ -159,6 +169,31 @@ public class NoticesFragment extends Fragment {
                             }
                         });
                         return;
+                    }
+
+                    else if (e instanceof IOException) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new AlertDialog.Builder(getContext())
+                                        .setTitle("No Internet")
+                                        .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
+                                        .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                doRequest(portal, date);
+                                            }
+                                        })
+                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                getActivity().finish();
+                                            }
+                                        })
+                                        .create()
+                                        .show();
+                            }
+                        });
                     }
                     e.printStackTrace();
                 }

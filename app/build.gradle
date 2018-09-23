@@ -28,6 +28,10 @@ android {
 
     useLibrary 'org.apache.http.legacy'
 
+    lintOptions {
+        checkReleaseBuilds false
+    }
+
 
     defaultConfig {
         applicationId "sheasmith.me.betterkamar"

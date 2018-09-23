@@ -1,8 +1,11 @@
 package sheasmith.me.betterkamar.pages.results;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
@@ -13,10 +16,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -25,9 +30,11 @@ import java.util.List;
 import sheasmith.me.betterkamar.ApiManager;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.GroupObject;
+import sheasmith.me.betterkamar.dataModels.LoginObject;
 import sheasmith.me.betterkamar.dataModels.NCEAObject;
 import sheasmith.me.betterkamar.dataModels.NoticesObject;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
+import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
 import sheasmith.me.betterkamar.pages.notices.NoticesAdapter;
 
@@ -52,23 +59,27 @@ public class NCEAFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        mView = inflater.inflate(R.layout.fragment_results_ncea, container, false);
-        mLoader = mView.findViewById(R.id.loader);
-
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         new Thread(new Runnable() {
             @Override
             public void run() {
                 doRequest(mPortal);
             }
         }).start();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        mView = inflater.inflate(R.layout.fragment_results_ncea, container, false);
+        mLoader = mView.findViewById(R.id.loader);
 
         return mView;
     }
 
-    private void doRequest(PortalObject portal) {
+    private void doRequest(final PortalObject portal) {
         ApiManager.getNCEADetails(new ApiResponse<NCEAObject>() {
             @Override
             public void success(final NCEAObject value) {
@@ -107,11 +118,9 @@ public class NCEAFragment extends Fragment {
                         int achieved = Integer.parseInt(latest.Total);
                         int lastAchieved = Integer.parseInt(student.YearTotals.get(1).Total);
 
-                        // Account for up to 20 credits gained in the previous year
-                        if (achieved + lastAchieved < 80)
-
-                            if (lastAchieved > 20)
-                                lastAchieved = 20;
+                        // Account for up to 20 credits gained in the previous date
+                        if (lastAchieved > 20)
+                            lastAchieved = 20;
 
                         achieved = achieved + lastAchieved;
 
@@ -237,6 +246,12 @@ public class NCEAFragment extends Fragment {
                         PieEntry achievedEntry = new PieEntry(Integer.parseInt(student.CreditsTotal.Achieved), "Achieved");
                         PieEntry meritEntry = new PieEntry(Integer.parseInt(student.CreditsTotal.Merit), "Merit");
 
+                        boolean enrolledInNCEA = excellenceEntry.getValue() != 0 || notAchievedEntry.getValue() != 0 || achievedEntry.getValue() != 0 || meritEntry.getValue() != 0;
+
+                        Description desc = new Description();
+                        desc.setText("Summary of all NCEA credits gained");
+                        chart.setDescription(desc);
+
                         List<PieEntry> entries = Arrays.asList(notAchievedEntry, achievedEntry, meritEntry, excellenceEntry);
 
                         chart.animateXY(1000, 1000);
@@ -248,6 +263,16 @@ public class NCEAFragment extends Fragment {
                         data.setValueTextColor(getContext().getResources().getColor(R.color.white));
                         chart.setData(data);
 
+                        if (!enrolledInNCEA) {
+                            mView.findViewById(R.id.chartLayout).setVisibility(View.GONE);
+                            mView.findViewById(R.id.needed_excellence).setVisibility(View.GONE);
+                            mView.findViewById(R.id.needed_merit).setVisibility(View.GONE);
+                            mView.findViewById(R.id.needed_pass).setVisibility(View.GONE);
+                            mView.findViewById(R.id.needed_excellence_caption).setVisibility(View.GONE);
+                            mView.findViewById(R.id.needed_merit_caption).setVisibility(View.GONE);
+                            mView.findViewById(R.id.needed_pass_caption).setVisibility(View.GONE);
+                        }
+
                         mLoader.setVisibility(View.GONE);
                     }
                 });
@@ -256,6 +281,44 @@ public class NCEAFragment extends Fragment {
             @Override
             public void error(Exception e) {
                 e.printStackTrace();
+
+                if (e instanceof Exceptions.ExpiredToken) {
+                    ApiManager.login(portal.username, portal.password, new ApiResponse<LoginObject>() {
+                        @Override
+                        public void success(LoginObject value) {
+                            doRequest(portal);
+                        }
+
+                        @Override
+                        public void error(Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    return;
+                } else if (e instanceof IOException) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle("No Internet")
+                                    .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
+                                    .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            doRequest(portal);
+                                        }
+                                    })
+                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            getActivity().finish();
+                                        }
+                                    })
+                                    .create()
+                                    .show();
+                        }
+                    });
+                }
             }
         });
     }

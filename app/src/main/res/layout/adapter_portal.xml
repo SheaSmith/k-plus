@@ -60,6 +60,15 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 app:srcCompat="@drawable/circle_yellow" />
+
+            <ImageView
+                android:id="@+id/edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/studentImage"
+                android:layout_alignEnd="@+id/schoolLogo"
+                app:srcCompat="@drawable/ic_edit" />
+
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>

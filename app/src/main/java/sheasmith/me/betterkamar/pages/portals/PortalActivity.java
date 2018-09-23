@@ -36,6 +36,8 @@ public class PortalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_portal);
 
+        setTitle("Portals");
+
         mRecyclerView = (RecyclerView) findViewById(R.id.servers);
 
         // use this setting to improve performance if you know that changes
@@ -70,31 +72,33 @@ public class PortalActivity extends AppCompatActivity {
             }
         });
 
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(PortalActivity.this, mRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Intent i = new Intent(PortalActivity.this, DataActivity.class);
-                i.putExtra("portal", servers.get(position));
-                startActivity(i);
-            }
-
-            @Override
-            public void onLongItemClick(View view, int position) {
-
-            }
-        }));
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        servers.add((PortalObject) data.getSerializableExtra("portal"));
-        mAdapter.notifyDataSetChanged();
+        if (requestCode == 1 && data != null) {
+            servers.add((PortalObject) data.getSerializableExtra("portal"));
+            mAdapter.notifyDataSetChanged();
+            save();
+        }
+        else {
+            if (data != null) {
+                if (!data.getBooleanExtra("isDeleted", false))
+                    servers.set(data.getIntExtra("index", -1), (PortalObject) data.getSerializableExtra("portal"));
+                else
+                    servers.remove(data.getIntExtra("index", -1));
+                mAdapter.notifyDataSetChanged();
+                save();
+            }
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    private void save() {
         SharedPreferences.Editor editor = new SecurePreferences(this).edit();
         Set<String> jsonSet = new HashSet<>();
         for (PortalObject portal : servers) {

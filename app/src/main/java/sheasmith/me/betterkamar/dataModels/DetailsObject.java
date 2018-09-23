@@ -53,6 +53,7 @@ public class DetailsObject {
         student.LastName = studentElement.getElementsByTagName("LastName").item(0).getTextContent();
         student.FirstNameLegal = studentElement.getElementsByTagName("FirstNameLegal").item(0).getTextContent();
         student.ForeNamesLegal = studentElement.getElementsByTagName("ForeNamesLegal").item(0).getTextContent();
+        student.LastNameLegal = studentElement.getElementsByTagName("LastNameLegal").item(0).getTextContent();
         student.Gender = studentElement.getElementsByTagName("Gender").item(0).getTextContent();
         student.Ethnicity = studentElement.getElementsByTagName("Ethnicity").item(0).getTextContent();
         student.DateBirth = studentElement.getElementsByTagName("DateBirth").item(0).getTextContent();
@@ -81,6 +82,7 @@ public class DetailsObject {
         student.DentistAddress = studentElement.getElementsByTagName("DentistAddress").item(0).getTextContent();
 
         student.AllowedPanadol = studentElement.getElementsByTagName("AllowedPanadol").item(0).getTextContent();
+        student.AllowedIbuprofen = studentElement.getElementsByTagName("AllowedIbuprofen").item(0).getTextContent();
         student.HealthFlag = studentElement.getElementsByTagName("HealthFlag").item(0).getTextContent();
         student.Medical = studentElement.getElementsByTagName("Medical").item(0).getTextContent();
         student.Reactions = studentElement.getElementsByTagName("Reactions").item(0).getTextContent();
@@ -104,6 +106,7 @@ public class DetailsObject {
         student.FatherRelation = studentElement.getElementsByTagName("FatherRelation").item(0).getTextContent();
         student.FatherName = studentElement.getElementsByTagName("FatherName").item(0).getTextContent();
         student.FatherStatus = studentElement.getElementsByTagName("FatherStatus").item(0).getTextContent();
+        student.FatherEmail = studentElement.getElementsByTagName("FatherEmail").item(0).getTextContent();
         student.FatherPhoneHome = studentElement.getElementsByTagName("FatherPhoneHome").item(0).getTextContent();
         student.FatherPhoneCell = studentElement.getElementsByTagName("FatherPhoneCell").item(0).getTextContent();
         student.FatherPhoneWork = studentElement.getElementsByTagName("FatherPhoneWork").item(0).getTextContent();

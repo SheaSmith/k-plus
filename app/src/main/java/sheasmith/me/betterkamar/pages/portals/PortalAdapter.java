@@ -1,9 +1,12 @@
 package sheasmith.me.betterkamar.pages.portals;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -11,8 +14,10 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import sheasmith.me.betterkamar.DataActivity;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
+import sheasmith.me.betterkamar.pages.editPortal.EditPortalActivity;
 
 /**
  * Created by TheDiamondPicks on 9/09/2018.
@@ -59,11 +64,11 @@ public class PortalAdapter extends RecyclerView.Adapter<PortalAdapter.PortalView
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(PortalViewHolder holder, int position) {
+    public void onBindViewHolder(PortalViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        PortalObject portal = mDataset.get(position);
+        final PortalObject portal = mDataset.get(position);
         String studentPathName = mContext.getFilesDir().toString() + "/" + portal.studentFile;
         String schoolPathName = mContext.getFilesDir().toString() + "/" + portal.schoolFile;
         holder.studentPhoto.setImageDrawable(Drawable.createFromPath(studentPathName));
@@ -71,6 +76,61 @@ public class PortalAdapter extends RecyclerView.Adapter<PortalAdapter.PortalView
 
         holder.schoolName.setText(portal.schoolName);
         holder.studentName.setText(portal.student);
+
+        holder.mView.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(mContext, EditPortalActivity.class);
+                i.putExtra("portal", portal);
+                i.putExtra("index", position);
+                ((Activity)mContext).startActivityForResult(i, 2);
+            }
+        });
+
+        holder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(mContext, DataActivity.class);
+                i.putExtra("portal", portal);
+                mContext.startActivity(i);
+            }
+        });
+
+        holder.schoolPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(mContext, DataActivity.class);
+                i.putExtra("portal", portal);
+                mContext.startActivity(i);
+            }
+        });
+
+        holder.schoolName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(mContext, DataActivity.class);
+                i.putExtra("portal", portal);
+                mContext.startActivity(i);
+            }
+        });
+
+        holder.studentName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(mContext, DataActivity.class);
+                i.putExtra("portal", portal);
+                mContext.startActivity(i);
+            }
+        });
+
+        holder.studentPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(mContext, DataActivity.class);
+                i.putExtra("portal", portal);
+                mContext.startActivity(i);
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)

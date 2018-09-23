@@ -1,5 +1,6 @@
 package sheasmith.me.betterkamar.pages.addPortal;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
@@ -11,9 +12,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
+
 import sheasmith.me.betterkamar.ApiManager;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
+import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
 
 public class AddPortalActivity extends AppCompatActivity {
@@ -33,47 +38,7 @@ public class AddPortalActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = urlText.getText().toString();
-                String username = usernameText.getText().toString();
-                String password = passwordText.getText().toString();
-
-                if (url.isEmpty()) {
-                    urlText.setError("Please enter a portal address");
-                    return;
-                }
-
-                if (username.isEmpty()) {
-                    usernameText.setError("Please enter a username");
-                    return;
-                }
-
-                if (password.isEmpty()) {
-                    passwordText.setError("Please enter a password");
-                    return;
-                }
-
-                if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                    urlText.setError("The address must either have http:// or https://");
-                    return;
-                }
-                PortalObject portal = new PortalObject();
-                portal.hostname = url;
-                portal.username = username;
-                portal.password = password;
-                ApiManager.setVariables(portal, new ApiResponse<PortalObject>() {
-                    @Override
-                    public void success(PortalObject value) {
-                        Intent result = new Intent();
-                        result.putExtra("portal", value);
-                        setResult(RESULT_OK, result);
-                        finish();
-                    }
-
-                    @Override
-                    public void error(Exception e) {
-                        e.printStackTrace();
-                    }
-                }, AddPortalActivity.this);
+                doRequest(usernameText, passwordText, urlText);
             }
         });
     }
@@ -91,7 +56,6 @@ public class AddPortalActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        setResult(RESULT_CANCELED);
         new AlertDialog.Builder(this)
                 .setTitle("Delete Unsaved Changes")
                 .setMessage("Are you sure you want to delete unsaved changes?")
@@ -102,6 +66,121 @@ public class AddPortalActivity extends AppCompatActivity {
                         finish();
                     }
                 }).create().show();
-        super.onBackPressed();
+    }
+
+    private void doRequest(final EditText usernameText, final EditText passwordText, final EditText hostnameText) {
+        String url = hostnameText.getText().toString();
+        String username = usernameText.getText().toString();
+        String password = passwordText.getText().toString();
+
+        if (url.isEmpty()) {
+            hostnameText.setError("Please enter a portal address");
+            return;
+        }
+
+        if (username.isEmpty()) {
+            usernameText.setError("Please enter a username");
+            return;
+        }
+
+        if (password.isEmpty()) {
+            passwordText.setError("Please enter a password");
+            return;
+        }
+
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            hostnameText.setError("The address must either have http:// or https://");
+            return;
+        }
+        PortalObject portal = new PortalObject();
+        portal.hostname = url;
+        portal.username = username;
+        portal.password = password;
+
+        final ProgressDialog dialog = new ProgressDialog(AddPortalActivity.this);
+        dialog.setTitle("Adding Portal");
+        dialog.setMessage("Validating portal...");
+        dialog.show();
+
+        ApiManager.setVariables(portal, new ApiResponse<PortalObject>() {
+            @Override
+            public void success(PortalObject value) {
+                Intent result = new Intent();
+                result.putExtra("portal", value);
+                setResult(RESULT_OK, result);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog.hide();
+                    }
+                });
+                finish();
+            }
+
+            @Override
+            public void error(Exception e) {
+                e.printStackTrace();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog.hide();
+                    }
+                });
+
+                if (e instanceof Exceptions.InvalidUsernamePassword) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            usernameText.setError("Either the username or password is incorrect. Please check and try again");
+                            passwordText.setError("Either the username or password is incorrect. Please check and try again");
+                        }
+                    });
+                }
+
+                else if (e instanceof NullPointerException) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hostnameText.setError("Incorrect prefix. Try using http or https instead.");
+                        }
+                    });
+                }
+
+                else if (e instanceof Exceptions.InvalidServer || e instanceof UnknownHostException) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hostnameText.setError("This website is not a valid KAMAR portal");
+                        }
+                    });
+                }
+                else if (e instanceof IOException) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new AlertDialog.Builder(AddPortalActivity.this)
+                                    .setTitle("No Internet")
+                                    .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
+                                    .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            doRequest(usernameText, passwordText, hostnameText);
+                                        }
+                                    })
+                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            finish();
+                                        }
+                                    })
+                                    .create()
+                                    .show();
+                        }
+                    });
+
+
+                }
+            }
+        }, AddPortalActivity.this);
     }
 }

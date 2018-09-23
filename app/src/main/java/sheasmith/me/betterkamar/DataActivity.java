@@ -9,15 +9,35 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-import sheasmith.me.betterkamar.internalModels.PortalObject;
+import sheasmith.me.betterkamar.pages.details.DetailsFragment;
+import sheasmith.me.betterkamar.pages.editPortal.EditPortalActivity;
+import sheasmith.me.betterkamar.pages.groups.GroupFragment;
 import sheasmith.me.betterkamar.pages.notices.NoticesFragment;
-import sheasmith.me.betterkamar.pages.results.NCEAFragment;
+import sheasmith.me.betterkamar.pages.results.AllResultsFragment;
+import sheasmith.me.betterkamar.pages.results.ResultsFragment;
 import sheasmith.me.betterkamar.pages.timetable.TimetableFragment;
 
 public class DataActivity extends AppCompatActivity {
 
     Integer lastFragment = null;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +55,8 @@ public class DataActivity extends AppCompatActivity {
             transaction.commit();
             lastFragment = R.id.nav_notices;
         }
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setContentView(R.layout.activity_data);
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
@@ -75,7 +97,11 @@ public class DataActivity extends AppCompatActivity {
             case R.id.nav_calender:
                 return TimetableFragment.newInstance();
             case R.id.nav_ncea:
-                return NCEAFragment.newInstance();
+                return ResultsFragment.newInstance();
+            case R.id.nav_groups:
+                return GroupFragment.newInstance();
+            case R.id.nav_details:
+                return DetailsFragment.newInstance();
             default:
                 return null;
         }

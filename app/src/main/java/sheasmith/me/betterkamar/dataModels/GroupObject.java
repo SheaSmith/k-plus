@@ -63,7 +63,10 @@ public class GroupObject {
                 group.index = groupElement.getAttribute("index");
                 group.Name = groupElement.getElementsByTagName("Name").item(0).getTextContent();
                 group.Teacher = groupElement.getElementsByTagName("Teacher").item(0).getTextContent();
-                group.Comment = groupElement.getElementsByTagName("Comment").item(0).getTextContent();
+                if (groupElement.getElementsByTagName("Comment").getLength() > 0)
+                    group.Comment = groupElement.getElementsByTagName("Comment").item(0).getTextContent();
+                else
+                    group.Comment = "";
 
                 year.Groups.add(group);
             }

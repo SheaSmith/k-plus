@@ -1,7 +1,6 @@
 package sheasmith.me.betterkamar.pages.notices;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +15,6 @@ import java.util.Set;
 
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.NoticesObject;
-import sheasmith.me.betterkamar.internalModels.PortalObject;
 
 /**
  * Created by TheDiamondPicks on 9/09/2018.
@@ -88,7 +86,7 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (viewType == TYPE_HEADER) {
             //inflate your layout and pass it to view holder
             LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.adapter_heading, parent, false);
+                    .inflate(R.layout.adapter_notice_heading, parent, false);
             HeadingViewHolder vh = new HeadingViewHolder(v);
             return vh;
         }
@@ -143,7 +141,7 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 });
             }
             else {
-                final NoticesObject.General notice = generalNotices.get(position - meetingNotices.size() - 1);
+                final NoticesObject.General notice = generalNotices.get(position - meetingNotices.size() - 2);
 
 //                if (!enabled.contains(notice.Level)) {
 //                    ((NoticeViewHolder) holder).mView.setVisibility(View.GONE);
@@ -203,11 +201,11 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return meetingNotices.size() + generalNotices.size() + 1;
+        return meetingNotices.size() + generalNotices.size() + 2;
     }
 
     private boolean isHeader(int position) {
-        return position == 0 || position == meetingNotices.size();
+        return position == 0 || position == meetingNotices.size() + 1;
     }
 
 }

@@ -59,7 +59,7 @@ public class ResultObject
                 Element resultElement = (Element) resultsNodes.item(j);
                 Result result = new Result();
                 result.index = resultElement.getAttribute("index");
-                result.Number = resultElement.getElementsByTagName("Result").item(0).getTextContent();
+                result.Number = resultElement.getElementsByTagName("Number").item(0).getTextContent();
                 result.Version = resultElement.getElementsByTagName("Version").item(0).getTextContent();
                 result.Grade = resultElement.getElementsByTagName("Grade").item(0).getTextContent();
                 result.Title = resultElement.getElementsByTagName("Title").item(0).getTextContent();

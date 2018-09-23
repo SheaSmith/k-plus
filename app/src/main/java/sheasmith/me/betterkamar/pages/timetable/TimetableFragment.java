@@ -1,9 +1,12 @@
 package sheasmith.me.betterkamar.pages.timetable;
 
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +19,7 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,8 +32,10 @@ import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.AttendanceObject;
 import sheasmith.me.betterkamar.dataModels.CalendarObject;
 import sheasmith.me.betterkamar.dataModels.GlobalObject;
+import sheasmith.me.betterkamar.dataModels.LoginObject;
 import sheasmith.me.betterkamar.dataModels.TimetableObject;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
+import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
 
 public class TimetableFragment extends Fragment {
@@ -46,6 +52,21 @@ public class TimetableFragment extends Fragment {
     private ArrayList<CalendarObject.Event> events;
     private ArrayList<TimetableObject.Week> timetable;
     private Date lastDate;
+    private PortalObject mPortal;
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(10);
+        getActivity().setTitle("Timetable");
+        if (mAdapter == null ||  mAdapter.getItemCount() == 0)
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    doRequest(mPortal);
+                }
+            }).start();
+    }
 
     public static TimetableFragment newInstance() {
         return new TimetableFragment();
@@ -74,8 +95,8 @@ public class TimetableFragment extends Fragment {
             lastDate = (Date) savedInstanceState.getSerializable("selectedDate");
         }
 
-        PortalObject portal = (PortalObject) getActivity().getIntent().getSerializableExtra("portal");
-        ApiManager.setVariables(portal, getContext());
+        mPortal = (PortalObject) getActivity().getIntent().getSerializableExtra("portal");
+        ApiManager.setVariables(mPortal, getContext());
     }
 
     @Nullable
@@ -130,19 +151,11 @@ public class TimetableFragment extends Fragment {
             updateList(lastDate);
         }
 
-        if (mAdapter == null ||  mAdapter.getItemCount() == 0)
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    doRequest();
-                }
-            }).start();
-
         return view;
     }
 
 
-    private void doRequest() {
+    private void doRequest(final PortalObject portal) {
         final boolean[] finished = new boolean[]{false, false, false, false};
 
         ApiManager.getGlobals(new ApiResponse<GlobalObject>() {
@@ -158,6 +171,7 @@ public class TimetableFragment extends Fragment {
                 e.printStackTrace();
                 finished[0] = true;
                 hideLoader(finished);
+                handleError(portal, e);
             }
 
         });
@@ -175,6 +189,7 @@ public class TimetableFragment extends Fragment {
                 e.printStackTrace();
                 finished[1] = true;
                 hideLoader(finished);
+                handleError(portal, e);
             }
         });
 
@@ -191,6 +206,7 @@ public class TimetableFragment extends Fragment {
                 e.printStackTrace();
                 finished[2] = true;
                 hideLoader(finished);
+                handleError(portal, e);
             }
         }, new Date(System.currentTimeMillis()).getYear());
 
@@ -207,8 +223,50 @@ public class TimetableFragment extends Fragment {
                 e.printStackTrace();
                 finished[3] = true;
                 hideLoader(finished);
+
+                handleError(portal, e);
             }
         });
+    }
+
+    private void handleError(final PortalObject portal, Exception e) {
+        if (e instanceof Exceptions.ExpiredToken) {
+            ApiManager.login(portal.username, portal.password, new ApiResponse<LoginObject>() {
+                @Override
+                public void success(LoginObject value) {
+                    doRequest(portal);
+                }
+
+                @Override
+                public void error(Exception e) {
+                    e.printStackTrace();
+                }
+            });
+            return;
+        } else if (e instanceof IOException) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("No Internet")
+                            .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
+                            .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    doRequest(portal);
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    getActivity().finish();
+                                }
+                            })
+                            .create()
+                            .show();
+                }
+            });
+        }
     }
 
     private void hideLoader(boolean[] finished) {
