@@ -38,7 +38,7 @@ public class AbsenceObject {
             }
         }
 
-        Element studentElement = (Element) ((Element) root.getElementsByTagName("Students").item(0)).getElementsByTagName("Student");
+        Element studentElement = (Element) root.getElementsByTagName("Students").item(0);
 
         StudentAbsenceStatsResults results = new StudentAbsenceStatsResults();
         results.AccessLevel = root.getElementsByTagName("AccessLevel").item(0).getTextContent();
@@ -59,6 +59,7 @@ public class AbsenceObject {
         student.PctgeO = studentElement.getElementsByTagName("PctgeO").item(0).getTextContent();
         student.PctgeT = studentElement.getElementsByTagName("PctgeT").item(0).getTextContent();
         student.PctgeP = studentElement.getElementsByTagName("PctgeP").item(0).getTextContent();
+        student.PctgeJ = studentElement.getElementsByTagName("PctgeJ").item(0).getTextContent();
 
         results.Student = student;
 

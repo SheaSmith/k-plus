@@ -10,6 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -32,6 +35,7 @@ import java.util.List;
 
 import sheasmith.me.betterkamar.ApiManager;
 import sheasmith.me.betterkamar.R;
+import sheasmith.me.betterkamar.dataModels.AbsenceObject;
 import sheasmith.me.betterkamar.dataModels.AttendanceObject;
 import sheasmith.me.betterkamar.dataModels.CalendarObject;
 import sheasmith.me.betterkamar.dataModels.EventsObject;
@@ -57,6 +61,7 @@ public class TimetableFragment extends Fragment {
     private ArrayList<EventsObject.Event> events;
     private ArrayList<TimetableObject.Week> timetable;
     private ArrayList<CalendarObject.Day> days;
+    private AbsenceObject absenceStats;
     private Date lastDate;
     private PortalObject mPortal;
 
@@ -72,6 +77,7 @@ public class TimetableFragment extends Fragment {
                     doRequest(mPortal);
                 }
             }).start();
+        getActivity().invalidateOptionsMenu();
     }
 
     public static TimetableFragment newInstance() {
@@ -105,6 +111,36 @@ public class TimetableFragment extends Fragment {
         ApiManager.setVariables(mPortal, getContext());
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == 1) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Attendance Statistics").setPositiveButton("close", null);
+            if (absenceStats == null) {
+                builder.setMessage("Please wait for the timetable to load");
+            }
+            else {
+                AbsenceObject.Student student = absenceStats.StudentAbsenceStatsResults.Student;
+                builder.setMessage(String.format("Unjustified: %s%%\nJustified: %s%%\nOverseas: %s%%\nTotal Absences: %s%%\nTotal Present: %s%%", student.PctgeU, student.PctgeJ, student.PctgeO, student.PctgeT, student.PctgeP));
+            }
+            builder.create().show();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+        menu.add(0, 1, 0, "Attendance Stats").setIcon(R.drawable.ic_chart).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -112,6 +148,7 @@ public class TimetableFragment extends Fragment {
         mLoader = view.findViewById(R.id.progressBar);
         noEvents = view.findViewById(R.id.noEvents);
         status = view.findViewById(R.id.schoolStatus);
+        setHasOptionsMenu(true);
 
         mRecyclerView = view.findViewById(R.id.events);
 
@@ -163,7 +200,7 @@ public class TimetableFragment extends Fragment {
 
 
     private void doRequest(final PortalObject portal) {
-        final boolean[] finished = new boolean[]{false, false, false, false, false};
+        final boolean[] finished = new boolean[]{false, false, false, false, false, false};
 
         ApiManager.getGlobals(new ApiResponse<GlobalObject>() {
             @Override
@@ -247,6 +284,24 @@ public class TimetableFragment extends Fragment {
             public void error(Exception e) {
                 e.printStackTrace();
                 finished[4] = true;
+                hideLoader(finished);
+
+                handleError(portal, e);
+            }
+        });
+
+        ApiManager.getAbsenceStats(new ApiResponse<AbsenceObject>() {
+            @Override
+            public void success(AbsenceObject value) {
+                absenceStats = value;
+                finished[5] = true;
+                hideLoader(finished);
+            }
+
+            @Override
+            public void error(Exception e) {
+                e.printStackTrace();
+                finished[5] = true;
                 hideLoader(finished);
 
                 handleError(portal, e);
