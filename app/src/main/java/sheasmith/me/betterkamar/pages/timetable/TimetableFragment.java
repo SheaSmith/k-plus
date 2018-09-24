@@ -19,6 +19,9 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
+import org.threeten.bp.Instant;
+import org.threeten.bp.ZoneId;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,6 +34,7 @@ import sheasmith.me.betterkamar.ApiManager;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.AttendanceObject;
 import sheasmith.me.betterkamar.dataModels.CalendarObject;
+import sheasmith.me.betterkamar.dataModels.EventsObject;
 import sheasmith.me.betterkamar.dataModels.GlobalObject;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
 import sheasmith.me.betterkamar.dataModels.TimetableObject;
@@ -45,12 +49,14 @@ public class TimetableFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private ProgressBar mLoader;
     private TextView noEvents;
+    private TextView status;
     private MaterialCalendarView mCalendarView;
 
     private ArrayList<GlobalObject.PeriodDefinition> periodDefinitions;
     private ArrayList<AttendanceObject.Week> attendanceResults;
-    private ArrayList<CalendarObject.Event> events;
+    private ArrayList<EventsObject.Event> events;
     private ArrayList<TimetableObject.Week> timetable;
+    private ArrayList<CalendarObject.Day> days;
     private Date lastDate;
     private PortalObject mPortal;
 
@@ -79,7 +85,7 @@ public class TimetableFragment extends Fragment {
         outState.putSerializable("attendanceResults", attendanceResults);
         outState.putSerializable("events", events);
         outState.putSerializable("timetable", timetable);
-        outState.putSerializable("selectedDate", mCalendarView.getSelectedDate().getDate());
+        outState.putSerializable("selectedDate", new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()));
     }
 
     @Override
@@ -89,7 +95,7 @@ public class TimetableFragment extends Fragment {
         if (savedInstanceState != null) {
             periodDefinitions = (ArrayList<GlobalObject.PeriodDefinition>) savedInstanceState.getSerializable("periodDefinitions");
             attendanceResults = (ArrayList<AttendanceObject.Week>) savedInstanceState.getSerializable("attendanceResults");
-            events = (ArrayList<CalendarObject.Event>) savedInstanceState.getSerializable("events");
+            events = (ArrayList<EventsObject.Event>) savedInstanceState.getSerializable("events");
             timetable = (ArrayList<TimetableObject.Week>) savedInstanceState.getSerializable("timetable");
 
             lastDate = (Date) savedInstanceState.getSerializable("selectedDate");
@@ -105,6 +111,7 @@ public class TimetableFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_timetable, container, false);
         mLoader = view.findViewById(R.id.progressBar);
         noEvents = view.findViewById(R.id.noEvents);
+        status = view.findViewById(R.id.schoolStatus);
 
         mRecyclerView = view.findViewById(R.id.events);
 
@@ -136,18 +143,18 @@ public class TimetableFragment extends Fragment {
 
         mCalendarView = view.findViewById(R.id.calendarView);
 //        mCalendarView.setCurrentDate(new Date(System.currentTimeMillis()));
-        mCalendarView.state().edit().setMaximumDate(max).setMinimumDate(min).commit();
+        mCalendarView.state().edit().setMaximumDate(Instant.ofEpochMilli(max.getTime()).atZone(ZoneId.systemDefault()).toLocalDate()).setMinimumDate(Instant.ofEpochMilli(min.getTime()).atZone(ZoneId.systemDefault()).toLocalDate()).commit();
 
         mCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay calDate, boolean selected) {
-                final Date date = calDate.getDate();
+                final Date date = new Date(calDate.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
                 updateList(date);
             }
         });
 
         if (lastDate != null) {
-            mCalendarView.setSelectedDate(lastDate);
+            mCalendarView.setSelectedDate(Instant.ofEpochMilli(lastDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate());
             updateList(lastDate);
         }
 
@@ -156,7 +163,7 @@ public class TimetableFragment extends Fragment {
 
 
     private void doRequest(final PortalObject portal) {
-        final boolean[] finished = new boolean[]{false, false, false, false};
+        final boolean[] finished = new boolean[]{false, false, false, false, false};
 
         ApiManager.getGlobals(new ApiResponse<GlobalObject>() {
             @Override
@@ -193,9 +200,9 @@ public class TimetableFragment extends Fragment {
             }
         });
 
-        ApiManager.getEvents(new ApiResponse<CalendarObject>() {
+        ApiManager.getEvents(new ApiResponse<EventsObject>() {
             @Override
-            public void success(CalendarObject value) {
+            public void success(EventsObject value) {
                 events = value.EventsResults.Events;
                 finished[2] = true;
                 hideLoader(finished);
@@ -222,6 +229,24 @@ public class TimetableFragment extends Fragment {
             public void error(Exception e) {
                 e.printStackTrace();
                 finished[3] = true;
+                hideLoader(finished);
+
+                handleError(portal, e);
+            }
+        });
+
+        ApiManager.getCalendar(new ApiResponse<CalendarObject>() {
+            @Override
+            public void success(CalendarObject value) {
+                days = value.CalendarResults.Days;
+                finished[4] = true;
+                hideLoader(finished);
+            }
+
+            @Override
+            public void error(Exception e) {
+                e.printStackTrace();
+                finished[4] = true;
                 hideLoader(finished);
 
                 handleError(portal, e);
@@ -278,7 +303,7 @@ public class TimetableFragment extends Fragment {
             @Override
             public void run() {
                 mLoader.setVisibility(View.GONE);
-                mCalendarView.setSelectedDate(new Date(System.currentTimeMillis()));
+                mCalendarView.setSelectedDate(Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.systemDefault()).toLocalDate());
                 updateList(new Date(System.currentTimeMillis()));
             }
         });
@@ -295,19 +320,40 @@ public class TimetableFragment extends Fragment {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
         int weekNumber = 0;
+        CalendarObject.Day thisDay = null;
         Calendar temp = Calendar.getInstance();
 
-        for (AttendanceObject.Week week : attendanceResults) {
+        for (CalendarObject.Day day : days) {
             try {
-                Date start = format.parse(week.WeekStart);
+                Date start = format.parse(day.Date);
                 temp.setTime(start);
-                if (monday.get(Calendar.DAY_OF_YEAR) == temp.get(Calendar.DAY_OF_YEAR)) {
-                    weekNumber = Integer.parseInt(week.index);
+                if (current.get(Calendar.DAY_OF_YEAR) == temp.get(Calendar.DAY_OF_YEAR) && !day.WeekYear.equals("")) {
+                    weekNumber = Integer.parseInt(day.WeekYear);
+                    thisDay = day;
+                    break;
+                }
+                else if (current.get(Calendar.DAY_OF_YEAR) == temp.get(Calendar.DAY_OF_YEAR)) {
+                    thisDay = day;
                     break;
                 }
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        if (thisDay != null) {
+            final CalendarObject.Day finalThisDay = thisDay;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (finalThisDay.Week.equals("") || finalThisDay.DayTT.equals("")) {
+                        status.setText(String.format("School Status: %s", finalThisDay.Status));
+                    }
+                    else {
+                        status.setText(String.format("School Status: %s. Term %s Week %s", finalThisDay.Status, finalThisDay.Term, finalThisDay.Week));
+                    }
+                }
+            });
         }
 
         if (weekNumber == 0) {
@@ -352,9 +398,9 @@ public class TimetableFragment extends Fragment {
             }
         }
 
-        final List<CalendarObject.Event> dayEvents = new ArrayList<>();
+        final List<EventsObject.Event> dayEvents = new ArrayList<>();
 
-        for (CalendarObject.Event event : events) {
+        for (EventsObject.Event event : events) {
             try {
                 Date start = format.parse(event.Start);
                 Date end = format.parse(event.Finish);

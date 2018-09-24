@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.securepreferences.SecurePreferences;
 
@@ -17,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import io.fabric.sdk.android.Fabric;
 import sheasmith.me.betterkamar.DataActivity;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.RecyclerItemClickListener;
@@ -71,6 +73,8 @@ public class PortalActivity extends AppCompatActivity {
                 startActivityForResult(i, 1);
             }
         });
+
+        Fabric.with(this, new Crashlytics());
 
     }
 

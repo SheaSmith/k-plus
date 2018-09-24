@@ -18,9 +18,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import sheasmith.me.betterkamar.R;
-import sheasmith.me.betterkamar.dataModels.CalendarObject;
+import sheasmith.me.betterkamar.dataModels.EventsObject;
 import sheasmith.me.betterkamar.dataModels.GlobalObject;
-import sheasmith.me.betterkamar.dataModels.NoticesObject;
 import sheasmith.me.betterkamar.dataModels.TimetableObject;
 
 /**
@@ -32,7 +31,7 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
-    public List<CalendarObject.Event> mEvents;
+    public List<EventsObject.Event> mEvents;
     public List<TimetableObject.Class> mClasses;
     public List<GlobalObject.PeriodDefinition> mPeriodDefinitions;
     private Context mContext;
@@ -56,7 +55,7 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    public TimetableAdapter(List<CalendarObject.Event> events, List<TimetableObject.Class> classes, List<GlobalObject.PeriodDefinition> periodDefinitions, Context context) {
+    public TimetableAdapter(List<EventsObject.Event> events, List<TimetableObject.Class> classes, List<GlobalObject.PeriodDefinition> periodDefinitions, Context context) {
         mEvents = events;
         mClasses = classes;
         mPeriodDefinitions = periodDefinitions;
@@ -78,7 +77,7 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         // - replace the contents of the view with that element
 
         if (position < mEvents.size()) {
-            final CalendarObject.Event event = mEvents.get(position);
+            final EventsObject.Event event = mEvents.get(position);
 
             DateFormat timeFormat = DateFormat.getTimeInstance();
             SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");

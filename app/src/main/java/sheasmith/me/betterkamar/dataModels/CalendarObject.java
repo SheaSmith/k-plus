@@ -16,22 +16,18 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 
-/**
- * Created by TheDiamondPicks on 6/09/2018.
- */
-
 public class CalendarObject
 {
-    public EventsResults EventsResults;
+    public CalendarResults CalendarResults;
 
-    public CalendarObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.ExpiredToken, Exceptions.UnknownServerError {
+    public CalendarObject(String xml) throws ParserConfigurationException, IOException, SAXException, Exceptions.ExpiredToken, Exceptions.UnknownServerError {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setIgnoringElementContentWhitespace(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 
-        Element root = (Element) doc.getElementsByTagName("EventsResults").item(0);
+        Element root = (Element) doc.getElementsByTagName("CalendarResults").item(0);
 
         if (root.getElementsByTagName("NumberRecords").getLength() == 0) {
             String error = root.getElementsByTagName("Error").item(0).getTextContent();
@@ -42,45 +38,37 @@ public class CalendarObject
             }
         }
 
-        NodeList events = root.getElementsByTagName("Events").item(0).getChildNodes();
-
-        EventsResults results = new EventsResults();
+        NodeList days = root.getElementsByTagName("Days").item(0).getChildNodes();
+        CalendarResults results = new CalendarResults();
         results.AccessLevel = root.getElementsByTagName("AccessLevel").item(0).getTextContent();
         results.ErrorCode = root.getElementsByTagName("ErrorCode").item(0).getTextContent();
         results.NumberRecords = root.getElementsByTagName("NumberRecords").item(0).getTextContent();
 
-        for (int i = 0; i != events.getLength(); i++) {
-            Element eventElement = (Element) events.item(i);
-            Event event = new Event();
-            event.index = eventElement.getAttribute("index");
-            event.Title = eventElement.getElementsByTagName("Title").item(0).getTextContent();
-            event.Location = eventElement.getElementsByTagName("Location").item(0).getTextContent();
-            event.Details = eventElement.getElementsByTagName("Details").item(0).getTextContent();
-            event.Priority = eventElement.getElementsByTagName("Priority").item(0).getTextContent();
-            event.Public = eventElement.getElementsByTagName("Public").item(0).getTextContent();
-            event.Student = eventElement.getElementsByTagName("Student").item(0).getTextContent();
-            event.CG1 = eventElement.getElementsByTagName("CG1").item(0).getTextContent();
-            event.CG2 = eventElement.getElementsByTagName("CG2").item(0).getTextContent();
-            event.Staff = eventElement.getElementsByTagName("Staff").item(0).getTextContent();
-            event.Colour = eventElement.getElementsByTagName("Colour").item(0).getTextContent();
-            event.ColourLabel = eventElement.getElementsByTagName("ColourLabel").item(0).getTextContent();
-            event.DateTimeInfo = eventElement.getElementsByTagName("DateTimeInfo").item(0).getTextContent();
-            event.DateTimeStart = eventElement.getElementsByTagName("DateTimeStart").item(0).getTextContent();
-            event.DateTimeFinish = eventElement.getElementsByTagName("DateTimeFinish").item(0).getTextContent();
-            event.Start = eventElement.getElementsByTagName("Start").item(0).getTextContent();
-            event.Finish = eventElement.getElementsByTagName("Finish").item(0).getTextContent();
+        for (int i = 0 ; i != days.getLength() ; i++) {
+            Element dayElement = (Element) days.item(i);
+            Day day = new Day();
+            day.index = dayElement.getAttribute("index");
+            day.Date = dayElement.getElementsByTagName("Date").item(0).getTextContent();
+            day.Status = dayElement.getElementsByTagName("Status").item(0).getTextContent();
+            day.DayTT = dayElement.getElementsByTagName("DayTT").item(0).getTextContent();
+            day.Term = dayElement.getElementsByTagName("Term").item(0).getTextContent();
+            day.TermA = dayElement.getElementsByTagName("TermA").item(0).getTextContent();
+            day.Week = dayElement.getElementsByTagName("Week").item(0).getTextContent();
+            day.WeekA = dayElement.getElementsByTagName("WeekA").item(0).getTextContent();
+            day.WeekYear = dayElement.getElementsByTagName("WeekYear").item(0).getTextContent();
 
-            results.Events.add(event);
+            results.Days.add(day);
         }
 
-        EventsResults = results;
+        CalendarResults = results;
+
     }
 
-    public class EventsResults
+    public class CalendarResults
     {
         public String AccessLevel;
 
-        public ArrayList<Event> Events = new ArrayList<>();
+        public ArrayList<Day> Days = new ArrayList<>();
 
         public String ErrorCode;
 
@@ -89,41 +77,24 @@ public class CalendarObject
         public String NumberRecords;
     }
 
-    public class Event
+    public class Day
     {
+        public String DayTT;
+
+        public String Status;
+
+        public String WeekA;
+
         public String index;
 
-        public String Staff;
+        public String Week;
 
-        public String Start;
+        public String Date;
 
-        public String Details;
+        public String WeekYear;
 
-        public String DateTimeStart;
+        public String Term;
 
-        public String Finish;
-
-        public String Location;
-
-        public String Title;
-
-        public String Priority;
-
-        public String Student;
-
-        public String CG1;
-
-        public String Colour;
-
-        public String ColourLabel;
-
-        public String CG2;
-
-        public String DateTimeFinish;
-
-        public String DateTimeInfo;
-
-        public String Public;
+        public String TermA;
     }
 }
-

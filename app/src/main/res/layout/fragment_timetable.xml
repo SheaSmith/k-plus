@@ -24,7 +24,18 @@
 
         </com.prolificinteractive.materialcalendarview.MaterialCalendarView>
 
-        <android.support.v7.widget.RecyclerView
+    <TextView
+        android:id="@+id/schoolStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="4dp"
+        android:text="School Status: Open. Term 2 Week 1."
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <android.support.v7.widget.RecyclerView
             android:id="@+id/events"
             android:layout_width="match_parent"
             android:layout_height="match_parent">

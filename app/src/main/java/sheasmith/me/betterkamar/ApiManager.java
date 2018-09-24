@@ -3,8 +3,6 @@ package sheasmith.me.betterkamar;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 
 import com.google.gson.reflect.TypeToken;
 import com.iainconnor.objectcache.DiskCache;
@@ -35,6 +33,7 @@ import okhttp3.Response;
 import sheasmith.me.betterkamar.dataModels.AbsenceObject;
 import sheasmith.me.betterkamar.dataModels.AttendanceObject;
 import sheasmith.me.betterkamar.dataModels.CalendarObject;
+import sheasmith.me.betterkamar.dataModels.EventsObject;
 import sheasmith.me.betterkamar.dataModels.DetailsObject;
 import sheasmith.me.betterkamar.dataModels.GlobalObject;
 import sheasmith.me.betterkamar.dataModels.GroupObject;
@@ -304,8 +303,8 @@ public class ApiManager {
         }
     }
 
-    public static void getEvents(final ApiResponse<CalendarObject> callback, final int year) {
-        CalendarObject cache = (CalendarObject) cacheManager.get("CalendarObject" + ID, CalendarObject.class, new TypeToken<CalendarObject>(){}.getType());
+    public static void getEvents(final ApiResponse<EventsObject> callback, final int year) {
+        EventsObject cache = (EventsObject) cacheManager.get("EventsObject" + ID, EventsObject.class, new TypeToken<EventsObject>(){}.getType());
         if (cache != null) {
             callback.success(cache);
             return;
@@ -344,9 +343,9 @@ public class ApiManager {
                         Response response = client.newCall(request).execute();
 
                         String xml = response.body().string();
-                        CalendarObject calendarObject = new CalendarObject(xml);
-                        callback.success(calendarObject);
-                        cacheManager.put("CalendarObject" + ID, calendarObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), false);
+                        EventsObject eventsObject = new EventsObject(xml);
+                        callback.success(eventsObject);
+                        cacheManager.put("EventsObject" + ID, eventsObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), false);
 
                     } catch (Exception e) {
                         callback.error(e);
@@ -437,6 +436,51 @@ public class ApiManager {
             });
             webThread.start();
         } else {
+            callback.error(new Exceptions.InvalidToken());
+        }
+    }
+
+    public static void getCalendar(final ApiResponse<CalendarObject> callback) {
+        CalendarObject cache = (CalendarObject) cacheManager.get("CalObject" + ID, AttendanceObject.class, new TypeToken<CalendarObject>(){}.getType());
+        if (cache != null) {
+            callback.success(cache);
+            return;
+        }
+
+        if (TOKEN != null) {
+            Thread webThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        OkHttpClient client = new OkHttpClient();
+
+                        SimpleDateFormat kamarDate = new SimpleDateFormat("yyyy");
+                        String date = kamarDate.format(new Date(System.currentTimeMillis())) + "TT";
+
+                        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+                        RequestBody body = RequestBody.create(mediaType, "Command=GetCalendar&Key=" + TOKEN + "&Year=" + date + "&StudentID=" + ID);
+                        Request request = new Request.Builder()
+                                .url(URL)
+                                .post(body)
+                                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                                .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .build();
+
+                        Response response = client.newCall(request).execute();
+
+                        String xml = response.body().string();
+                        CalendarObject calendarObject = new CalendarObject(xml);
+                        callback.success(calendarObject);
+                        cacheManager.put("CalObject" + ID, calendarObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), false);
+
+                    } catch (Exception e) {
+                        callback.error(e);
+                    }
+                }
+            });
+            webThread.start();
+        }
+        else {
             callback.error(new Exceptions.InvalidToken());
         }
     }
