@@ -42,7 +42,8 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public TextView title;
         public TextView details;
         public TextView periodName;
-        public LinearLayout item;
+        public TextView attendance;
+        public RelativeLayout item;
 
         public TimetableViewHolder(RelativeLayout v) {
             super(v);
@@ -51,6 +52,7 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             title = mView.findViewById(R.id.title);
             details = mView.findViewById(R.id.details);
             periodName = mView.findViewById(R.id.time);
+            attendance = mView.findViewById(R.id.attendance);
             item = mView.findViewById(R.id.item);
         }
     }
@@ -94,8 +96,7 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     throw new RuntimeException(e);
                 }
 
-            }
-            else if (!event.DateTimeStart.equals("")) {
+            } else if (!event.DateTimeStart.equals("")) {
                 try {
                     time = timeFormat.format(format.parse(event.DateTimeStart));
 
@@ -111,6 +112,9 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 ((TimetableViewHolder) holder).periodName.setText("Events");
             else
                 ((TimetableViewHolder) holder).periodName.setText("");
+
+            ((TimetableViewHolder) holder).attendance.setVisibility(View.GONE);
+
         } else {
             int pos = position - mEvents.size();
 
@@ -124,9 +128,36 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 TypedArray colors = mContext.getResources().obtainTypedArray(R.array.mdcolor_500);
                 int number = Math.abs(period.SubjectCode.hashCode()) % colors.length();
                 ((TimetableViewHolder) holder).item.getBackground().mutate().setColorFilter(colors.getColor(number, Color.BLACK), PorterDuff.Mode.SRC_ATOP);
+            } else {
+                ((TimetableViewHolder) holder).item.setVisibility(View.GONE);
+            }
+
+            if (period.attendance != '.') {
+                ((TimetableViewHolder) holder).attendance.setVisibility(View.VISIBLE);
+                switch (period.attendance) {
+                    case 'P':
+                        ((TimetableViewHolder) holder).attendance.setBackground(mContext.getResources().getDrawable(R.drawable.attendence_present));
+                        break;
+                    case 'U':
+                        ((TimetableViewHolder) holder).attendance.setBackground(mContext.getResources().getDrawable(R.drawable.attendence_unjustified));
+                        break;
+                    case 'L':
+                        ((TimetableViewHolder) holder).attendance.setBackground(mContext.getResources().getDrawable(R.drawable.attendence_late));
+                        break;
+                    case 'O':
+                        ((TimetableViewHolder) holder).attendance.setBackground(mContext.getResources().getDrawable(R.drawable.attendence_overseas));
+                        break;
+                    case 'J':
+                        ((TimetableViewHolder) holder).attendance.setBackground(mContext.getResources().getDrawable(R.drawable.attendence_justified));
+                        break;
+                    default:
+                        ((TimetableViewHolder) holder).attendance.setVisibility(View.GONE);
+                }
+
+                ((TimetableViewHolder) holder).attendance.setText(period.attendance + "");
             }
             else {
-                ((TimetableViewHolder) holder).item.setVisibility(View.GONE);
+                ((TimetableViewHolder) holder).attendance.setVisibility(View.GONE);
             }
         }
 

@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+import com.prolificinteractive.materialcalendarview.format.TitleFormatter;
 
 import org.threeten.bp.Instant;
 import org.threeten.bp.ZoneId;
@@ -378,12 +379,20 @@ public class TimetableFragment extends Fragment {
         CalendarObject.Day thisDay = null;
         Calendar temp = Calendar.getInstance();
 
+        AttendanceObject.Week attendanceWeek = null;
+
         for (CalendarObject.Day day : days) {
             try {
                 Date start = format.parse(day.Date);
                 temp.setTime(start);
                 if (current.get(Calendar.DAY_OF_YEAR) == temp.get(Calendar.DAY_OF_YEAR) && !day.WeekYear.equals("")) {
                     weekNumber = Integer.parseInt(day.WeekYear);
+                    for (AttendanceObject.Week aw : attendanceResults) {
+                        if (Integer.parseInt(aw.index) == weekNumber) {
+                            attendanceWeek = aw;
+                            break;
+                        }
+                    }
                     thisDay = day;
                     break;
                 }
@@ -401,12 +410,19 @@ public class TimetableFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (finalThisDay.Week.equals("") || finalThisDay.DayTT.equals("")) {
+//                    if (finalThisDay.Week.equals("") || finalThisDay.DayTT.equals("")) {
                         status.setText(String.format("School Status: %s", finalThisDay.Status));
-                    }
-                    else {
-                        status.setText(String.format("School Status: %s. Term %s Week %s", finalThisDay.Status, finalThisDay.Term, finalThisDay.Week));
-                    }
+//                    }
+//                    else {
+//                        status.setText(String.format("School Status: %s. Term %s Week %s", finalThisDay.Status, finalThisDay.Term, finalThisDay.Week));
+//                    }
+//                    mCalendarView.setTitleFormatter(new TitleFormatter() {
+//                        @Override
+//                        public CharSequence format(CalendarDay calendarDay) {
+//                            SimpleDateFormat form = new SimpleDateFormat("MMMM");
+//                            return form.format(new Date(calendarDay.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())) + "\nTerm " + finalThisDay.Term + " Week " + finalThisDay.Week;
+//                        }
+//                    });
                 }
             });
         }
@@ -431,6 +447,8 @@ public class TimetableFragment extends Fragment {
             });
         }
 
+        AttendanceObject.Day attendanceDay = null;
+
         weekLoop:
         for (TimetableObject.Week week : timetable) {
             if (week.WeekNumber == weekNumber) {
@@ -447,10 +465,25 @@ public class TimetableFragment extends Fragment {
 
                     if (cal.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)) {
                         periods = week.Classes.get(day);
+                        if (attendanceWeek != null) {
+                            for (AttendanceObject.Day ad : attendanceWeek.Days) {
+                                if (ad.index.equals(day.toString())) {
+                                    attendanceDay = ad;
+                                    break;
+                                }
+                            }
+                        }
                         break weekLoop;
                     }
                 }
             }
+        }
+
+        for (TimetableObject.Class c : periods) {
+            if (attendanceDay != null)
+                c.attendance = attendanceDay.content.charAt(periods.indexOf(c));
+            else
+                break;
         }
 
         final List<EventsObject.Event> dayEvents = new ArrayList<>();

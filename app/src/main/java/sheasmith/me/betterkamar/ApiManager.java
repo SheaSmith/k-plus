@@ -516,7 +516,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         AttendanceObject attendanceObject = new AttendanceObject(xml);
                         callback.success(attendanceObject);
-                        cacheManager.put("AttendanceObject" + ID, attendanceObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), false);
+                        cacheManager.put("AttendanceObject" + ID, attendanceObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_HOUR.asSeconds(), false);
 
                     } catch (Exception e) {
                         callback.error(e);

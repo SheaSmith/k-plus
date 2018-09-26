@@ -13,7 +13,7 @@
         android:gravity="center_vertical"
         android:text="Events" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,8 +21,20 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="92dp"
         android:background="@drawable/timetable_bg"
-        android:orientation="vertical"
         android:padding="8dp">
+
+        <TextView
+            android:id="@+id/attendance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/attendence_justified"
+            android:gravity="center"
+            android:text="P"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/title"
@@ -30,6 +42,7 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:singleLine="true"
+            android:layout_toLeftOf="@+id/attendance"
             android:text="Class"
             android:textColor="@color/white" />
 
@@ -37,9 +50,14 @@
             android:id="@+id/details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/title"
             android:maxLines="1"
+            android:layout_toLeftOf="@+id/attendance"
             android:singleLine="true"
             android:text="8:55 • PR • F8"
             android:textColor="@color/white" />
-    </LinearLayout>
+
+    </RelativeLayout>
+
 </RelativeLayout>

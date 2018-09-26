@@ -145,6 +145,8 @@ public class TimetableObject {
         public String SubjectCode = "";
         public String Teacher = "";
         public String Room = "";
+
+        public char attendance = '.';
     }
 
 
