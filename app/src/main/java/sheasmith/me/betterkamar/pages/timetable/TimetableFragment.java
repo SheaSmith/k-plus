@@ -416,13 +416,14 @@ public class TimetableFragment extends Fragment {
 //                    else {
 //                        status.setText(String.format("School Status: %s. Term %s Week %s", finalThisDay.Status, finalThisDay.Term, finalThisDay.Week));
 //                    }
-//                    mCalendarView.setTitleFormatter(new TitleFormatter() {
-//                        @Override
-//                        public CharSequence format(CalendarDay calendarDay) {
-//                            SimpleDateFormat form = new SimpleDateFormat("MMMM");
-//                            return form.format(new Date(calendarDay.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())) + "\nTerm " + finalThisDay.Term + " Week " + finalThisDay.Week;
-//                        }
-//                    });
+                    mCalendarView.setTitleFormatter(new TitleFormatter() {
+                        @Override
+                        public CharSequence format(CalendarDay calendarDay) {
+                            SimpleDateFormat form = new SimpleDateFormat("MMMM");
+                            return form.format(new Date(calendarDay.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())) + "\nTerm " + finalThisDay.Term + " Week " + finalThisDay.Week;
+                        }
+                    });
+                    mCalendarView.invalidate();
                 }
             });
         }
@@ -480,8 +481,14 @@ public class TimetableFragment extends Fragment {
         }
 
         for (TimetableObject.Class c : periods) {
-            if (attendanceDay != null)
-                c.attendance = attendanceDay.content.charAt(periods.indexOf(c));
+            if (attendanceDay != null) {
+                try {
+                    c.attendance = attendanceDay.content.charAt(periods.indexOf(c));
+                }
+                catch (IndexOutOfBoundsException e) {
+                    c.attendance = '.';
+                }
+            }
             else
                 break;
         }
