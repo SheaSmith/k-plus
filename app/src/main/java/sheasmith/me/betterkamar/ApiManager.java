@@ -686,7 +686,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         TimetableObject timetableObject = new TimetableObject(xml);
                         callback.success(timetableObject);
-                        cacheManager.put("TimetableObject" + ID, timetableObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), true);
+                        cacheManager.put("TimetableObject" + ID, timetableObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), false);
 
                     } catch (Exception e) {
                         callback.error(e);
@@ -727,7 +727,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         GroupObject groupObject = new GroupObject(xml);
                         callback.success(groupObject);
-                        cacheManager.put("GroupObject" + ID, groupObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_DAY.asSeconds(), true);
+                        cacheManager.put("GroupObject" + ID, groupObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_DAY.asSeconds(), false);
 
                     } catch (Exception e) {
                         callback.error(e);
@@ -768,7 +768,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         DetailsObject detailsObject = new DetailsObject(xml);
                         callback.success(detailsObject);
-                        cacheManager.put("DetailsObject" + ID, detailsObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), true);
+                        cacheManager.put("DetailsObject" + ID, detailsObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), false);
 
                     } catch (Exception e) {
                         callback.error(e);
@@ -869,7 +869,7 @@ public class ApiManager {
                     }
 
                     callback.success(reports);
-                    cacheManager.put("ReportsObject" + ID, reports, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), true);
+                    cacheManager.put("ReportsObject" + ID, reports, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), false);
                 } catch (Exception e) {
                     callback.error(e);
                 }
@@ -928,7 +928,7 @@ public class ApiManager {
                     }
 
                     callback.success(groupsList);
-                    cacheManager.put("GroupsObjectHTML" + ID, groupsList, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), true);
+                    cacheManager.put("GroupsObjectHTML" + ID, groupsList, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), false);
                 } catch (Exception e) {
                     callback.error(e);
                 }
