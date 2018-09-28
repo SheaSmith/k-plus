@@ -96,6 +96,8 @@ public class GroupFragment extends Fragment {
         ApiManager.getGroupsApi(new ApiResponse<GroupObject>() {
             @Override
             public void success(final GroupObject value) {
+                if (getActivity() == null)
+                    return;
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

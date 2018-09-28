@@ -296,6 +296,8 @@ public class NCEAFragment extends Fragment {
                     });
                     return;
                 } else if (e instanceof IOException) {
+                    if (getActivity() == null)
+                        return;
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

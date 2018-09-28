@@ -93,6 +93,7 @@ public class TimetableFragment extends Fragment {
         outState.putSerializable("events", events);
         outState.putSerializable("timetable", timetable);
         outState.putSerializable("selectedDate", new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+        outState.putSerializable("days", days);
     }
 
     @Override
@@ -104,6 +105,7 @@ public class TimetableFragment extends Fragment {
             attendanceResults = (ArrayList<AttendanceObject.Week>) savedInstanceState.getSerializable("attendanceResults");
             events = (ArrayList<EventsObject.Event>) savedInstanceState.getSerializable("events");
             timetable = (ArrayList<TimetableObject.Week>) savedInstanceState.getSerializable("timetable");
+            days = (ArrayList<CalendarObject.Day>) savedInstanceState.getSerializable("days");
 
             lastDate = (Date) savedInstanceState.getSerializable("selectedDate");
         }
@@ -206,6 +208,8 @@ public class TimetableFragment extends Fragment {
         ApiManager.getGlobals(new ApiResponse<GlobalObject>() {
             @Override
             public void success(GlobalObject value) {
+                if (getActivity() == null)
+                    return;
                 periodDefinitions = value.GlobalsResults.PeriodDefinitions;
                 finished[0] = true;
                 hideLoader(finished);
@@ -215,7 +219,6 @@ public class TimetableFragment extends Fragment {
             public void error(Exception e) {
                 e.printStackTrace();
                 finished[0] = true;
-                hideLoader(finished);
                 handleError(portal, e);
             }
 
@@ -224,6 +227,8 @@ public class TimetableFragment extends Fragment {
         ApiManager.getAttendance(new ApiResponse<AttendanceObject>() {
             @Override
             public void success(AttendanceObject value) {
+                if (getActivity() == null)
+                    return;
                 attendanceResults = value.StudentAttendanceResults.Weeks;
                 finished[1] = true;
                 hideLoader(finished);
@@ -233,7 +238,6 @@ public class TimetableFragment extends Fragment {
             public void error(Exception e) {
                 e.printStackTrace();
                 finished[1] = true;
-                hideLoader(finished);
                 handleError(portal, e);
             }
         });
@@ -241,6 +245,8 @@ public class TimetableFragment extends Fragment {
         ApiManager.getEvents(new ApiResponse<EventsObject>() {
             @Override
             public void success(EventsObject value) {
+                if (getActivity() == null)
+                    return;
                 events = value.EventsResults.Events;
                 finished[2] = true;
                 hideLoader(finished);
@@ -250,7 +256,6 @@ public class TimetableFragment extends Fragment {
             public void error(Exception e) {
                 e.printStackTrace();
                 finished[2] = true;
-                hideLoader(finished);
                 handleError(portal, e);
             }
         }, new Date(System.currentTimeMillis()).getYear());
@@ -258,6 +263,8 @@ public class TimetableFragment extends Fragment {
         ApiManager.getTimetable(new ApiResponse<TimetableObject>() {
             @Override
             public void success(TimetableObject value) {
+                if (getActivity() == null)
+                    return;
                 timetable = value.StudentTimetableResults.Student.Timetable;
                 finished[3] = true;
                 hideLoader(finished);
@@ -267,7 +274,6 @@ public class TimetableFragment extends Fragment {
             public void error(Exception e) {
                 e.printStackTrace();
                 finished[3] = true;
-                hideLoader(finished);
 
                 handleError(portal, e);
             }
@@ -276,6 +282,8 @@ public class TimetableFragment extends Fragment {
         ApiManager.getCalendar(new ApiResponse<CalendarObject>() {
             @Override
             public void success(CalendarObject value) {
+                if (getActivity() == null)
+                    return;
                 days = value.CalendarResults.Days;
                 finished[4] = true;
                 hideLoader(finished);
@@ -285,7 +293,6 @@ public class TimetableFragment extends Fragment {
             public void error(Exception e) {
                 e.printStackTrace();
                 finished[4] = true;
-                hideLoader(finished);
 
                 handleError(portal, e);
             }
@@ -294,6 +301,8 @@ public class TimetableFragment extends Fragment {
         ApiManager.getAbsenceStats(new ApiResponse<AbsenceObject>() {
             @Override
             public void success(AbsenceObject value) {
+                if (getActivity() == null)
+                    return;
                 absenceStats = value;
                 finished[5] = true;
                 hideLoader(finished);
@@ -303,7 +312,6 @@ public class TimetableFragment extends Fragment {
             public void error(Exception e) {
                 e.printStackTrace();
                 finished[5] = true;
-                hideLoader(finished);
 
                 handleError(portal, e);
             }
@@ -325,6 +333,8 @@ public class TimetableFragment extends Fragment {
             });
             return;
         } else if (e instanceof IOException) {
+            if (getActivity() == null)
+                return;
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -416,13 +426,13 @@ public class TimetableFragment extends Fragment {
 //                    else {
 //                        status.setText(String.format("School Status: %s. Term %s Week %s", finalThisDay.Status, finalThisDay.Term, finalThisDay.Week));
 //                    }
-                    mCalendarView.setTitleFormatter(new TitleFormatter() {
-                        @Override
-                        public CharSequence format(CalendarDay calendarDay) {
-                            SimpleDateFormat form = new SimpleDateFormat("MMMM");
-                            return form.format(new Date(calendarDay.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())) + "\nTerm " + finalThisDay.Term + " Week " + finalThisDay.Week;
-                        }
-                    });
+//                    mCalendarView.setTitleFormatter(new TitleFormatter() {
+//                        @Override
+//                        public CharSequence format(CalendarDay calendarDay) {
+//                            SimpleDateFormat form = new SimpleDateFormat("MMMM");
+//                            return form.format(new Date(calendarDay.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())) + "\nTerm " + finalThisDay.Term + " Week " + finalThisDay.Week;
+//                        }
+//                    });
                     mCalendarView.invalidate();
                 }
             });

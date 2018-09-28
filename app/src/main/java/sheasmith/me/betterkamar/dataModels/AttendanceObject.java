@@ -7,6 +7,7 @@ import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 
-public class AttendanceObject
+public class AttendanceObject implements Serializable
 {
     public StudentAttendanceResults StudentAttendanceResults;
 
@@ -67,7 +68,7 @@ public class AttendanceObject
         StudentAttendanceResults = results;
     }
 
-    public class StudentAttendanceResults
+    public class StudentAttendanceResults implements Serializable
     {
         public String AccessLevel;
 
@@ -81,20 +82,20 @@ public class AttendanceObject
     }
 
 
-    public class Day
+    public class Day implements Serializable
     {
         public String content;
 
         public String index;
     }
 
-    public class Week
+    public class Week implements Serializable
     {
         public String index;
 
         public String WeekStart;
 
-        public List<Day> Days = new ArrayList<>();
+        public ArrayList<Day> Days = new ArrayList<>();
     }
 
 

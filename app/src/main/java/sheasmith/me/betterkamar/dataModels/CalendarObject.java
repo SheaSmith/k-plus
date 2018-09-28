@@ -7,6 +7,7 @@ import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 
-public class CalendarObject
+public class CalendarObject implements Serializable
 {
     public CalendarResults CalendarResults;
 
@@ -64,7 +65,7 @@ public class CalendarObject
 
     }
 
-    public class CalendarResults
+    public class CalendarResults implements Serializable
     {
         public String AccessLevel;
 
@@ -77,7 +78,7 @@ public class CalendarObject
         public String NumberRecords;
     }
 
-    public class Day
+    public class Day implements Serializable
     {
         public String DayTT;
 

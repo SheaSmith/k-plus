@@ -7,6 +7,7 @@ import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 
-public class NZQAObject
+public class NZQAObject implements Serializable
 {
     public StudentOfficialResultsResults StudentOfficialResultsResults;
 
@@ -74,13 +75,13 @@ public class NZQAObject
         StudentOfficialResultsResults = results;
     }
 
-    public class StudentOfficialResultsResults
+    public class StudentOfficialResultsResults implements Serializable
     {
         public String AccessLevel;
 
         public String NumberTypes;
 
-        public List<Type> Types = new ArrayList<>();
+        public ArrayList<Type> Types = new ArrayList<>();
 
         public String ErrorCode;
 
@@ -89,7 +90,7 @@ public class NZQAObject
         public String NumberRecords;
     }
 
-    public class Qualification
+    public class Qualification implements Serializable
     {
         public String Year;
 
@@ -104,7 +105,7 @@ public class NZQAObject
         public String Title;
     }
 
-    public class Type
+    public class Type implements Serializable
     {
         public String index;
 
@@ -112,6 +113,6 @@ public class NZQAObject
 
         public String NumberQuals;
 
-        public List<Qualification> Qualifications = new ArrayList<>();
+        public ArrayList<Qualification> Qualifications = new ArrayList<>();
     }
 }

@@ -7,6 +7,7 @@ import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +23,7 @@ import sheasmith.me.betterkamar.internalModels.Exceptions;
  * Created by TheDiamondPicks on 8/09/2018.
  */
 
-public class TimetableObject {
+public class TimetableObject implements Serializable {
     public StudentTimetableResults StudentTimetableResults;
 
     public TimetableObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.ExpiredToken, Exceptions.UnknownServerError {
@@ -105,7 +106,7 @@ public class TimetableObject {
         StudentTimetableResults = results;
     }
 
-    public class StudentTimetableResults {
+    public class StudentTimetableResults implements Serializable {
         public String AccessLevel;
 
         public String TTGrid;
@@ -119,7 +120,7 @@ public class TimetableObject {
         public String NumberRecords;
     }
 
-    public class Student {
+    public class Student implements Serializable {
         public String index;
 
         public String IDNumber;
@@ -131,13 +132,13 @@ public class TimetableObject {
         public String Level;
     }
 
-    public class Week {
+    public class Week implements Serializable {
         public HashMap<Integer, List<Class>> Classes = new HashMap<>();
         public int WeekNumber;
         public int Term;
     }
 
-    public class Class {
+    public class Class implements Serializable {
         // No idea what this is. Appears to either be C or O
         public String GridType = "";
         // 'Unique' subject identifier.

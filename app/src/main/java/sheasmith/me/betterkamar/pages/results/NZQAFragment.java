@@ -82,6 +82,8 @@ public class NZQAFragment extends Fragment {
         ApiManager.getNZQAResults(new ApiResponse<NZQAObject>() {
             @Override
             public void success(final NZQAObject value) {
+                if (getActivity() == null)
+                    return;
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

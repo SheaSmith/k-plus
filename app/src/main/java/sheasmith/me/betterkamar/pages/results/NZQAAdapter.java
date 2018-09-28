@@ -10,9 +10,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.util.List;
 import java.util.Set;
 
+import io.fabric.sdk.android.Fabric;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.NZQAObject;
 import sheasmith.me.betterkamar.dataModels.NoticesObject;
@@ -96,29 +99,40 @@ public class NZQAAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         if (holder instanceof QualificationViewHolder) {
             NZQAObject.Qualification qualification;
-            if (position <= codeQ.size())
-                qualification = codeQ.get(position - 1);
-            else if (position <= codeO.size() + 3)
-                qualification = codeO.get(position - codeQ.size() - 2);
-            else
-                qualification = codeC.get(position - codeQ.size() - codeO.size() - 3);
+            try {
+                if (position <= codeQ.size())
+                    qualification = codeQ.get(position - 1);
+                else if (position <= codeO.size() + 3)
+                    qualification = codeO.get(position - codeQ.size() - 2);
+                else
+                    qualification = codeC.get(position - codeQ.size() - codeO.size() - 3);
 
-            ((QualificationViewHolder) holder).title.setText(qualification.Title);
-            ((QualificationViewHolder) holder).year.setText(qualification.Year);
+                ((QualificationViewHolder) holder).title.setText(qualification.Title);
+                ((QualificationViewHolder) holder).year.setText(qualification.Year);
 
-            if (qualification.Level.equals(""))
-                ((QualificationViewHolder) holder).level.setVisibility(GONE);
-            else {
-                ((QualificationViewHolder) holder).level.setVisibility(View.VISIBLE);
-                ((QualificationViewHolder) holder).level.setText(String.format("Level %s", qualification.Level));
+                if (qualification.Level.equals(""))
+                    ((QualificationViewHolder) holder).level.setVisibility(GONE);
+                else {
+                    ((QualificationViewHolder) holder).level.setVisibility(View.VISIBLE);
+                    ((QualificationViewHolder) holder).level.setText(String.format("Level %s", qualification.Level));
+                }
+
+                if (qualification.Endorse.equals(""))
+                    ((QualificationViewHolder) holder).endorsement.setVisibility(GONE);
+                else {
+                    ((QualificationViewHolder) holder).endorsement.setVisibility(View.VISIBLE);
+                    ((QualificationViewHolder) holder).endorsement.setText(String.format("Endorsed with %s", qualification.Endorse));
+                }
+            }
+            catch (IndexOutOfBoundsException e) {
+                Crashlytics.logException(e);
+                Crashlytics.setInt("q", codeQ.size());
+                Crashlytics.setInt("o", codeO.size());
+                Crashlytics.setInt("c", codeC.size());
+                Crashlytics.setInt("pos", position);
             }
 
-            if (qualification.Endorse.equals(""))
-                ((QualificationViewHolder) holder).endorsement.setVisibility(GONE);
-            else {
-                ((QualificationViewHolder) holder).endorsement.setVisibility(View.VISIBLE);
-                ((QualificationViewHolder) holder).endorsement.setText(String.format("Endorsed with %s", qualification.Endorse));
-            }
+
         }
         else if (holder instanceof HeadingViewHolder) {
             if (position == 0) {

@@ -7,6 +7,7 @@ import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import sheasmith.me.betterkamar.internalModels.Exceptions;
  * Created by TheDiamondPicks on 8/09/2018.
  */
 
-public class GroupObject {
+public class GroupObject implements Serializable {
     public StudentGroupsResults StudentGroupsResults;
 
     public GroupObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.ExpiredToken, Exceptions.UnknownServerError {
@@ -77,12 +78,12 @@ public class GroupObject {
         StudentGroupsResults = results;
     }
 
-    public class StudentGroupsResults {
+    public class StudentGroupsResults implements Serializable {
         public String AccessLevel;
 
         public String NumberYears;
 
-        public List<Year> Years = new ArrayList<>();
+        public ArrayList<Year> Years = new ArrayList<>();
 
         public String ErrorCode;
 
@@ -91,7 +92,7 @@ public class GroupObject {
         public String NumberRecords;
     }
 
-    public class Group {
+    public class Group implements Serializable {
         public String Name;
 
         public String index;
@@ -101,8 +102,8 @@ public class GroupObject {
         public String Comment;
     }
 
-    public class Year {
-        public List<Group> Groups = new ArrayList<>();
+    public class Year implements Serializable {
+        public ArrayList<Group> Groups = new ArrayList<>();
 
         public String index;
 

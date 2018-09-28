@@ -7,6 +7,7 @@ import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import sheasmith.me.betterkamar.internalModels.Exceptions;
  * Created by TheDiamondPicks on 6/09/2018.
  */
 
-public class GlobalObject
+public class GlobalObject implements Serializable
 {
     public GlobalsResults GlobalsResults;
 
@@ -63,7 +64,7 @@ public class GlobalObject
         GlobalsResults = results;
     }
 
-    public class GlobalsResults
+    public class GlobalsResults implements Serializable
     {
         public String AccessLevel;
 
@@ -76,7 +77,7 @@ public class GlobalObject
         public String NumberRecords;
     }
 
-    public class PeriodDefinition
+    public class PeriodDefinition implements Serializable
     {
         public String index;
 

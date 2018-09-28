@@ -136,6 +136,8 @@ public class NoticesFragment extends Fragment {
             ApiManager.getNotices(new ApiResponse<NoticesObject>() {
                 @Override
                 public void success(final NoticesObject value) {
+                    if (getActivity() == null)
+                        return;
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

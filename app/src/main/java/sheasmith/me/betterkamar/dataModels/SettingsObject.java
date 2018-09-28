@@ -7,6 +7,7 @@ import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import sheasmith.me.betterkamar.internalModels.Exceptions;
  * Created by TheDiamondPicks on 6/09/2018.
  */
 
-public class SettingsObject
+public class SettingsObject implements Serializable
 {
     public SettingsResults SettingsResults;
 
@@ -69,7 +70,7 @@ public class SettingsObject
         SettingsResults = results;
     }
 
-    public class SettingsResults
+    public class SettingsResults implements Serializable
     {
         public String AccessLevel;
 
@@ -101,12 +102,12 @@ public class SettingsObject
 
         public UserAccess UserAccess;
     }
-    public class UserAccess
+    public class UserAccess implements Serializable
     {
-        public List<User> User = new ArrayList<>();
+        public ArrayList<User> User = new ArrayList<>();
         public CalendarSettings CalendarSettings;
     }
-    public class CalendarSettings
+    public class CalendarSettings implements Serializable
     {
         public String orange;
 
@@ -132,7 +133,7 @@ public class SettingsObject
 
         public String amazon;
     }
-    public class User
+    public class User implements Serializable
     {
         public String index;
 

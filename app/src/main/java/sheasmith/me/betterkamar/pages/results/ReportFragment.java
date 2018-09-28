@@ -90,6 +90,8 @@ public class ReportFragment extends Fragment {
         ApiManager.getReports(new ApiResponse<List<ReportsObject>>() {
             @Override
             public void success(final List<ReportsObject> value) {
+                if (getActivity() == null)
+                    return;
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

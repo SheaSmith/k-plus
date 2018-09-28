@@ -6,6 +6,7 @@ import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,7 +18,7 @@ import sheasmith.me.betterkamar.internalModels.Exceptions;
  * Created by TheDiamondPicks on 6/09/2018.
  */
 
-public class LoginObject
+public class LoginObject implements Serializable
 {
     public LogonResults LogonResults;
 
@@ -53,7 +54,7 @@ public class LoginObject
 
     }
 
-    public class LogonResults
+    public class LogonResults implements Serializable
     {
         public String AccessLevel;
 

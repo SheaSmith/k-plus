@@ -7,6 +7,7 @@ import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 
-public class NCEAObject
+public class NCEAObject implements Serializable
 {
     public StudentNCEASummaryResults StudentNCEASummaryResults;
 
@@ -170,7 +171,7 @@ public class NCEAObject
         StudentNCEASummaryResults = results;
     }
 
-    public class StudentNCEASummaryResults
+    public class StudentNCEASummaryResults implements Serializable
     {
         public String AccessLevel;
 
@@ -183,24 +184,24 @@ public class NCEAObject
         public String NumberRecords;
     }
 
-    public class Student
+    public class Student implements Serializable
     {
         public String index;
 
         public CreditsExternal CreditsExternal;
 
-        public List<YearTotal> YearTotals = new ArrayList<>();
+        public ArrayList<YearTotal> YearTotals = new ArrayList<>();
 
         public NCEA NCEA;
 
-        public List<LevelTotal> LevelTotals = new ArrayList<>();
+        public ArrayList<LevelTotal> LevelTotals = new ArrayList<>();
 
         public CreditsTotal CreditsTotal;
 
         public CreditsInternal CreditsInternal;
     }
 
-    public class CreditsInternal
+    public class CreditsInternal implements Serializable
     {
         public String Achieved = "0";
 

@@ -6,6 +6,7 @@ import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,7 +18,7 @@ import sheasmith.me.betterkamar.internalModels.Exceptions;
  * Created by TheDiamondPicks on 6/09/2018.
  */
 
-public class AbsenceObject {
+public class AbsenceObject implements Serializable {
     public StudentAbsenceStatsResults StudentAbsenceStatsResults;
 
     public AbsenceObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.ExpiredToken, Exceptions.UnknownServerError {
@@ -66,7 +67,7 @@ public class AbsenceObject {
         StudentAbsenceStatsResults = results;
     }
 
-    public class StudentAbsenceStatsResults {
+    public class StudentAbsenceStatsResults implements Serializable {
         public String AccessLevel;
 
         public String ErrorCode;
@@ -78,7 +79,7 @@ public class AbsenceObject {
         public String NumberRecords;
     }
 
-    public class Student {
+    public class Student implements Serializable {
         public String FullDaysO;
 
         public String index;

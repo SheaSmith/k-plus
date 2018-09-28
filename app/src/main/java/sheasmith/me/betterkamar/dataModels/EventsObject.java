@@ -7,6 +7,7 @@ import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import sheasmith.me.betterkamar.internalModels.Exceptions;
  * Created by TheDiamondPicks on 6/09/2018.
  */
 
-public class EventsObject
+public class EventsObject implements Serializable
 {
     public EventsResults EventsResults;
 
@@ -76,7 +77,7 @@ public class EventsObject
         EventsResults = results;
     }
 
-    public class EventsResults
+    public class EventsResults implements Serializable
     {
         public String AccessLevel;
 
@@ -89,7 +90,7 @@ public class EventsObject
         public String NumberRecords;
     }
 
-    public class Event
+    public class Event implements Serializable
     {
         public String index;
 

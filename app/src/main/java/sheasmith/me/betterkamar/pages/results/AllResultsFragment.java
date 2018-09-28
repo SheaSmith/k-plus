@@ -85,6 +85,8 @@ public class AllResultsFragment extends Fragment {
         ApiManager.getAllResults(new ApiResponse<ResultObject>() {
             @Override
             public void success(ResultObject value) {
+                if (getActivity() == null)
+                    return;
                 final List<ResultsViewModel> results = ResultsViewModel.generate(value);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override

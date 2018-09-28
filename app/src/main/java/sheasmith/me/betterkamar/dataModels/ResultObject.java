@@ -7,6 +7,7 @@ import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 
-public class ResultObject
+public class ResultObject implements Serializable
 {
     public StudentResultsResults StudentResultsResults;
 
@@ -77,7 +78,7 @@ public class ResultObject
         StudentResultsResults = results;
     }
 
-    public class StudentResultsResults
+    public class StudentResultsResults implements Serializable
     {
         public String AccessLevel;
 
@@ -85,7 +86,7 @@ public class ResultObject
 
         public String ErrorCode;
 
-        public List<ResultLevel> ResultLevels = new ArrayList<>();
+        public ArrayList<ResultLevel> ResultLevels = new ArrayList<>();
 
         public String apiversion;
 
@@ -93,7 +94,7 @@ public class ResultObject
 
         public String StudentID;
     }
-    public class Result
+    public class Result implements Serializable
     {
         public String SubField;
 
@@ -114,7 +115,7 @@ public class ResultObject
         public String Title;
     }
 
-    public class ResultLevel
+    public class ResultLevel implements Serializable
     {
         public String NCEALevel;
 
@@ -122,7 +123,7 @@ public class ResultObject
 
         public String NumberResults;
 
-        public List<Result> Results = new ArrayList<>();
+        public ArrayList<Result> Results = new ArrayList<>();
     }
 
 
