@@ -15,10 +15,14 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import sheasmith.me.betterkamar.ApiManager;
+import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.DetailsObject;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
@@ -33,6 +37,7 @@ public class CaregiverDetailsFragment extends Fragment {
     private View mView;
     private ProgressBar mLoader;
     private PortalObject mPortal;
+    private Tracker mTracker;
 
     public static CaregiverDetailsFragment newInstance() {
         return new CaregiverDetailsFragment();
@@ -41,6 +46,7 @@ public class CaregiverDetailsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         final PortalObject portal = (PortalObject) getActivity().getIntent().getSerializableExtra("portal");
         mPortal = portal;
         ApiManager.setVariables(portal, getContext());
@@ -49,6 +55,11 @@ public class CaregiverDetailsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
+        mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("Caregiver Details");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
         new Thread(new Runnable() {
             @Override
             public void run() {

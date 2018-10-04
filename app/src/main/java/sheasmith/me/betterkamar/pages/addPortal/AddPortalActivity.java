@@ -12,10 +12,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.io.IOException;
 import java.net.UnknownHostException;
 
 import sheasmith.me.betterkamar.ApiManager;
+import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
 import sheasmith.me.betterkamar.internalModels.Exceptions;
@@ -23,10 +27,17 @@ import sheasmith.me.betterkamar.internalModels.PortalObject;
 
 public class AddPortalActivity extends AppCompatActivity {
 
+    private Tracker mTracker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_portal);
+
+        KamarPlusApplication application = (KamarPlusApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("Add Portal");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

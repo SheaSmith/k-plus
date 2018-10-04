@@ -851,8 +851,8 @@ public class ApiManager {
                         login = Jsoup.connect(URL.replace("api/api.php", "index.php/login")).method(Connection.Method.POST).data("username", ID, "password", PASSWORD).cookies(sessionCookies).execute();
 
                     Map<String, String> cookies = login.cookies();
-                    if (cookies.containsKey("kamar_session"))
-                    cookies.put("kamar_session", sessionCookies.get("kamar_session"));
+//                    if (sessionCookies.containsKey("kamar_session"))
+                        cookies.put("kamar_session", sessionCookies.get("kamar_session"));
 
                     org.jsoup.nodes.Document d = Jsoup.connect(URL.replace("api/api.php", "index.php/reports/")).cookies(cookies).get();
                     Elements groups = d.getElementsByTag("tbody").first().children();

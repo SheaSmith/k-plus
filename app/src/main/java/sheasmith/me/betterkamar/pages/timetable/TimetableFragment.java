@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
@@ -35,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 
 import sheasmith.me.betterkamar.ApiManager;
+import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.AbsenceObject;
 import sheasmith.me.betterkamar.dataModels.AttendanceObject;
@@ -65,6 +68,7 @@ public class TimetableFragment extends Fragment {
     private AbsenceObject absenceStats;
     private Date lastDate;
     private PortalObject mPortal;
+    private Tracker mTracker;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -79,6 +83,11 @@ public class TimetableFragment extends Fragment {
                 }
             }).start();
         getActivity().invalidateOptionsMenu();
+
+        KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
+        mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("Timetable");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     public static TimetableFragment newInstance() {
@@ -395,7 +404,7 @@ public class TimetableFragment extends Fragment {
             try {
                 Date start = format.parse(day.Date);
                 temp.setTime(start);
-                if (current.get(Calendar.DAY_OF_YEAR) == temp.get(Calendar.DAY_OF_YEAR) && !day.WeekYear.equals("")) {
+                if (current.get(Calendar.DAY_OF_YEAR) == temp.get(Calendar.DAY_OF_YEAR) && !day.WeekYear.equals("") && !day.Status.equals("Holidays")) {
                     weekNumber = Integer.parseInt(day.WeekYear);
                     for (AttendanceObject.Week aw : attendanceResults) {
                         if (Integer.parseInt(aw.index) == weekNumber) {

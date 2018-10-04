@@ -13,26 +13,30 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import sheasmith.me.betterkamar.ApiManager;
+import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
 import sheasmith.me.betterkamar.dataModels.NoticesObject;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
-import sheasmith.me.betterkamar.pages.editPortal.EditPortalActivity;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -45,23 +49,23 @@ public class NoticesFragment extends Fragment {
     private PortalObject mPortal;
 
     private ArrayList<String> groups;
-    private HashSet<String> mEnabled;
+    private HashSet<String> mDisabled;
     private HashSet<String> mTempEnabled;
 
     private Date lastDate;
 
     private HashMap<Date, NoticesObject> notices = new HashMap<>();
+    private Tracker mTracker;
 
     public static NoticesFragment newInstance() {
         return new NoticesFragment();
     }
-
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("notices", notices);
         outState.putSerializable("groups", groups);
-        outState.putSerializable("enabled", mEnabled);
+        outState.putSerializable("disabled", mDisabled);
         outState.putSerializable("lastDate", lastDate);
     }
 
@@ -73,12 +77,31 @@ public class NoticesFragment extends Fragment {
 
         if (mAdapter == null ||  mAdapter.getItemCount() == 0)
             doRequest(mPortal, new Date(System.currentTimeMillis()));
+
+        KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
+        mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("Notices");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         menu.clear();
+        menu.add(0, 1, 0, "Filter Notices").setIcon(R.drawable.ic_filter).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == 1)
+            createFilterDiag(mPortal);
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -92,7 +115,7 @@ public class NoticesFragment extends Fragment {
         if (savedInstanceState != null) {
             notices = (HashMap<Date, NoticesObject>) savedInstanceState.getSerializable("notices");
             groups = (ArrayList<String>) savedInstanceState.getSerializable("groups");
-            mEnabled = (HashSet<String>) savedInstanceState.getSerializable("enabled");
+            mDisabled = (HashSet<String>) savedInstanceState.getSerializable("disabled");
             lastDate = (Date) savedInstanceState.getSerializable("lastDate");
         }
 
@@ -103,6 +126,7 @@ public class NoticesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notices, container, false);
         mRecyclerView = view.findViewById(R.id.notices);
+        setHasOptionsMenu(true);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -115,14 +139,14 @@ public class NoticesFragment extends Fragment {
         mLoader = view.findViewById(R.id.loader);
 
         SharedPreferences preferences = getActivity().getPreferences(MODE_PRIVATE);
-        mEnabled = (HashSet<String>) preferences.getStringSet(mPortal.schoolFile.replace(".jpg", ""), new HashSet<String>());
+        mDisabled = (HashSet<String>) preferences.getStringSet(mPortal.schoolFile.replace(".jpg", "_notices_disabled"), new HashSet<String>());
 
         ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         if (lastDate != null) {
             NoticesObject value = notices.get(lastDate);
 
-            mAdapter = new NoticesAdapter(value.NoticesResults.MeetingNotices.Meeting, value.NoticesResults.GeneralNotices.General, getContext(), mEnabled);
+            mAdapter = new NoticesAdapter(value.NoticesResults.MeetingNotices.Meeting, value.NoticesResults.GeneralNotices.General, getContext(), mDisabled);
             mRecyclerView.setAdapter(mAdapter);
             mLoader.setVisibility(View.GONE);
         }
@@ -141,7 +165,7 @@ public class NoticesFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mAdapter = new NoticesAdapter(value.NoticesResults.MeetingNotices.Meeting, value.NoticesResults.GeneralNotices.General, getContext(), mEnabled);
+                            mAdapter = new NoticesAdapter(value.NoticesResults.MeetingNotices.Meeting, value.NoticesResults.GeneralNotices.General, getContext(), mDisabled);
                             mRecyclerView.setAdapter(mAdapter);
                             mLoader.setVisibility(View.GONE);
                             mRecyclerView.setVisibility(View.VISIBLE);
@@ -210,7 +234,7 @@ public class NoticesFragment extends Fragment {
         else {
             NoticesObject value = notices.get(date);
 
-            mAdapter = new NoticesAdapter(value.NoticesResults.MeetingNotices.Meeting, value.NoticesResults.GeneralNotices.General, getContext(), mEnabled);
+            mAdapter = new NoticesAdapter(value.NoticesResults.MeetingNotices.Meeting, value.NoticesResults.GeneralNotices.General, getContext(), mDisabled);
             mRecyclerView.setAdapter(mAdapter);
             mLoader.setVisibility(View.GONE);
 
@@ -229,7 +253,7 @@ public class NoticesFragment extends Fragment {
 
 
 
-    private void createFilterDiag(PortalObject portal) {
+    private void createFilterDiag(final PortalObject portal) {
         final AlertDialog.Builder diag = new AlertDialog.Builder(getContext())
                 .setTitle("Include Notices From");
 
@@ -237,25 +261,29 @@ public class NoticesFragment extends Fragment {
             diag.setMessage("The notices are still loading. Please wait");
         }
         else {
-            SharedPreferences preferences = getActivity().getPreferences(MODE_PRIVATE);
-            Set<String> enabled = preferences.getStringSet(portal.schoolFile.replace(".jpg", ""), new HashSet<String>());
-            boolean[] enabledBoolean = new boolean[groups.size()];
+            final SharedPreferences preferences = getActivity().getPreferences(MODE_PRIVATE);
+            Set<String> disabled = preferences.getStringSet(portal.schoolFile.replace(".jpg", "_notices_disabled"), new HashSet<String>());
+            boolean[] disabledBoolean = new boolean[groups.size()];
             for (String group : groups) {
-                enabledBoolean[groups.indexOf(group)] = enabled.contains(group) || enabled.size() == 0;
+                disabledBoolean[groups.indexOf(group)] = !disabled.contains(group);
             }
-            mTempEnabled = new HashSet<>();
-            diag.setMultiChoiceItems(groups.toArray(new CharSequence[groups.size()]), enabledBoolean, new DialogInterface.OnMultiChoiceClickListener() {
+            mTempEnabled = mDisabled;
+            diag.setMultiChoiceItems(groups.toArray(new CharSequence[groups.size()]), disabledBoolean, new DialogInterface.OnMultiChoiceClickListener() {
                 @Override
-                public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                    mTempEnabled.add(groups.get(i));
+                public void onClick(DialogInterface dialogInterface, int i, boolean isChecked) {
+                    if (!isChecked)
+                        mTempEnabled.add(groups.get(i));
+                    else
+                        mTempEnabled.remove(groups.get(i));
                 }
             });
 
             diag.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    mEnabled = mTempEnabled;
-                    mAdapter = new NoticesAdapter(mAdapter.meetingNotices, mAdapter.generalNotices, getContext(), mEnabled);
+                    mDisabled = mTempEnabled;
+                    preferences.edit().putStringSet(portal.schoolFile.replace(".jpg", "_notices_disabled"), mDisabled).apply();
+                    mAdapter = new NoticesAdapter(mAdapter.meetingNotices, mAdapter.generalNotices, getContext(), mDisabled);
                     mRecyclerView.setAdapter(mAdapter);
                     mAdapter.notifyDataSetChanged();
                 }

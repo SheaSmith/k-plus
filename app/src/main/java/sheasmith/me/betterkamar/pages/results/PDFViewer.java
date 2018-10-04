@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.barteksc.pdfviewer.PDFView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -31,6 +33,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
+import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.htmlModels.ReportsObject;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
@@ -43,6 +46,7 @@ public class PDFViewer extends Activity {
     ProgressDialog mProgressDialog;
     ReportsObject report;
     PortalObject mPortal;
+    private Tracker mTracker;
 
 
     @SuppressLint("NewApi")
@@ -60,6 +64,11 @@ public class PDFViewer extends Activity {
                 finish();
             }
         });
+
+        KamarPlusApplication application = (KamarPlusApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("Report Viewer");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
         report = (ReportsObject) getIntent().getSerializableExtra("report");
         ((TextView) findViewById(R.id.reportName)).setText(report.title);

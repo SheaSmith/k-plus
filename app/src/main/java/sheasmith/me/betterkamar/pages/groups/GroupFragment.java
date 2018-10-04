@@ -15,10 +15,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.io.IOException;
 import java.util.List;
 
 import sheasmith.me.betterkamar.ApiManager;
+import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.GroupObject;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
@@ -37,6 +41,7 @@ public class GroupFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private GroupAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private Tracker mTracker;
 
     public static GroupFragment newInstance() {
         return new GroupFragment();
@@ -47,6 +52,11 @@ public class GroupFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(10);
         getActivity().setTitle("Groups");
+
+        KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
+        mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("Groups");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override

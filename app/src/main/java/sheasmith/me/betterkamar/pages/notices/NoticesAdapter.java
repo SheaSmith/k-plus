@@ -28,7 +28,7 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public List<NoticesObject.General> generalNotices;
     public List<NoticesObject.Meeting> meetingNotices;
     private Context mContext;
-    public Set<String> enabled;
+    public Set<String> disabled;
 
     public static class NoticeViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
@@ -68,11 +68,11 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    public NoticesAdapter(List<NoticesObject.Meeting> meetings, List<NoticesObject.General> general, Context context, Set<String> shownGroups) {
+    public NoticesAdapter(List<NoticesObject.Meeting> meetings, List<NoticesObject.General> general, Context context, Set<String> hiddenGroups) {
         meetingNotices = meetings;
         generalNotices = general;
         mContext = context;
-        enabled = shownGroups;
+        disabled = hiddenGroups;
     }
 
 
@@ -103,10 +103,14 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (position <= meetingNotices.size()) {
                 final NoticesObject.Meeting notice = meetingNotices.get(position - 1);
 
-//                if (!enabled.contains(notice.Level)) {
-//                    ((NoticeViewHolder) holder).mView.setVisibility(View.GONE);
-//                    return;
-//                }
+                if (disabled.contains(notice.Level)) {
+                    ((NoticeViewHolder) holder).mView.setVisibility(View.GONE);
+                    ((NoticeViewHolder) holder).mView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+                    return;
+                }
+
+                ((NoticeViewHolder) holder).mView.setVisibility(View.VISIBLE);
+                ((NoticeViewHolder) holder).mView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
                 ((NoticeViewHolder) holder).title.setText(notice.Subject);
                 ((NoticeViewHolder) holder).group.setText(notice.Level);
@@ -143,10 +147,14 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             else {
                 final NoticesObject.General notice = generalNotices.get(position - meetingNotices.size() - 2);
 
-//                if (!enabled.contains(notice.Level)) {
-//                    ((NoticeViewHolder) holder).mView.setVisibility(View.GONE);
-//                    return;
-//                }
+                if (disabled.contains(notice.Level)) {
+                    ((NoticeViewHolder) holder).mView.setVisibility(View.GONE);
+                    ((NoticeViewHolder) holder).mView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+                    return;
+                }
+
+                ((NoticeViewHolder) holder).mView.setVisibility(View.VISIBLE);
+                ((NoticeViewHolder) holder).mView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
                 ((NoticeViewHolder) holder).title.setText(notice.Subject);
                 ((NoticeViewHolder) holder).group.setText(notice.Level);

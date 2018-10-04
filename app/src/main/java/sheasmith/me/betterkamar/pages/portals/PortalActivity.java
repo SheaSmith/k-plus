@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.securepreferences.SecurePreferences;
 
@@ -20,6 +22,7 @@ import java.util.Set;
 
 import io.fabric.sdk.android.Fabric;
 import sheasmith.me.betterkamar.DataActivity;
+import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.RecyclerItemClickListener;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
@@ -32,11 +35,18 @@ public class PortalActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<PortalObject> servers = new ArrayList<>();
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_portal);
+
+        KamarPlusApplication application = (KamarPlusApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("Portal List");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        mTracker.enableAdvertisingIdCollection(true);
 
         setTitle("Portals");
 
