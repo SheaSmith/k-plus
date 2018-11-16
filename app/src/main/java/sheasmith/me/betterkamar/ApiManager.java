@@ -199,6 +199,8 @@ public class ApiManager {
                         .post(body)
                         .addHeader("Content-Type", "application/x-www-form-urlencoded")
                         .addHeader("User-Agent", "KAMAR+ 3.0")
+                        .addHeader("X-Requested-With", "nz.co.KAMAR")
+                        .addHeader("Origin", "file://")
                         .build();
 
                 try {
@@ -241,6 +243,8 @@ public class ApiManager {
                             .post(body)
                             .addHeader("Content-Type", "application/x-www-form-urlencoded")
                             .addHeader("User-Agent", "KAMAR+ 3.0")
+                            .addHeader("X-Requested-With", "nz.co.KAMAR")
+                            .addHeader("Origin", "file://")
                             .build();
 
                     Response response = client.newCall(request).execute();
@@ -283,6 +287,8 @@ public class ApiManager {
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                                 .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("X-Requested-With", "nz.co.KAMAR")
+                                .addHeader("Origin", "file://")
                                 .build();
 
                         Response response = client.newCall(request).execute();
@@ -338,6 +344,8 @@ public class ApiManager {
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                                 .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("X-Requested-With", "nz.co.KAMAR")
+                                .addHeader("Origin", "file://")
                                 .build();
 
                         Response response = client.newCall(request).execute();
@@ -376,6 +384,8 @@ public class ApiManager {
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                                 .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("X-Requested-With", "nz.co.KAMAR")
+                                .addHeader("Origin", "file://")
                                 .build();
 
                         Response response = client.newCall(request).execute();
@@ -420,6 +430,8 @@ public class ApiManager {
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                                 .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("X-Requested-With", "nz.co.KAMAR")
+                                .addHeader("Origin", "file://")
                                 .build();
 
                         Response response = client.newCall(request).execute();
@@ -464,6 +476,8 @@ public class ApiManager {
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                                 .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("X-Requested-With", "nz.co.KAMAR")
+                                .addHeader("Origin", "file://")
                                 .build();
 
                         Response response = client.newCall(request).execute();
@@ -509,6 +523,8 @@ public class ApiManager {
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                                 .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("X-Requested-With", "nz.co.KAMAR")
+                                .addHeader("Origin", "file://")
                                 .build();
 
                         Response response = client.newCall(request).execute();
@@ -550,6 +566,8 @@ public class ApiManager {
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                                 .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("X-Requested-With", "nz.co.KAMAR")
+                                .addHeader("Origin", "file://")
                                 .build();
 
                         Response response = client.newCall(request).execute();
@@ -591,6 +609,8 @@ public class ApiManager {
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                                 .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("X-Requested-With", "nz.co.KAMAR")
+                                .addHeader("Origin", "file://")
                                 .build();
 
                         Response response = client.newCall(request).execute();
@@ -635,6 +655,8 @@ public class ApiManager {
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                                 .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("X-Requested-With", "nz.co.KAMAR")
+                                .addHeader("Origin", "file://")
                                 .build();
 
                         Response response = client.newCall(request).execute();
@@ -679,6 +701,8 @@ public class ApiManager {
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                                 .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("X-Requested-With", "nz.co.KAMAR")
+                                .addHeader("Origin", "file://")
                                 .build();
 
                         Response response = client.newCall(request).execute();
@@ -720,6 +744,8 @@ public class ApiManager {
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                                 .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("X-Requested-With", "nz.co.KAMAR")
+                                .addHeader("Origin", "file://")
                                 .build();
 
                         Response response = client.newCall(request).execute();
@@ -761,6 +787,8 @@ public class ApiManager {
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                                 .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("X-Requested-With", "nz.co.KAMAR")
+                                .addHeader("Origin", "file://")
                                 .build();
 
                         Response response = client.newCall(request).execute();
@@ -789,6 +817,8 @@ public class ApiManager {
                     try {
                         HttpURLConnection connection = (HttpURLConnection) new URL(URL.replace("api.php", "img.php") + "?Key=" + TOKEN + "&Stuid=" + ID).openConnection();
                         connection.setRequestProperty("User-agent", "KAMAR+ 3.0");
+                        connection.setRequestProperty("X-Requested-With", "nz.co.KAMAR");
+                        connection.setRequestProperty("Origin", "file://");
 
                         connection.connect();
                         try {
@@ -817,6 +847,8 @@ public class ApiManager {
                 try {
                     HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
                     connection.setRequestProperty("User-agent", "KAMAR+ 3.0");
+                    connection.setRequestProperty("X-Requested-With", "nz.co.KAMAR");
+                    connection.setRequestProperty("Origin", "file://");
 
                     connection.connect();
                     InputStream input = connection.getInputStream();

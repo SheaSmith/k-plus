@@ -37,8 +37,8 @@ android {
         applicationId "sheasmith.me.betterkamar"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 5
-        versionName "3.0.1"
+        versionCode 10
+        versionName "3.0.2-d"
     }
     buildTypes {
         release {
@@ -69,4 +69,9 @@ dependencies {
     implementation 'com.android.support:cardview-v7:27.1.1'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
     implementation 'com.iainconnor:objectcache:0.0.18-SNAPSHOT'
+    implementation 'com.google.firebase:firebase-core:16.0.3'
+    implementation 'com.google.firebase:firebase-perf:16.1.0'
 }
+
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.firebase-perf'

@@ -92,6 +92,7 @@ public class TimetableFragment extends Fragment {
         outState.putSerializable("attendanceResults", attendanceResults);
         outState.putSerializable("events", events);
         outState.putSerializable("timetable", timetable);
+        if (mCalendarView.getSelectedDate() != null)
         outState.putSerializable("selectedDate", new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()));
         outState.putSerializable("days", days);
     }
@@ -107,6 +108,7 @@ public class TimetableFragment extends Fragment {
             timetable = (ArrayList<TimetableObject.Week>) savedInstanceState.getSerializable("timetable");
             days = (ArrayList<CalendarObject.Day>) savedInstanceState.getSerializable("days");
 
+            if (savedInstanceState.containsKey("selectedDate"))
             lastDate = (Date) savedInstanceState.getSerializable("selectedDate");
         }
 
