@@ -15,4 +15,5 @@ public class Exceptions {
 
     public static class ExpiredToken extends Exception {
     }
+    public static class TooManyAttempts extends Exception {}
 }

@@ -12,9 +12,13 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.io.IOException;
 
-import sheasmith.me.betterkamar.ApiManager;
+import sheasmith.me.betterkamar.util.ApiManager;
+import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.DetailsObject;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
@@ -29,6 +33,7 @@ public class EmergencyDetailsFragment extends Fragment {
     private View mView;
     private ProgressBar mLoader;
     private PortalObject mPortal;
+    private Tracker mTracker;
 
     public static EmergencyDetailsFragment newInstance() {
         return new EmergencyDetailsFragment();
@@ -51,6 +56,11 @@ public class EmergencyDetailsFragment extends Fragment {
                 doRequest(mPortal);
             }
         }).start();
+
+        KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
+        mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("Emergency Details");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override

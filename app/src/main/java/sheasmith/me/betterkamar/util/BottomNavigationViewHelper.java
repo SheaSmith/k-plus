@@ -1,4 +1,4 @@
-package sheasmith.me.betterkamar;
+package sheasmith.me.betterkamar.util;
 
 import android.annotation.SuppressLint;
 import android.support.design.internal.BottomNavigationItemView;

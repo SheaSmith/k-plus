@@ -13,13 +13,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.io.IOException;
 import java.util.List;
 
-import sheasmith.me.betterkamar.ApiManager;
+import sheasmith.me.betterkamar.util.ApiManager;
+import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
-import sheasmith.me.betterkamar.dataModels.NZQAObject;
 import sheasmith.me.betterkamar.dataModels.htmlModels.ReportsObject;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
 import sheasmith.me.betterkamar.internalModels.Exceptions;
@@ -33,6 +36,7 @@ public class ReportFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private ReportAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private Tracker mTracker;
 
     public static ReportFragment newInstance() {
         return new ReportFragment();
@@ -56,6 +60,11 @@ public class ReportFragment extends Fragment {
                     doRequest(mPortal);
                 }
             }).start();
+
+        KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
+        mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("Reports");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override
@@ -120,28 +129,30 @@ public class ReportFragment extends Fragment {
                     });
                     return;
                 } else if (e instanceof IOException) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            new AlertDialog.Builder(getContext())
-                                    .setTitle("No Internet")
-                                    .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
-                                    .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            doRequest(portal);
-                                        }
-                                    })
-                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            getActivity().finish();
-                                        }
-                                    })
-                                    .create()
-                                    .show();
-                        }
-                    });
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new AlertDialog.Builder(getContext())
+                                        .setTitle("No Internet")
+                                        .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
+                                        .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                doRequest(portal);
+                                            }
+                                        })
+                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                getActivity().finish();
+                                            }
+                                        })
+                                        .create()
+                                        .show();
+                            }
+                        });
+                    }
                 }
             }
         });

@@ -1,4 +1,4 @@
-package sheasmith.me.betterkamar; /**
+package sheasmith.me.betterkamar.util; /**
  * Created by TheDiamondPicks on 22/09/2018.
  */
 import android.os.Parcelable;

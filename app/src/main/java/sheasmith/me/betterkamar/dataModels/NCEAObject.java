@@ -2,6 +2,7 @@ package sheasmith.me.betterkamar.dataModels;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -114,56 +115,60 @@ public class NCEAObject implements Serializable
 
         NodeList years = studentElement.getElementsByTagName("YearTotals").item(0).getChildNodes();
         for (int i = 0; i != years.getLength(); i++) {
-            Element yearTotalElement = (Element) years.item(i);
-            YearTotal yearTotal = new YearTotal();
+            if (years.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                Element yearTotalElement = (Element) years.item(i);
+                YearTotal yearTotal = new YearTotal();
 
-            if (yearTotalElement.getElementsByTagName("Achieved").getLength() != 0)
-                yearTotal.Achieved = yearTotalElement.getElementsByTagName("Achieved").item(0).getTextContent();
-            if (yearTotalElement.getElementsByTagName("Merit").getLength() != 0)
-                yearTotal.Merit = yearTotalElement.getElementsByTagName("Merit").item(0).getTextContent();
+                if (yearTotalElement.getElementsByTagName("Achieved").getLength() != 0)
+                    yearTotal.Achieved = yearTotalElement.getElementsByTagName("Achieved").item(0).getTextContent();
+                if (yearTotalElement.getElementsByTagName("Merit").getLength() != 0)
+                    yearTotal.Merit = yearTotalElement.getElementsByTagName("Merit").item(0).getTextContent();
 
-            if (yearTotalElement.getElementsByTagName("Excellence").getLength() != 0)
-                yearTotal.Excellence = yearTotalElement.getElementsByTagName("Excellence").item(0).getTextContent();
+                if (yearTotalElement.getElementsByTagName("Excellence").getLength() != 0)
+                    yearTotal.Excellence = yearTotalElement.getElementsByTagName("Excellence").item(0).getTextContent();
 
-            if (yearTotalElement.getElementsByTagName("Total").getLength() != 0)
-                yearTotal.Total = yearTotalElement.getElementsByTagName("Total").item(0).getTextContent();
+                if (yearTotalElement.getElementsByTagName("Total").getLength() != 0)
+                    yearTotal.Total = yearTotalElement.getElementsByTagName("Total").item(0).getTextContent();
 
-            if (yearTotalElement.getElementsByTagName("Attempted").getLength() != 0)
-                yearTotal.Attempted = yearTotalElement.getElementsByTagName("Attempted").item(0).getTextContent();
+                if (yearTotalElement.getElementsByTagName("Attempted").getLength() != 0)
+                    yearTotal.Attempted = yearTotalElement.getElementsByTagName("Attempted").item(0).getTextContent();
 
-            if (yearTotalElement.getElementsByTagName("NotAchieved").getLength() != 0)
-                yearTotal.NotAchieved = yearTotalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
+                if (yearTotalElement.getElementsByTagName("NotAchieved").getLength() != 0)
+                    yearTotal.NotAchieved = yearTotalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
 
-            yearTotal.Year = yearTotalElement.getElementsByTagName("Year").item(0).getTextContent();
+                yearTotal.Year = yearTotalElement.getElementsByTagName("Year").item(0).getTextContent();
 
-            student.YearTotals.add(yearTotal);
+                student.YearTotals.add(yearTotal);
+            }
         }
 
         NodeList levels = studentElement.getElementsByTagName("LevelTotals").item(0).getChildNodes();
         for (int i = 0; i != levels.getLength(); i++) {
-            Element levelTotalElement = (Element) levels.item(i);
-            LevelTotal levelTotal = new LevelTotal();
+            if (levels.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                Element levelTotalElement = (Element) levels.item(i);
+                LevelTotal levelTotal = new LevelTotal();
 
-            if (levelTotalElement.getElementsByTagName("Achieved").getLength() != 0)
-                levelTotal.Achieved = levelTotalElement.getElementsByTagName("Achieved").item(0).getTextContent();
-            if (levelTotalElement.getElementsByTagName("Merit").getLength() != 0)
-                levelTotal.Merit = levelTotalElement.getElementsByTagName("Merit").item(0).getTextContent();
+                if (levelTotalElement.getElementsByTagName("Achieved").getLength() != 0)
+                    levelTotal.Achieved = levelTotalElement.getElementsByTagName("Achieved").item(0).getTextContent();
+                if (levelTotalElement.getElementsByTagName("Merit").getLength() != 0)
+                    levelTotal.Merit = levelTotalElement.getElementsByTagName("Merit").item(0).getTextContent();
 
-            if (levelTotalElement.getElementsByTagName("Excellence").getLength() != 0)
-                levelTotal.Excellence = levelTotalElement.getElementsByTagName("Excellence").item(0).getTextContent();
+                if (levelTotalElement.getElementsByTagName("Excellence").getLength() != 0)
+                    levelTotal.Excellence = levelTotalElement.getElementsByTagName("Excellence").item(0).getTextContent();
 
-            if (levelTotalElement.getElementsByTagName("Total").getLength() != 0)
-                levelTotal.Total = levelTotalElement.getElementsByTagName("Total").item(0).getTextContent();
+                if (levelTotalElement.getElementsByTagName("Total").getLength() != 0)
+                    levelTotal.Total = levelTotalElement.getElementsByTagName("Total").item(0).getTextContent();
 
-            if (levelTotalElement.getElementsByTagName("Attempted").getLength() != 0)
-                levelTotal.Attempted = levelTotalElement.getElementsByTagName("Attempted").item(0).getTextContent();
+                if (levelTotalElement.getElementsByTagName("Attempted").getLength() != 0)
+                    levelTotal.Attempted = levelTotalElement.getElementsByTagName("Attempted").item(0).getTextContent();
 
-            if (levelTotalElement.getElementsByTagName("NotAchieved").getLength() != 0)
-                levelTotal.NotAchieved = levelTotalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
+                if (levelTotalElement.getElementsByTagName("NotAchieved").getLength() != 0)
+                    levelTotal.NotAchieved = levelTotalElement.getElementsByTagName("NotAchieved").item(0).getTextContent();
 
-            levelTotal.Level = levelTotalElement.getElementsByTagName("Level").item(0).getTextContent();
+                levelTotal.Level = levelTotalElement.getElementsByTagName("Level").item(0).getTextContent();
 
-            student.LevelTotals.add(levelTotal);
+                student.LevelTotals.add(levelTotal);
+            }
         }
 
         results.Student = student;

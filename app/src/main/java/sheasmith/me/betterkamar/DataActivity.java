@@ -1,6 +1,5 @@
 package sheasmith.me.betterkamar;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -9,15 +8,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import sheasmith.me.betterkamar.pages.details.DetailsFragment;
-import sheasmith.me.betterkamar.pages.editPortal.EditPortalActivity;
 import sheasmith.me.betterkamar.pages.groups.GroupFragment;
 import sheasmith.me.betterkamar.pages.notices.NoticesFragment;
-import sheasmith.me.betterkamar.pages.results.AllResultsFragment;
 import sheasmith.me.betterkamar.pages.results.ResultsFragment;
 import sheasmith.me.betterkamar.pages.timetable.TimetableFragment;
+import sheasmith.me.betterkamar.util.BottomNavigationViewHelper;
 
 public class DataActivity extends AppCompatActivity {
 

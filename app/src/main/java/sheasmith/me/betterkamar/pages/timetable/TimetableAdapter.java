@@ -1,13 +1,18 @@
 package sheasmith.me.betterkamar.pages.timetable;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -77,12 +82,11 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-
         if (position < mEvents.size()) {
             final EventsObject.Event event = mEvents.get(position);
 
-            DateFormat timeFormat = DateFormat.getTimeInstance();
             SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
             ((TimetableViewHolder) holder).title.setText(event.Title);
             String time = "All day";
@@ -107,6 +111,24 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             ((TimetableViewHolder) holder).details.setText(time);
             ((TimetableViewHolder) holder).item.getBackground().mutate().setColorFilter(Color.parseColor("#5677fc"), PorterDuff.Mode.SRC_ATOP);
+            ((TimetableViewHolder) holder).item.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+                    View titleView = inflater.inflate(R.layout.timetable_title, null);
+                    TextView title = titleView.findViewById(R.id.title);
+                    title.setText(event.Title);
+                    titleView.findViewById(R.id.bg).setBackgroundColor(Color.parseColor("#5677fc"));
+                    titleView.findViewById(R.id.attendance).setVisibility(View.GONE);
+
+                    new AlertDialog.Builder(mContext)
+                            .setCustomTitle(titleView)
+                            .setMessage(event.Details + "\n\nLocation: " + event.Location + "\n " + event.DateTimeInfo.replace("   ", " "))
+                            .setPositiveButton("Close", null)
+                            .create()
+                            .show();
+                }
+            });
 
             if (position == 0)
                 ((TimetableViewHolder) holder).periodName.setText("Events");
@@ -116,18 +138,74 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             ((TimetableViewHolder) holder).attendance.setVisibility(View.GONE);
 
         } else {
-            int pos = position - mEvents.size();
+            final int pos = position - mEvents.size();
 
             final TimetableObject.Class period = mClasses.get(pos);
-            GlobalObject.PeriodDefinition periodDefinition = mPeriodDefinitions.get(pos);
+            final GlobalObject.PeriodDefinition periodDefinition = mPeriodDefinitions.get(pos);
             ((TimetableViewHolder) holder).periodName.setText(periodDefinition.PeriodName);
 
             if (!period.SubjectCode.equals("")) {
                 ((TimetableViewHolder) holder).title.setText(period.SubjectCode);
                 ((TimetableViewHolder) holder).details.setText(String.format("%s • %s • %s", periodDefinition.PeriodTime, period.Teacher, period.Room));
-                TypedArray colors = mContext.getResources().obtainTypedArray(R.array.mdcolor_500);
-                int number = Math.abs(period.SubjectCode.hashCode()) % colors.length();
+                final TypedArray colors = mContext.getResources().obtainTypedArray(R.array.mdcolor_500);
+                final int number = Math.abs(period.SubjectCode.hashCode()) % colors.length();
                 ((TimetableViewHolder) holder).item.getBackground().mutate().setColorFilter(colors.getColor(number, Color.BLACK), PorterDuff.Mode.SRC_ATOP);
+
+                ((TimetableViewHolder) holder).item.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+                        View titleView = inflater.inflate(R.layout.timetable_title, null);
+                        TextView title = titleView.findViewById(R.id.title);
+                        title.setText(period.SubjectCode);
+                        titleView.findViewById(R.id.bg).setBackgroundColor(colors.getColor(number, Color.BLACK));
+
+                        TextView attendance = titleView.findViewById(R.id.attendance);
+
+                        if (period.attendance != '.') {
+                            ((TimetableViewHolder) holder).attendance.setVisibility(View.VISIBLE);
+                            switch (period.attendance) {
+                                case 'P':
+                                    attendance.setBackground(mContext.getResources().getDrawable(R.drawable.attendence_present));
+                                    attendance.setText("Present");
+                                    break;
+                                case 'U':
+                                    attendance.setBackground(mContext.getResources().getDrawable(R.drawable.attendence_unjustified));
+                                    attendance.setText("Unjustified");
+                                    break;
+                                case 'L':
+                                    attendance.setBackground(mContext.getResources().getDrawable(R.drawable.attendence_late));
+                                    attendance.setText("Late");
+                                    break;
+                                case 'O':
+                                    attendance.setBackground(mContext.getResources().getDrawable(R.drawable.attendence_overseas));
+                                    attendance.setText("Overseas");
+                                    break;
+                                case 'J':
+                                    attendance.setBackground(mContext.getResources().getDrawable(R.drawable.attendence_justified));
+                                    attendance.setText("Justified");
+                                    break;
+                                default:
+                                    ((TimetableViewHolder) holder).attendance.setVisibility(View.GONE);
+                            }
+
+                        }
+                        else {
+                            ((TimetableViewHolder) holder).attendance.setVisibility(View.GONE);
+                        }
+                        String endTime = "";
+                        if (mPeriodDefinitions.size() != pos) {
+                            if (!mPeriodDefinitions.get(pos + 1).PeriodTime.equals(""))
+                                endTime = " - " + mPeriodDefinitions.get(pos + 1).PeriodTime;
+                        }
+                        new AlertDialog.Builder(mContext)
+                                .setCustomTitle(titleView)
+                                .setMessage(periodDefinition.PeriodTime + endTime + "\nTeacher: " + period.Teacher + "\nRoom: " + period.Room)
+                                .setPositiveButton("Close", null)
+                                .create()
+                                .show();
+                    }
+                });
             } else {
                 ((TimetableViewHolder) holder).item.setVisibility(View.GONE);
             }

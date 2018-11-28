@@ -1,4 +1,4 @@
-package sheasmith.me.betterkamar;
+package sheasmith.me.betterkamar.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

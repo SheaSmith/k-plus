@@ -12,11 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import sheasmith.me.betterkamar.R;
-import sheasmith.me.betterkamar.TabViewPagerAdapter;
-import sheasmith.me.betterkamar.pages.results.AllResultsFragment;
-import sheasmith.me.betterkamar.pages.results.NCEAFragment;
-import sheasmith.me.betterkamar.pages.results.NZQAFragment;
-import sheasmith.me.betterkamar.pages.results.ReportFragment;
+import sheasmith.me.betterkamar.util.TabViewPagerAdapter;
 
 public class DetailsFragment extends Fragment {
 

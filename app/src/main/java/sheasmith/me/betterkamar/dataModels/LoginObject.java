@@ -22,7 +22,7 @@ public class LoginObject implements Serializable
 {
     public LogonResults LogonResults;
 
-    public LoginObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.InvalidUsernamePassword, Exceptions.UnknownServerError {
+    public LoginObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.InvalidUsernamePassword, Exceptions.UnknownServerError, Exceptions.TooManyAttempts {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setIgnoringElementContentWhitespace(true);
@@ -43,8 +43,11 @@ public class LoginObject implements Serializable
         }
         else {
             String error = root.getElementsByTagName("Error").item(0).getTextContent();
-            if (error.equalsIgnoreCase("The Username & Password do not appear to match a user on record. Please re-enter your Username and Password.")) {
+            if (error.equalsIgnoreCase("The Username & Password do not appear to match a user on record. Please re-enter your Username and Password.") || error.equals("Incorrect Username or Password")) {
                 throw new Exceptions.InvalidUsernamePassword();
+            }
+            else if (error.equalsIgnoreCase("Too many failed login attempts, try again in 20 minutes")) {
+                throw new Exceptions.TooManyAttempts();
             }
             else {
                 throw new Exceptions.UnknownServerError();

@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
@@ -34,7 +36,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import sheasmith.me.betterkamar.ApiManager;
+import sheasmith.me.betterkamar.util.ApiManager;
+import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.AbsenceObject;
 import sheasmith.me.betterkamar.dataModels.AttendanceObject;
@@ -46,6 +49,7 @@ import sheasmith.me.betterkamar.dataModels.TimetableObject;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
+import sheasmith.me.betterkamar.util.OnSwipeTouchListener;
 
 public class TimetableFragment extends Fragment {
 
@@ -65,6 +69,7 @@ public class TimetableFragment extends Fragment {
     private AbsenceObject absenceStats;
     private Date lastDate;
     private PortalObject mPortal;
+    private Tracker mTracker;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -79,6 +84,11 @@ public class TimetableFragment extends Fragment {
                 }
             }).start();
         getActivity().invalidateOptionsMenu();
+
+        KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
+        mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("Timetable");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     public static TimetableFragment newInstance() {
@@ -130,6 +140,17 @@ public class TimetableFragment extends Fragment {
             }
             builder.create().show();
         }
+        else if (item.getItemId() == 2) {
+            LayoutInflater inflater = getLayoutInflater();
+            View contentView = inflater.inflate(R.layout.timetable_info, null);
+
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Attendance Codes (based on MoE rules)")
+                    .setView(contentView)
+                    .setPositiveButton("Close", null)
+                    .create()
+                    .show();
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -138,6 +159,7 @@ public class TimetableFragment extends Fragment {
     public void onPrepareOptionsMenu(Menu menu) {
         menu.clear();
         menu.add(0, 1, 0, "Attendance Stats").setIcon(R.drawable.ic_chart).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(0, 2, 0, "Attendance Info").setIcon(R.drawable.ic_info).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         super.onPrepareOptionsMenu(menu);
     }
 
@@ -156,6 +178,41 @@ public class TimetableFragment extends Fragment {
         setHasOptionsMenu(true);
 
         mRecyclerView = view.findViewById(R.id.events);
+        mRecyclerView.setOnTouchListener(new OnSwipeTouchListener(getContext()) {
+            @Override
+            public void onSwipeRight() {
+                mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
+                mCalendarView.setSelectedDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
+                final Date date = new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                updateList(date);
+            }
+
+            @Override
+            public void onSwipeLeft() {
+                mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().plusDays(1));
+                mCalendarView.setSelectedDate(mCalendarView.getSelectedDate().getDate().plusDays(1));
+                final Date date = new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                updateList(date);
+            }
+        });
+
+        noEvents.setOnTouchListener(new OnSwipeTouchListener(getContext()) {
+            @Override
+            public void onSwipeRight() {
+                mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
+                mCalendarView.setSelectedDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
+                final Date date = new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                updateList(date);
+            }
+
+            @Override
+            public void onSwipeLeft() {
+                mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().plusDays(1));
+                mCalendarView.setSelectedDate(mCalendarView.getSelectedDate().getDate().plusDays(1));
+                final Date date = new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                updateList(date);
+            }
+        });
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -371,13 +428,16 @@ public class TimetableFragment extends Fragment {
             @Override
             public void run() {
                 mLoader.setVisibility(View.GONE);
+                // So we get the weeks to show up
+                mCalendarView.setCurrentDate(mCalendarView.getCurrentDate().getDate().minusWeeks(1));
+                mCalendarView.setCurrentDate(mCalendarView.getCurrentDate().getDate().plusWeeks(1));
                 mCalendarView.setSelectedDate(Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.systemDefault()).toLocalDate());
                 updateList(new Date(System.currentTimeMillis()));
             }
         });
     }
 
-    private void updateList(Date date) {
+    private void updateList(final Date date) {
         Calendar current = Calendar.getInstance();
         current.setTime(date);
 
@@ -385,11 +445,11 @@ public class TimetableFragment extends Fragment {
         Calendar monday = Calendar.getInstance();
         monday.setTime(date);
         monday.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
         int weekNumber = 0;
         CalendarObject.Day thisDay = null;
-        Calendar temp = Calendar.getInstance();
+        final Calendar temp = Calendar.getInstance();
 
         AttendanceObject.Week attendanceWeek = null;
 
@@ -397,7 +457,7 @@ public class TimetableFragment extends Fragment {
             try {
                 Date start = format.parse(day.Date);
                 temp.setTime(start);
-                if (current.get(Calendar.DAY_OF_YEAR) == temp.get(Calendar.DAY_OF_YEAR) && !day.WeekYear.equals("")) {
+                if (current.get(Calendar.DAY_OF_YEAR) == temp.get(Calendar.DAY_OF_YEAR) && !day.WeekYear.equals("") && !day.Status.equals("Holidays")) {
                     weekNumber = Integer.parseInt(day.WeekYear);
                     for (AttendanceObject.Week aw : attendanceResults) {
                         if (Integer.parseInt(aw.index) == weekNumber) {
@@ -412,6 +472,7 @@ public class TimetableFragment extends Fragment {
                     thisDay = day;
                     break;
                 }
+
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
@@ -428,13 +489,30 @@ public class TimetableFragment extends Fragment {
 //                    else {
 //                        status.setText(String.format("School Status: %s. Term %s Week %s", finalThisDay.Status, finalThisDay.Term, finalThisDay.Week));
 //                    }
-//                    mCalendarView.setTitleFormatter(new TitleFormatter() {
-//                        @Override
-//                        public CharSequence format(CalendarDay calendarDay) {
-//                            SimpleDateFormat form = new SimpleDateFormat("MMMM");
-//                            return form.format(new Date(calendarDay.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())) + "\nTerm " + finalThisDay.Term + " Week " + finalThisDay.Week;
-//                        }
-//                    });
+                    mCalendarView.setTitleFormatter(new TitleFormatter() {
+                        @Override
+                        public CharSequence format(CalendarDay calendarDay) {
+                            SimpleDateFormat form = new SimpleDateFormat("MMMM, yyyy");
+                            CalendarObject.Day weekDay = null;
+                            int dayOfYear = mCalendarView.getCurrentDate().getDate().getDayOfYear();
+                            for (CalendarObject.Day day : days) {
+                                try {
+                                    Date start = format.parse(day.Date);
+                                    temp.setTime(start);
+                                    if (dayOfYear == temp.get(Calendar.DAY_OF_YEAR)) {
+                                        weekDay = day;
+                                    }
+
+                                } catch (ParseException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                            if (weekDay.Status.equals("Holidays"))
+                                return form.format(new Date(calendarDay.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+                            else
+                                return form.format(new Date(calendarDay.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())) + "\nTerm " + weekDay.TermA + " Week " + weekDay.WeekA;
+                        }
+                    });
                     mCalendarView.invalidate();
                 }
             });

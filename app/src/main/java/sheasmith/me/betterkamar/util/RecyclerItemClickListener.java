@@ -1,4 +1,4 @@
-package sheasmith.me.betterkamar;
+package sheasmith.me.betterkamar.util;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

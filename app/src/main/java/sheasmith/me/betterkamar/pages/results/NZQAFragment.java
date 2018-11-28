@@ -9,14 +9,20 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.io.IOException;
 
-import sheasmith.me.betterkamar.ApiManager;
+import sheasmith.me.betterkamar.util.ApiManager;
+import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
 import sheasmith.me.betterkamar.dataModels.NZQAObject;
@@ -32,6 +38,7 @@ public class NZQAFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private NZQAAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private Tracker mTracker;
 
     public static NZQAFragment newInstance() {
         return new NZQAFragment();
@@ -54,6 +61,30 @@ public class NZQAFragment extends Fragment {
                 doRequest(mPortal);
             }
         }).start();
+
+        KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
+        mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("NZQA Results");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == 1) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle("NZQA Qualifications Information")
+                    .setMessage("These qualifications and endorsements have been officially awarded by NZQA. They should properly reflect official records.")
+                    .setPositiveButton("Close", null)
+                    .create()
+                    .show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

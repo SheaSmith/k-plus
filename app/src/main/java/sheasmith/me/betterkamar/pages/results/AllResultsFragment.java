@@ -13,10 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.io.IOException;
 import java.util.List;
 
 import sheasmith.me.betterkamar.ApiManager;
+import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
 import sheasmith.me.betterkamar.dataModels.ResultObject;
@@ -33,6 +37,7 @@ public class AllResultsFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private AllResultsParentAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private Tracker mTracker;
 
     public static AllResultsFragment newInstance() {
         return new AllResultsFragment();
@@ -57,6 +62,11 @@ public class AllResultsFragment extends Fragment {
                 doRequest(mPortal);
             }
         }).start();
+
+        KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
+        mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("All Results");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override

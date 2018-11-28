@@ -45,7 +45,7 @@
         <TextView
             android:id="@+id/noEvents"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:padding="16dp"
             android:text="There are no events or classes on the day you selected"
             android:visibility="gone" />

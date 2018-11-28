@@ -7,9 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.securepreferences.SecurePreferences;
 
@@ -19,12 +23,11 @@ import java.util.List;
 import java.util.Set;
 
 import io.fabric.sdk.android.Fabric;
-import sheasmith.me.betterkamar.DataActivity;
+import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
-import sheasmith.me.betterkamar.RecyclerItemClickListener;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
+import sheasmith.me.betterkamar.pages.about.AboutActivity;
 import sheasmith.me.betterkamar.pages.addPortal.AddPortalActivity;
-import sheasmith.me.betterkamar.pages.notices.NoticesFragment;
 
 public class PortalActivity extends AppCompatActivity {
 
@@ -32,11 +35,38 @@ public class PortalActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<PortalObject> servers = new ArrayList<>();
+    private Tracker mTracker;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_portal, menu);
+        return true;
+    }
+    //and this to handle actions
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_info) {
+            Intent i = new Intent(this, AboutActivity.class);
+            startActivity(i);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_portal);
+
+        KamarPlusApplication application = (KamarPlusApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("Portal List");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        mTracker.enableAdvertisingIdCollection(true);
 
         setTitle("Portals");
 

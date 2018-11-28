@@ -2,6 +2,7 @@ package sheasmith.me.betterkamar.dataModels;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -47,22 +48,26 @@ public class AttendanceObject implements Serializable
         results.NumberRecords = root.getElementsByTagName("NumberRecords").item(0).getTextContent();
 
         for (int i = 0; i != weeks.getLength(); i++) {
-            Element weekElement = (Element) weeks.item(i);
-            Week week = new Week();
-            week.WeekStart = weekElement.getElementsByTagName("WeekStart").item(0).getTextContent();
-            week.index = weekElement.getAttribute("index");
+            if (weeks.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                Element weekElement = (Element) weeks.item(i);
+                Week week = new Week();
+                week.WeekStart = weekElement.getElementsByTagName("WeekStart").item(0).getTextContent();
+                week.index = weekElement.getAttribute("index");
 
-            NodeList days = weekElement.getElementsByTagName("Days").item(0).getChildNodes();
-            for (int j = 0; j != days.getLength(); j++) {
-                Element dayElement = (Element) days.item(j);
-                Day day = new Day();
-                day.content = dayElement.getTextContent();
-                day.index = dayElement.getAttribute("index");
+                NodeList days = weekElement.getElementsByTagName("Days").item(0).getChildNodes();
+                for (int j = 0; j != days.getLength(); j++) {
+                    if (days.item(j).getNodeType() == Node.ELEMENT_NODE) {
+                        Element dayElement = (Element) days.item(j);
+                        Day day = new Day();
+                        day.content = dayElement.getTextContent();
+                        day.index = dayElement.getAttribute("index");
 
-                week.Days.add(day);
+                        week.Days.add(day);
+                    }
+                }
+
+                results.Weeks.add(week);
             }
-
-            results.Weeks.add(week);
         }
 
         StudentAttendanceResults = results;

@@ -2,6 +2,7 @@ package sheasmith.me.betterkamar.dataModels;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -46,19 +47,21 @@ public class CalendarObject implements Serializable
         results.NumberRecords = root.getElementsByTagName("NumberRecords").item(0).getTextContent();
 
         for (int i = 0 ; i != days.getLength() ; i++) {
-            Element dayElement = (Element) days.item(i);
-            Day day = new Day();
-            day.index = dayElement.getAttribute("index");
-            day.Date = dayElement.getElementsByTagName("Date").item(0).getTextContent();
-            day.Status = dayElement.getElementsByTagName("Status").item(0).getTextContent();
-            day.DayTT = dayElement.getElementsByTagName("DayTT").item(0).getTextContent();
-            day.Term = dayElement.getElementsByTagName("Term").item(0).getTextContent();
-            day.TermA = dayElement.getElementsByTagName("TermA").item(0).getTextContent();
-            day.Week = dayElement.getElementsByTagName("Week").item(0).getTextContent();
-            day.WeekA = dayElement.getElementsByTagName("WeekA").item(0).getTextContent();
-            day.WeekYear = dayElement.getElementsByTagName("WeekYear").item(0).getTextContent();
+            if (days.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                Element dayElement = (Element) days.item(i);
+                Day day = new Day();
+                day.index = dayElement.getAttribute("index");
+                day.Date = dayElement.getElementsByTagName("Date").item(0).getTextContent();
+                day.Status = dayElement.getElementsByTagName("Status").item(0).getTextContent();
+                day.DayTT = dayElement.getElementsByTagName("DayTT").item(0).getTextContent();
+                day.Term = dayElement.getElementsByTagName("Term").item(0).getTextContent();
+                day.TermA = dayElement.getElementsByTagName("TermA").item(0).getTextContent();
+                day.Week = dayElement.getElementsByTagName("Week").item(0).getTextContent();
+                day.WeekA = dayElement.getElementsByTagName("WeekA").item(0).getTextContent();
+                day.WeekYear = dayElement.getElementsByTagName("WeekYear").item(0).getTextContent();
 
-            results.Days.add(day);
+                results.Days.add(day);
+            }
         }
 
         CalendarResults = results;

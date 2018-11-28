@@ -2,6 +2,7 @@ package sheasmith.me.betterkamar.dataModels;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -51,27 +52,29 @@ public class EventsObject implements Serializable
         results.NumberRecords = root.getElementsByTagName("NumberRecords").item(0).getTextContent();
 
         for (int i = 0; i != events.getLength(); i++) {
-            Element eventElement = (Element) events.item(i);
-            Event event = new Event();
-            event.index = eventElement.getAttribute("index");
-            event.Title = eventElement.getElementsByTagName("Title").item(0).getTextContent();
-            event.Location = eventElement.getElementsByTagName("Location").item(0).getTextContent();
-            event.Details = eventElement.getElementsByTagName("Details").item(0).getTextContent();
-            event.Priority = eventElement.getElementsByTagName("Priority").item(0).getTextContent();
-            event.Public = eventElement.getElementsByTagName("Public").item(0).getTextContent();
-            event.Student = eventElement.getElementsByTagName("Student").item(0).getTextContent();
-            event.CG1 = eventElement.getElementsByTagName("CG1").item(0).getTextContent();
-            event.CG2 = eventElement.getElementsByTagName("CG2").item(0).getTextContent();
-            event.Staff = eventElement.getElementsByTagName("Staff").item(0).getTextContent();
-            event.Colour = eventElement.getElementsByTagName("Colour").item(0).getTextContent();
-            event.ColourLabel = eventElement.getElementsByTagName("ColourLabel").item(0).getTextContent();
-            event.DateTimeInfo = eventElement.getElementsByTagName("DateTimeInfo").item(0).getTextContent();
-            event.DateTimeStart = eventElement.getElementsByTagName("DateTimeStart").item(0).getTextContent();
-            event.DateTimeFinish = eventElement.getElementsByTagName("DateTimeFinish").item(0).getTextContent();
-            event.Start = eventElement.getElementsByTagName("Start").item(0).getTextContent();
-            event.Finish = eventElement.getElementsByTagName("Finish").item(0).getTextContent();
+            if (events.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                Element eventElement = (Element) events.item(i);
+                Event event = new Event();
+                event.index = eventElement.getAttribute("index");
+                event.Title = eventElement.getElementsByTagName("Title").item(0).getTextContent();
+                event.Location = eventElement.getElementsByTagName("Location").item(0).getTextContent();
+                event.Details = eventElement.getElementsByTagName("Details").item(0).getTextContent();
+                event.Priority = eventElement.getElementsByTagName("Priority").item(0).getTextContent();
+                event.Public = eventElement.getElementsByTagName("Public").item(0).getTextContent();
+                event.Student = eventElement.getElementsByTagName("Student").item(0).getTextContent();
+                event.CG1 = eventElement.getElementsByTagName("CG1").item(0).getTextContent();
+                event.CG2 = eventElement.getElementsByTagName("CG2").item(0).getTextContent();
+                event.Staff = eventElement.getElementsByTagName("Staff").item(0).getTextContent();
+                event.Colour = eventElement.getElementsByTagName("Colour").item(0).getTextContent();
+                event.ColourLabel = eventElement.getElementsByTagName("ColourLabel").item(0).getTextContent();
+                event.DateTimeInfo = eventElement.getElementsByTagName("DateTimeInfo").item(0).getTextContent();
+                event.DateTimeStart = eventElement.getElementsByTagName("DateTimeStart").item(0).getTextContent();
+                event.DateTimeFinish = eventElement.getElementsByTagName("DateTimeFinish").item(0).getTextContent();
+                event.Start = eventElement.getElementsByTagName("Start").item(0).getTextContent();
+                event.Finish = eventElement.getElementsByTagName("Finish").item(0).getTextContent();
 
-            results.Events.add(event);
+                results.Events.add(event);
+            }
         }
 
         EventsResults = results;

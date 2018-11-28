@@ -2,6 +2,7 @@ package sheasmith.me.betterkamar.dataModels;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -51,14 +52,16 @@ public class GlobalObject implements Serializable
         results.NumberRecords = root.getElementsByTagName("NumberRecords").item(0).getTextContent();
 
         for (int i = 0; i != periodDefinitions.getLength(); i++) {
-            Element periodDefElement = (Element) periodDefinitions.item(i);
+            if (periodDefinitions.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                Element periodDefElement = (Element) periodDefinitions.item(i);
 
-            PeriodDefinition definition = new PeriodDefinition();
-            definition.index = periodDefElement.getAttribute("index");
-            definition.PeriodName = periodDefElement.getElementsByTagName("PeriodName").item(0).getTextContent();
-            definition.PeriodTime = periodDefElement.getElementsByTagName("PeriodTime").item(0).getTextContent();
+                PeriodDefinition definition = new PeriodDefinition();
+                definition.index = periodDefElement.getAttribute("index");
+                definition.PeriodName = periodDefElement.getElementsByTagName("PeriodName").item(0).getTextContent();
+                definition.PeriodTime = periodDefElement.getElementsByTagName("PeriodTime").item(0).getTextContent();
 
-            results.PeriodDefinitions.add(definition);
+                results.PeriodDefinitions.add(definition);
+            }
         }
 
         GlobalsResults = results;

@@ -2,6 +2,7 @@ package sheasmith.me.betterkamar.dataModels;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -49,30 +50,34 @@ public class ResultObject implements Serializable
         results.StudentID = root.getElementsByTagName("StudentID").item(0).getTextContent();
 
         for (int i = 0; i != levels.getLength(); i++) {
-            Element levelElement = (Element) levels.item(i);
-            ResultLevel resultLevel = new ResultLevel();
-            resultLevel.index = levelElement.getAttribute("index");
-            resultLevel.NumberResults = levelElement.getElementsByTagName("NumberResults").item(0).getTextContent();
-            resultLevel.NCEALevel = levelElement.getElementsByTagName("NCEALevel").item(0).getTextContent();
+            if (levels.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                Element levelElement = (Element) levels.item(i);
+                ResultLevel resultLevel = new ResultLevel();
+                resultLevel.index = levelElement.getAttribute("index");
+                resultLevel.NumberResults = levelElement.getElementsByTagName("NumberResults").item(0).getTextContent();
+                resultLevel.NCEALevel = levelElement.getElementsByTagName("NCEALevel").item(0).getTextContent();
 
-            NodeList resultsNodes = levelElement.getElementsByTagName("Results").item(0).getChildNodes();
-            for (int j = 0; j != resultsNodes.getLength(); j++) {
-                Element resultElement = (Element) resultsNodes.item(j);
-                Result result = new Result();
-                result.index = resultElement.getAttribute("index");
-                result.Number = resultElement.getElementsByTagName("Number").item(0).getTextContent();
-                result.Version = resultElement.getElementsByTagName("Version").item(0).getTextContent();
-                result.Grade = resultElement.getElementsByTagName("Grade").item(0).getTextContent();
-                result.Title = resultElement.getElementsByTagName("Title").item(0).getTextContent();
-                result.SubField = resultElement.getElementsByTagName("SubField").item(0).getTextContent();
-                result.Credits = resultElement.getElementsByTagName("Credits").item(0).getTextContent();
-                result.CreditsPassed = resultElement.getElementsByTagName("CreditsPassed").item(0).getTextContent();
-                result.ResultPublished = resultElement.getElementsByTagName("ResultPublished").item(0).getTextContent();
+                NodeList resultsNodes = levelElement.getElementsByTagName("Results").item(0).getChildNodes();
+                for (int j = 0; j != resultsNodes.getLength(); j++) {
+                    if (resultsNodes.item(j).getNodeType() == Node.ELEMENT_NODE) {
+                        Element resultElement = (Element) resultsNodes.item(j);
+                        Result result = new Result();
+                        result.index = resultElement.getAttribute("index");
+                        result.Number = resultElement.getElementsByTagName("Number").item(0).getTextContent();
+                        result.Version = resultElement.getElementsByTagName("Version").item(0).getTextContent();
+                        result.Grade = resultElement.getElementsByTagName("Grade").item(0).getTextContent();
+                        result.Title = resultElement.getElementsByTagName("Title").item(0).getTextContent();
+                        result.SubField = resultElement.getElementsByTagName("SubField").item(0).getTextContent();
+                        result.Credits = resultElement.getElementsByTagName("Credits").item(0).getTextContent();
+                        result.CreditsPassed = resultElement.getElementsByTagName("CreditsPassed").item(0).getTextContent();
+                        result.ResultPublished = resultElement.getElementsByTagName("ResultPublished").item(0).getTextContent();
 
-                resultLevel.Results.add(result);
+                        resultLevel.Results.add(result);
+                    }
+                }
+
+                results.ResultLevels.add(resultLevel);
             }
-
-            results.ResultLevels.add(resultLevel);
         }
 
         StudentResultsResults = results;

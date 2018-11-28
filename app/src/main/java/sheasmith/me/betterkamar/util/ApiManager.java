@@ -1,9 +1,12 @@
-package sheasmith.me.betterkamar;
+package sheasmith.me.betterkamar.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.security.ProviderInstaller;
 import com.google.gson.reflect.TypeToken;
 import com.iainconnor.objectcache.DiskCache;
 
@@ -17,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,11 +30,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import sheasmith.me.betterkamar.BuildConfig;
+import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.AbsenceObject;
 import sheasmith.me.betterkamar.dataModels.AttendanceObject;
 import sheasmith.me.betterkamar.dataModels.CalendarObject;
@@ -141,7 +153,7 @@ public class ApiManager {
                                 public void error(Exception e) {
                                     callback.error(e);
                                 }
-                            });
+                            }, context);
                         }
 
                         @Override
@@ -815,6 +827,25 @@ public class ApiManager {
                 @Override
                 public void run() {
                     try {
+                        initializeSSLContext(context);
+                        // Since many schools use Lets Encrypt or roll their own self-signed certs. We are going to disable certificate checking
+                        // This is bad, but there's no other solution to stop it breaking at some schools
+                        TrustManager[] dummyTrustManager = new TrustManager[] { new X509TrustManager() {
+                            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                                return null;
+                            }
+
+                            public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                            }
+
+                            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                            }
+                        } };
+                        SSLContext sc = SSLContext.getInstance("SSL");
+                        sc.init(null, dummyTrustManager, new java.security.SecureRandom());
+
+                        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
                         HttpURLConnection connection = (HttpURLConnection) new URL(URL.replace("api.php", "img.php") + "?Key=" + TOKEN + "&Stuid=" + ID).openConnection();
                         connection.setRequestProperty("User-agent", "KAMAR+ 3.0");
                         connection.setRequestProperty("X-Requested-With", "nz.co.KAMAR");
@@ -840,11 +871,29 @@ public class ApiManager {
         }
     }
 
-    public static void downloadImage(final String url, final ApiResponse<Bitmap> callback) {
+    public static void downloadImage(final String url, final ApiResponse<Bitmap> callback, final Context context) {
         Thread webThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
+                    initializeSSLContext(context);
+                    // Since many schools use Lets Encrypt or roll their own self-signed certs. We are going to disable certificate checking
+                    // This is bad, but there's no other solution to stop it breaking at some schools
+                    TrustManager[] dummyTrustManager = new TrustManager[] { new X509TrustManager() {
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return null;
+                        }
+
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                        }
+
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                        }
+                    } };
+                    SSLContext sc = SSLContext.getInstance("SSL");
+                    sc.init(null, dummyTrustManager, new java.security.SecureRandom());
+
+                    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
                     HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
                     connection.setRequestProperty("User-agent", "KAMAR+ 3.0");
                     connection.setRequestProperty("X-Requested-With", "nz.co.KAMAR");
@@ -860,6 +909,21 @@ public class ApiManager {
             }
         });
         webThread.start();
+    }
+
+    public static void initializeSSLContext(Context mContext){
+        try {
+            SSLContext.getInstance("TLSv1.2");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        try {
+            ProviderInstaller.installIfNeeded(mContext.getApplicationContext());
+        } catch (GooglePlayServicesRepairableException e) {
+            e.printStackTrace();
+        } catch (GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void getReports(final ApiResponse<List<ReportsObject>> callback) {
@@ -883,8 +947,8 @@ public class ApiManager {
                         login = Jsoup.connect(URL.replace("api/api.php", "index.php/login")).method(Connection.Method.POST).data("username", ID, "password", PASSWORD).cookies(sessionCookies).execute();
 
                     Map<String, String> cookies = login.cookies();
-                    if (cookies.containsKey("kamar_session"))
-                    cookies.put("kamar_session", sessionCookies.get("kamar_session"));
+//                    if (sessionCookies.containsKey("kamar_session"))
+                        cookies.put("kamar_session", sessionCookies.get("kamar_session"));
 
                     org.jsoup.nodes.Document d = Jsoup.connect(URL.replace("api/api.php", "index.php/reports/")).cookies(cookies).get();
                     Elements groups = d.getElementsByTag("tbody").first().children();
