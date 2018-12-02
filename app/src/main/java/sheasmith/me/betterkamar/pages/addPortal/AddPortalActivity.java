@@ -1,3 +1,9 @@
+/*
+ * Created by Shea Smith on 2/12/18 4:18 PM
+ * Copyright (c) 2016 -  2018 Shea Smith. All rights reserved.
+ * Last modified 2/12/18 4:18 PM
+ */
+
 package sheasmith.me.betterkamar.pages.addPortal;
 
 import android.app.ProgressDialog;
@@ -11,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -182,6 +189,7 @@ public class AddPortalActivity extends AppCompatActivity {
                         }
                     });
                 } else if (e instanceof IOException) {
+                    Crashlytics.logException(e);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
