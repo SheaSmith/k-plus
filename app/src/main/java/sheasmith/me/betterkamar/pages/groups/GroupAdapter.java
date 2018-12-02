@@ -1,6 +1,7 @@
 package sheasmith.me.betterkamar.pages.groups;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
 
     public List<GroupsViewModel> groups;
     private Context mContext;
+    public String lastHeading;
 
     public static class GroupViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
@@ -52,6 +54,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
     public GroupAdapter(List<GroupsViewModel> resultLevels, Context context) {
         groups = resultLevels;
         mContext = context;
+        lastHeading = "";
     }
 
 
@@ -74,7 +77,17 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         final GroupsViewModel group = groups.get(position);
 
         if (!group.isYear) {
-            holder.heading.setVisibility(View.GONE);
+            if (group.section.equals(lastHeading))
+                holder.heading.setVisibility(View.GONE);
+            else {
+                lastHeading = group.section;
+                holder.heading.setText(group.section);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    holder.heading.setTextAppearance(R.style.TextAppearance_AppCompat_Subhead);
+                } else {
+                    holder.heading.setTextAppearance(mContext, R.style.TextAppearance_AppCompat_Subhead);
+                }
+            }
             holder.groupsLayout.setVisibility(View.VISIBLE);
 
             holder.title.setText(group.name);
@@ -111,6 +124,11 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
            holder.heading.setVisibility(View.VISIBLE);
 
            holder.heading.setText(group.year);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                holder.heading.setTextAppearance(R.style.TextAppearance_AppCompat_Headline);
+            } else {
+                holder.heading.setTextAppearance(mContext, R.style.TextAppearance_AppCompat_Headline);
+            }
         }
 
 

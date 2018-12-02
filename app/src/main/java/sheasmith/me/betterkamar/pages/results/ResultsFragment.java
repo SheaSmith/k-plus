@@ -44,6 +44,7 @@ public class ResultsFragment extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        getActivity().setTheme(R.style.NoActionBarShadow);
         super.onActivityCreated(savedInstanceState);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
         getActivity().setTitle("Results");

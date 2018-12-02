@@ -1,15 +1,14 @@
 package sheasmith.me.betterkamar.pages.results;
 
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -25,23 +24,16 @@ import com.google.android.gms.analytics.Tracker;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
-import sheasmith.me.betterkamar.ApiManager;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
-import sheasmith.me.betterkamar.dataModels.GroupObject;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
 import sheasmith.me.betterkamar.dataModels.NCEAObject;
-import sheasmith.me.betterkamar.dataModels.NoticesObject;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
-import sheasmith.me.betterkamar.pages.notices.NoticesAdapter;
-
-import static android.content.Context.MODE_PRIVATE;
+import sheasmith.me.betterkamar.util.ApiManager;
 
 public class NCEAFragment extends Fragment {
 
@@ -49,6 +41,7 @@ public class NCEAFragment extends Fragment {
     private ProgressBar mLoader;
     private PortalObject mPortal;
     private Tracker mTracker;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static NCEAFragment newInstance() {
         return new NCEAFragment();
@@ -63,12 +56,25 @@ public class NCEAFragment extends Fragment {
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+        menu.add(0, 1, 0, "NCEA Information").setIcon(R.drawable.ic_info).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                doRequest(mPortal);
+                doRequest(mPortal, false);
             }
         }).start();
 
@@ -85,10 +91,19 @@ public class NCEAFragment extends Fragment {
         mView = inflater.inflate(R.layout.fragment_results_ncea, container, false);
         mLoader = mView.findViewById(R.id.loader);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                doRequest(mPortal, true);
+            }
+        });
+
         return mView;
     }
 
-    private void doRequest(final PortalObject portal) {
+    private void doRequest(final PortalObject portal, final boolean ignoreCache) {
         ApiManager.getNCEADetails(new ApiResponse<NCEAObject>() {
             @Override
             public void success(final NCEAObject value) {
@@ -241,9 +256,9 @@ public class NCEAFragment extends Fragment {
                         ((TextView) mView.findViewById(R.id.level5_attempted)).setText(level.Attempted);
 
                         NCEAObject.NCEA ncea = student.NCEA;
-                        ((TextView) mView.findViewById(R.id.ncea_level1_result)).setText(ncea.L1NCEA);
-                        ((TextView) mView.findViewById(R.id.ncea_level2_result)).setText(ncea.L2NCEA);
-                        ((TextView) mView.findViewById(R.id.ncea_level3_result)).setText(ncea.L3NCEA);
+                        ((TextView) mView.findViewById(R.id.ncea_level1_result)).setText(toTitleCase(ncea.L1NCEA));
+                        ((TextView) mView.findViewById(R.id.ncea_level2_result)).setText(toTitleCase(ncea.L2NCEA));
+                        ((TextView) mView.findViewById(R.id.ncea_level3_result)).setText(toTitleCase(ncea.L3NCEA));
                         ((TextView) mView.findViewById(R.id.ncea_ue_lit_result)).setText(ncea.NCEAUELIT);
                         ((TextView) mView.findViewById(R.id.ncea_num_result)).setText(ncea.NCEANUM);
                         ((TextView) mView.findViewById(R.id.ncea_lit_result)).setText(ncea.NCEAL1LIT);
@@ -283,6 +298,7 @@ public class NCEAFragment extends Fragment {
                         }
 
                         mLoader.setVisibility(View.GONE);
+                        mSwipeRefreshLayout.setRefreshing(false);
                     }
                 });
             }
@@ -295,7 +311,7 @@ public class NCEAFragment extends Fragment {
                     ApiManager.login(portal.username, portal.password, new ApiResponse<LoginObject>() {
                         @Override
                         public void success(LoginObject value) {
-                            doRequest(portal);
+                            doRequest(portal, ignoreCache);
                         }
 
                         @Override
@@ -316,7 +332,7 @@ public class NCEAFragment extends Fragment {
                                     .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
-                                            doRequest(portal);
+                                            doRequest(portal, ignoreCache);
                                         }
                                     })
                                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -331,6 +347,26 @@ public class NCEAFragment extends Fragment {
                     });
                 }
             }
-        });
+        }, ignoreCache);
+    }
+
+    public static String toTitleCase(String s) {
+        String str = "";
+        char a;
+
+        for (int i = 0; i < s.length(); i++) {
+            a = s.charAt(i);
+            if (a == ' ') {
+                str = str + Character.toLowerCase(a) + (Character.toUpperCase(s.charAt(i + 1)));
+                i++; // "skip" the next element since it is now already processed
+            } else if (i == 0) {
+                str = str + Character.toUpperCase(s.charAt(i));
+            } else {
+                str = str + (Character.toLowerCase(a));
+            }
+
+        }
+
+        return str;
     }
 }

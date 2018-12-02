@@ -1,10 +1,11 @@
 package sheasmith.me.betterkamar.pages.timetable;
 
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,7 +37,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import sheasmith.me.betterkamar.util.ApiManager;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.AbsenceObject;
@@ -49,6 +49,7 @@ import sheasmith.me.betterkamar.dataModels.TimetableObject;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
+import sheasmith.me.betterkamar.util.ApiManager;
 import sheasmith.me.betterkamar.util.OnSwipeTouchListener;
 
 public class TimetableFragment extends Fragment {
@@ -70,6 +71,7 @@ public class TimetableFragment extends Fragment {
     private Date lastDate;
     private PortalObject mPortal;
     private Tracker mTracker;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -80,7 +82,7 @@ public class TimetableFragment extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    doRequest(mPortal);
+                    doRequest(mPortal, false);
                 }
             }).start();
         getActivity().invalidateOptionsMenu();
@@ -257,11 +259,20 @@ public class TimetableFragment extends Fragment {
             updateList(lastDate);
         }
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                doRequest(mPortal, true);
+            }
+        });
+
         return view;
     }
 
 
-    private void doRequest(final PortalObject portal) {
+    private void doRequest(final PortalObject portal, final boolean ignoreCache) {
         final boolean[] finished = new boolean[]{false, false, false, false, false, false};
 
         ApiManager.getGlobals(new ApiResponse<GlobalObject>() {
@@ -278,10 +289,10 @@ public class TimetableFragment extends Fragment {
             public void error(Exception e) {
                 e.printStackTrace();
                 finished[0] = true;
-                handleError(portal, e);
+                handleError(portal, e, ignoreCache);
             }
 
-        });
+        }, ignoreCache);
 
         ApiManager.getAttendance(new ApiResponse<AttendanceObject>() {
             @Override
@@ -297,9 +308,9 @@ public class TimetableFragment extends Fragment {
             public void error(Exception e) {
                 e.printStackTrace();
                 finished[1] = true;
-                handleError(portal, e);
+                handleError(portal, e, ignoreCache);
             }
-        });
+        }, ignoreCache);
 
         ApiManager.getEvents(new ApiResponse<EventsObject>() {
             @Override
@@ -315,9 +326,9 @@ public class TimetableFragment extends Fragment {
             public void error(Exception e) {
                 e.printStackTrace();
                 finished[2] = true;
-                handleError(portal, e);
+                handleError(portal, e, ignoreCache);
             }
-        }, new Date(System.currentTimeMillis()).getYear());
+        }, new Date(System.currentTimeMillis()).getYear(), ignoreCache);
 
         ApiManager.getTimetable(new ApiResponse<TimetableObject>() {
             @Override
@@ -334,9 +345,9 @@ public class TimetableFragment extends Fragment {
                 e.printStackTrace();
                 finished[3] = true;
 
-                handleError(portal, e);
+                handleError(portal, e, ignoreCache);
             }
-        });
+        }, ignoreCache);
 
         ApiManager.getCalendar(new ApiResponse<CalendarObject>() {
             @Override
@@ -353,9 +364,9 @@ public class TimetableFragment extends Fragment {
                 e.printStackTrace();
                 finished[4] = true;
 
-                handleError(portal, e);
+                handleError(portal, e, ignoreCache);
             }
-        });
+        }, ignoreCache);
 
         ApiManager.getAbsenceStats(new ApiResponse<AbsenceObject>() {
             @Override
@@ -372,17 +383,17 @@ public class TimetableFragment extends Fragment {
                 e.printStackTrace();
                 finished[5] = true;
 
-                handleError(portal, e);
+                handleError(portal, e, ignoreCache);
             }
-        });
+        }, ignoreCache);
     }
 
-    private void handleError(final PortalObject portal, Exception e) {
+    private void handleError(final PortalObject portal, Exception e, final boolean ignoreCache) {
         if (e instanceof Exceptions.ExpiredToken) {
             ApiManager.login(portal.username, portal.password, new ApiResponse<LoginObject>() {
                 @Override
                 public void success(LoginObject value) {
-                    doRequest(portal);
+                    doRequest(portal, ignoreCache);
                 }
 
                 @Override
@@ -403,7 +414,7 @@ public class TimetableFragment extends Fragment {
                             .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    doRequest(portal);
+                                    doRequest(portal, ignoreCache);
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -428,6 +439,7 @@ public class TimetableFragment extends Fragment {
             @Override
             public void run() {
                 mLoader.setVisibility(View.GONE);
+                mSwipeRefreshLayout.setRefreshing(false);
                 // So we get the weeks to show up
                 mCalendarView.setCurrentDate(mCalendarView.getCurrentDate().getDate().minusWeeks(1));
                 mCalendarView.setCurrentDate(mCalendarView.getCurrentDate().getDate().plusWeeks(1));

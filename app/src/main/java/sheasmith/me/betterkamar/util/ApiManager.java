@@ -45,8 +45,8 @@ import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.AbsenceObject;
 import sheasmith.me.betterkamar.dataModels.AttendanceObject;
 import sheasmith.me.betterkamar.dataModels.CalendarObject;
-import sheasmith.me.betterkamar.dataModels.EventsObject;
 import sheasmith.me.betterkamar.dataModels.DetailsObject;
+import sheasmith.me.betterkamar.dataModels.EventsObject;
 import sheasmith.me.betterkamar.dataModels.GlobalObject;
 import sheasmith.me.betterkamar.dataModels.GroupObject;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
@@ -177,7 +177,7 @@ public class ApiManager {
                         public void error(Exception e) {
                             callback.error(e);
                         }
-                    });
+                    }, false);
                 }
 
                 if (portal.studentFile != null && portal.schoolFile != null && portal.student != null)
@@ -210,7 +210,7 @@ public class ApiManager {
                         .url(URL)
                         .post(body)
                         .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                        .addHeader("User-Agent", "KAMAR+ 3.0")
+                        .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
                         .addHeader("X-Requested-With", "nz.co.KAMAR")
                         .addHeader("Origin", "file://")
                         .build();
@@ -254,7 +254,7 @@ public class ApiManager {
                             .url(URL)
                             .post(body)
                             .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                            .addHeader("User-Agent", "KAMAR+ 3.0")
+                            .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
                             .addHeader("X-Requested-With", "nz.co.KAMAR")
                             .addHeader("Origin", "file://")
                             .build();
@@ -278,9 +278,9 @@ public class ApiManager {
         webThread.start();
     }
 
-    public static void getGlobals(final ApiResponse<GlobalObject> callback) {
+    public static void getGlobals(final ApiResponse<GlobalObject> callback, boolean ignoreCache) {
         GlobalObject cache = (GlobalObject) cacheManager.get("GlobalObject" + ID, GlobalObject.class, new TypeToken<GlobalObject>(){}.getType());
-        if (cache != null) {
+        if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
         }
@@ -298,7 +298,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -321,9 +321,9 @@ public class ApiManager {
         }
     }
 
-    public static void getEvents(final ApiResponse<EventsObject> callback, final int year) {
+    public static void getEvents(final ApiResponse<EventsObject> callback, final int year, boolean ignoreCache) {
         EventsObject cache = (EventsObject) cacheManager.get("EventsObject" + ID, EventsObject.class, new TypeToken<EventsObject>(){}.getType());
-        if (cache != null) {
+        if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
         }
@@ -355,7 +355,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -378,7 +378,16 @@ public class ApiManager {
         }
     }
 
-    public static void getNotices(final ApiResponse<NoticesObject> callback, final Date dateToShow) {
+    public static void getNotices(final ApiResponse<NoticesObject> callback, final Date dateToShow, boolean ignoreCache) {
+        final SimpleDateFormat cacheDate = new SimpleDateFormat("dd-MM-yyyy");
+
+        NoticesObject cache = (NoticesObject) cacheManager.get("NoticesObject" + ID + cacheDate.format(dateToShow), NoticesObject.class, new TypeToken<NoticesObject>() {
+        }.getType());
+        if (cache != null && !ignoreCache) {
+            callback.success(cache);
+            return;
+        }
+
         if (TOKEN != null) {
             Thread webThread = new Thread(new Runnable() {
                 @Override
@@ -395,7 +404,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -405,6 +414,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         NoticesObject noticesObject = new NoticesObject(xml);
                         callback.success(noticesObject);
+                        cacheManager.put("NoticesObject" + ID + cacheDate.format(dateToShow), noticesObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), false);
 
 
                     } catch (Exception e) {
@@ -418,9 +428,9 @@ public class ApiManager {
         }
     }
 
-    public static void getAbsenceStats(final ApiResponse<AbsenceObject> callback) {
+    public static void getAbsenceStats(final ApiResponse<AbsenceObject> callback, boolean ignoreCache) {
         AbsenceObject cache = (AbsenceObject) cacheManager.get("AbsenceObject" + ID, AbsenceObject.class, new TypeToken<AbsenceObject>(){}.getType());
-        if (cache != null) {
+        if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
         }
@@ -441,7 +451,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -464,9 +474,9 @@ public class ApiManager {
         }
     }
 
-    public static void getCalendar(final ApiResponse<CalendarObject> callback) {
+    public static void getCalendar(final ApiResponse<CalendarObject> callback, boolean ignoreCache) {
         CalendarObject cache = (CalendarObject) cacheManager.get("CalObject" + ID, AttendanceObject.class, new TypeToken<CalendarObject>(){}.getType());
-        if (cache != null) {
+        if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
         }
@@ -487,7 +497,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -511,9 +521,9 @@ public class ApiManager {
         }
     }
 
-    public static void getAttendance(final ApiResponse<AttendanceObject> callback) {
+    public static void getAttendance(final ApiResponse<AttendanceObject> callback, boolean ignoreCache) {
         AttendanceObject cache = (AttendanceObject) cacheManager.get("AttendanceObject" + ID, AttendanceObject.class, new TypeToken<AttendanceObject>(){}.getType());
-        if (cache != null) {
+        if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
         }
@@ -534,7 +544,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -557,9 +567,9 @@ public class ApiManager {
         }
     }
 
-    public static void getNCEADetails(final ApiResponse<NCEAObject> callback) {
+    public static void getNCEADetails(final ApiResponse<NCEAObject> callback, boolean ignoreCache) {
         NCEAObject cache = (NCEAObject) cacheManager.get("NCEAObject" + ID, NCEAObject.class, new TypeToken<NCEAObject>(){}.getType());
-        if (cache != null) {
+        if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
         }
@@ -577,7 +587,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -600,9 +610,9 @@ public class ApiManager {
         }
     }
 
-    public static void getNZQAResults(final ApiResponse<NZQAObject> callback) {
+    public static void getNZQAResults(final ApiResponse<NZQAObject> callback, boolean ignoreCache) {
         NZQAObject cache = (NZQAObject) cacheManager.get("NZQAObject" + ID, NZQAObject.class, new TypeToken<NZQAObject>(){}.getType());
-        if (cache != null) {
+        if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
         }
@@ -620,7 +630,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -643,9 +653,9 @@ public class ApiManager {
         }
     }
 
-    public static void getAllResults(final ApiResponse<ResultObject> callback) {
+    public static void getAllResults(final ApiResponse<ResultObject> callback, boolean ignoreCache) {
         ResultObject cache = (ResultObject) cacheManager.get("ResultObject" + ID, ResultObject.class, new TypeToken<ResultObject>(){}.getType());
-        if (cache != null) {
+        if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
         }
@@ -666,7 +676,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -689,9 +699,9 @@ public class ApiManager {
         }
     }
 
-    public static void getTimetable(final ApiResponse<TimetableObject> callback) {
+    public static void getTimetable(final ApiResponse<TimetableObject> callback, boolean ignoreCache) {
         TimetableObject cache = (TimetableObject) cacheManager.get("TimetableObject" + ID, TimetableObject.class, new TypeToken<TimetableObject>(){}.getType());
-        if (cache != null) {
+        if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
         }
@@ -712,7 +722,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -735,9 +745,9 @@ public class ApiManager {
         }
     }
 
-    public static void getGroupsApi(final ApiResponse<GroupObject> callback) {
+    public static void getGroupsApi(final ApiResponse<GroupObject> callback, boolean ignoreCache) {
         GroupObject cache = (GroupObject) cacheManager.get("GroupObject" + ID, GroupObject.class, new TypeToken<GroupObject>(){}.getType());
-        if (cache != null) {
+        if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
         }
@@ -755,7 +765,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -778,9 +788,9 @@ public class ApiManager {
         }
     }
 
-    public static void getDetails(final ApiResponse<DetailsObject> callback) {
+    public static void getDetails(final ApiResponse<DetailsObject> callback, boolean ignoreCache) {
         DetailsObject cache = (DetailsObject) cacheManager.get("DetailsObject" + ID, DetailsObject.class, new TypeToken<DetailsObject>(){}.getType());
-        if (cache != null) {
+        if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
         }
@@ -798,7 +808,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ 3.0")
+                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -827,10 +837,12 @@ public class ApiManager {
                 @Override
                 public void run() {
                     try {
+
                         initializeSSLContext(context);
+
                         // Since many schools use Lets Encrypt or roll their own self-signed certs. We are going to disable certificate checking
                         // This is bad, but there's no other solution to stop it breaking at some schools
-                        TrustManager[] dummyTrustManager = new TrustManager[] { new X509TrustManager() {
+                        TrustManager[] dummyTrustManager = new TrustManager[]{new X509TrustManager() {
                             public java.security.cert.X509Certificate[] getAcceptedIssuers() {
                                 return null;
                             }
@@ -840,14 +852,14 @@ public class ApiManager {
 
                             public void checkServerTrusted(X509Certificate[] certs, String authType) {
                             }
-                        } };
+                        }};
                         SSLContext sc = SSLContext.getInstance("SSL");
                         sc.init(null, dummyTrustManager, new java.security.SecureRandom());
 
                         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
                         HttpURLConnection connection = (HttpURLConnection) new URL(URL.replace("api.php", "img.php") + "?Key=" + TOKEN + "&Stuid=" + ID).openConnection();
-                        connection.setRequestProperty("User-agent", "KAMAR+ 3.0");
+                        connection.setRequestProperty("User-agent", "KAMAR+ " + BuildConfig.VERSION_NAME);
                         connection.setRequestProperty("X-Requested-With", "nz.co.KAMAR");
                         connection.setRequestProperty("Origin", "file://");
 
@@ -855,11 +867,45 @@ public class ApiManager {
                         try {
                             InputStream input = connection.getInputStream();
                             callback.success(BitmapFactory.decodeStream(input));
-                        }
-                        catch (FileNotFoundException e) {
+                        } catch (FileNotFoundException e) {
                             callback.success(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_person));
                         }
 
+                    } catch (GooglePlayServicesNotAvailableException e) {
+                        try {
+                            // Since many schools use Lets Encrypt or roll their own self-signed certs. We are going to disable certificate checking
+                            // This is bad, but there's no other solution to stop it breaking at some schools
+                            TrustManager[] dummyTrustManager = new TrustManager[]{new X509TrustManager() {
+                                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                                    return null;
+                                }
+
+                                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                                }
+
+                                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                                }
+                            }};
+                            SSLContext sc = SSLContext.getInstance("SSL");
+                            sc.init(null, dummyTrustManager, new java.security.SecureRandom());
+
+                            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+                            HttpURLConnection connection = (HttpURLConnection) new URL(URL.replace("api.php", "img.php") + "?Key=" + TOKEN + "&Stuid=" + ID).openConnection();
+                            connection.setRequestProperty("User-agent", "KAMAR+ " + BuildConfig.VERSION_NAME);
+                            connection.setRequestProperty("X-Requested-With", "nz.co.KAMAR");
+                            connection.setRequestProperty("Origin", "file://");
+
+                            connection.connect();
+                            try {
+                                InputStream input = connection.getInputStream();
+                                callback.success(BitmapFactory.decodeStream(input));
+                            } catch (FileNotFoundException ex) {
+                                callback.success(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_person));
+                            }
+                        } catch (Exception ex) {
+                            callback.error(ex);
+                        }
                     } catch (Exception e) {
                         callback.error(e);
                     }
@@ -871,15 +917,17 @@ public class ApiManager {
         }
     }
 
-    public static void downloadImage(final String url, final ApiResponse<Bitmap> callback, final Context context) {
+    public static void downloadImage(final String finalUrl, final ApiResponse<Bitmap> callback, final Context context) {
         Thread webThread = new Thread(new Runnable() {
             @Override
             public void run() {
+                String url = finalUrl;
                 try {
                     initializeSSLContext(context);
+
                     // Since many schools use Lets Encrypt or roll their own self-signed certs. We are going to disable certificate checking
                     // This is bad, but there's no other solution to stop it breaking at some schools
-                    TrustManager[] dummyTrustManager = new TrustManager[] { new X509TrustManager() {
+                    TrustManager[] dummyTrustManager = new TrustManager[]{new X509TrustManager() {
                         public java.security.cert.X509Certificate[] getAcceptedIssuers() {
                             return null;
                         }
@@ -889,13 +937,13 @@ public class ApiManager {
 
                         public void checkServerTrusted(X509Certificate[] certs, String authType) {
                         }
-                    } };
+                    }};
                     SSLContext sc = SSLContext.getInstance("SSL");
                     sc.init(null, dummyTrustManager, new java.security.SecureRandom());
 
                     HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
                     HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-                    connection.setRequestProperty("User-agent", "KAMAR+ 3.0");
+                    connection.setRequestProperty("User-agent", "KAMAR+ " + BuildConfig.VERSION_NAME);
                     connection.setRequestProperty("X-Requested-With", "nz.co.KAMAR");
                     connection.setRequestProperty("Origin", "file://");
 
@@ -903,6 +951,38 @@ public class ApiManager {
                     InputStream input = connection.getInputStream();
                     callback.success(BitmapFactory.decodeStream(input));
 
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    try {
+                        url = "http://i.imgur.com/wmHzuNg.png";
+
+                        // Since many schools use Lets Encrypt or roll their own self-signed certs. We are going to disable certificate checking
+                        // This is bad, but there's no other solution to stop it breaking at some schools
+                        TrustManager[] dummyTrustManager = new TrustManager[]{new X509TrustManager() {
+                            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                                return null;
+                            }
+
+                            public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                            }
+
+                            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                            }
+                        }};
+                        SSLContext sc = SSLContext.getInstance("SSL");
+                        sc.init(null, dummyTrustManager, new java.security.SecureRandom());
+
+                        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+                        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                        connection.setRequestProperty("User-agent", "KAMAR+ " + BuildConfig.VERSION_NAME);
+                        connection.setRequestProperty("X-Requested-With", "nz.co.KAMAR");
+                        connection.setRequestProperty("Origin", "file://");
+
+                        connection.connect();
+                        InputStream input = connection.getInputStream();
+                        callback.success(BitmapFactory.decodeStream(input));
+                    } catch (Exception ex) {
+                        callback.error(e);
+                    }
                 } catch (Exception e) {
                     callback.error(e);
                 }
@@ -911,7 +991,7 @@ public class ApiManager {
         webThread.start();
     }
 
-    public static void initializeSSLContext(Context mContext){
+    public static void initializeSSLContext(Context mContext) throws GooglePlayServicesNotAvailableException {
         try {
             SSLContext.getInstance("TLSv1.2");
         } catch (NoSuchAlgorithmException e) {
@@ -921,14 +1001,12 @@ public class ApiManager {
             ProviderInstaller.installIfNeeded(mContext.getApplicationContext());
         } catch (GooglePlayServicesRepairableException e) {
             e.printStackTrace();
-        } catch (GooglePlayServicesNotAvailableException e) {
-            e.printStackTrace();
         }
     }
 
-    public static void getReports(final ApiResponse<List<ReportsObject>> callback) {
+    public static void getReports(final ApiResponse<List<ReportsObject>> callback, boolean ignoreCache) {
         List<ReportsObject> cache = (List<ReportsObject>) cacheManager.get("ReportsObject" + ID, ArrayList.class, new TypeToken<List<ReportsObject>>(){}.getType());
-        if (cache != null) {
+        if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
         }
@@ -974,9 +1052,9 @@ public class ApiManager {
         webThread.start();
     }
 
-    public static void getGroupsHtml(final ApiResponse<List<GroupsObject>> callback) {
+    public static void getGroupsHtml(final ApiResponse<List<GroupsObject>> callback, boolean ignoreCache) {
         List<GroupsObject> cache = (List<GroupsObject>) cacheManager.get("GroupsObjectHTML" + ID, ArrayList.class, new TypeToken<List<GroupsObject>>(){}.getType());
-        if (cache != null) {
+        if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
         }
@@ -985,8 +1063,18 @@ public class ApiManager {
             @Override
             public void run() {
                 try {
-                    Connection.Response login = Jsoup.connect(URL.replace("api/api.php", "/index.php/login")).method(Connection.Method.POST).data("username", ID, "password", PASSWORD).execute();
+                    Connection.Response origCookies = Jsoup.connect(URL.replace("api/api.php", "index.php")).method(Connection.Method.GET).execute();
+                    Map<String, String> sessionCookies = origCookies.cookies();
+
+                    Connection.Response login;
+                    if (sessionCookies.containsKey("csrf_kamar_cn"))
+                        login = Jsoup.connect(URL.replace("api/api.php", "index.php/login")).method(Connection.Method.POST).data("username", ID, "password", PASSWORD, "csrf_kamar_sn", sessionCookies.get("csrf_kamar_cn")).cookies(sessionCookies).execute();
+                    else
+                        login = Jsoup.connect(URL.replace("api/api.php", "index.php/login")).method(Connection.Method.POST).data("username", ID, "password", PASSWORD).cookies(sessionCookies).execute();
+
                     Map<String, String> cookies = login.cookies();
+//                    if (sessionCookies.containsKey("kamar_session"))
+                    cookies.put("kamar_session", sessionCookies.get("kamar_session"));
 
                     String lastcategory = "";
                     String lastyear = "";

@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +20,6 @@ import com.google.android.gms.analytics.Tracker;
 import java.io.IOException;
 import java.util.List;
 
-import sheasmith.me.betterkamar.util.ApiManager;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
@@ -27,6 +27,7 @@ import sheasmith.me.betterkamar.dataModels.htmlModels.ReportsObject;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
+import sheasmith.me.betterkamar.util.ApiManager;
 
 public class ReportFragment extends Fragment {
 
@@ -37,6 +38,7 @@ public class ReportFragment extends Fragment {
     private ReportAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private Tracker mTracker;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static ReportFragment newInstance() {
         return new ReportFragment();
@@ -57,7 +59,7 @@ public class ReportFragment extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    doRequest(mPortal);
+                    doRequest(mPortal, false);
                 }
             }).start();
 
@@ -86,16 +88,25 @@ public class ReportFragment extends Fragment {
 
         ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                doRequest(mPortal, true);
+            }
+        });
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                doRequest(mPortal);
+                doRequest(mPortal, false);
             }
         }).start();
         return mView;
     }
 
-    private void doRequest(final PortalObject portal) {
+    private void doRequest(final PortalObject portal, final boolean ignoreCache) {
         ApiManager.getReports(new ApiResponse<List<ReportsObject>>() {
             @Override
             public void success(final List<ReportsObject> value) {
@@ -107,6 +118,7 @@ public class ReportFragment extends Fragment {
                         mAdapter = new ReportAdapter(value, getContext(), mPortal);
                         mRecyclerView.setAdapter(mAdapter);
                         mLoader.setVisibility(View.GONE);
+                        mSwipeRefreshLayout.setRefreshing(false);
                     }
                 });
             }
@@ -119,7 +131,7 @@ public class ReportFragment extends Fragment {
                     ApiManager.login(portal.username, portal.password, new ApiResponse<LoginObject>() {
                         @Override
                         public void success(LoginObject value) {
-                            doRequest(portal);
+                            doRequest(portal, ignoreCache);
                         }
 
                         @Override
@@ -139,7 +151,32 @@ public class ReportFragment extends Fragment {
                                         .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
-                                                doRequest(portal);
+                                                doRequest(portal, ignoreCache);
+                                            }
+                                        })
+                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                getActivity().finish();
+                                            }
+                                        })
+                                        .create()
+                                        .show();
+                            }
+                        });
+                    }
+                } else {
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new AlertDialog.Builder(getContext())
+                                        .setTitle("Reports not supported")
+                                        .setMessage("Your school's portal does not seem to support reports. You will have to view them via the web portal.")
+                                        .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                doRequest(portal, ignoreCache);
                                             }
                                         })
                                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -155,6 +192,6 @@ public class ReportFragment extends Fragment {
                     }
                 }
             }
-        });
+        }, ignoreCache);
     }
 }

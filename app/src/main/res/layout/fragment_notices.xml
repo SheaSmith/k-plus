@@ -7,16 +7,69 @@
     android:orientation="vertical"
     tools:context="sheasmith.me.betterkamar.pages.notices.NoticesFragment">
 
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/colorAccent"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="3dp">
+
+        <LinearLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/previous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/mcv_arrow_margin"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/previous"
+                android:padding="@dimen/mcv_arrow_padding"
+                app:srcCompat="@drawable/action_previous" />
+
+            <TextView
+                android:id="@+id/current_date"
+                style="?android:attr/textAppearanceMedium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Friday, 30th of November"
+                android:textColor="@color/white" />
+
+            <ImageButton
+                android:id="@+id/next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/mcv_arrow_margin"
+                android:contentDescription="@string/next"
+                android:background="@android:color/transparent"
+                android:padding="@dimen/mcv_arrow_padding"
+                app:srcCompat="@drawable/action_next" />
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
     <ProgressBar
         android:id="@+id/loader"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
-        android:layout_gravity="center"
         android:layout_height="match_parent"
-        />
+        android:layout_gravity="center" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/notices"
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipe_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/notices"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

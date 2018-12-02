@@ -8,6 +8,13 @@
     android:orientation="vertical"
     tools:context="sheasmith.me.betterkamar.pages.portals.PortalActivity">
 
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="No portals have been added! Click '+' to add one." />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/servers"
         android:layout_width="match_parent"

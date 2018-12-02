@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,6 @@ import com.google.android.gms.analytics.Tracker;
 
 import java.io.IOException;
 
-import sheasmith.me.betterkamar.util.ApiManager;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.DetailsObject;
@@ -24,6 +24,7 @@ import sheasmith.me.betterkamar.dataModels.LoginObject;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
+import sheasmith.me.betterkamar.util.ApiManager;
 
 import static android.view.View.GONE;
 
@@ -33,6 +34,7 @@ public class MedicalDetailsFragment extends Fragment {
     private ProgressBar mLoader;
     private PortalObject mPortal;
     private Tracker mTracker;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static MedicalDetailsFragment newInstance() {
         return new MedicalDetailsFragment();
@@ -52,7 +54,7 @@ public class MedicalDetailsFragment extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                doRequest(mPortal);
+                doRequest(mPortal, false);
             }
         }).start();
 
@@ -69,10 +71,19 @@ public class MedicalDetailsFragment extends Fragment {
         mView = inflater.inflate(R.layout.fragment_details_medical, container, false);
         mLoader = mView.findViewById(R.id.loader);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                doRequest(mPortal, true);
+            }
+        });
+
         return mView;
     }
 
-    private void doRequest(final PortalObject portal) {
+    private void doRequest(final PortalObject portal, final boolean ignoreCache) {
        ApiManager.getDetails(new ApiResponse<DetailsObject>() {
            @Override
            public void success(final DetailsObject value) {
@@ -106,6 +117,7 @@ public class MedicalDetailsFragment extends Fragment {
                        maybeHideView(R.id.dentist, student.DentistName, student.DentistPhone, student.DentistAddress);
 
                        mLoader.setVisibility(GONE);
+                       mSwipeRefreshLayout.setRefreshing(false);
                    }
                });
            }
@@ -118,7 +130,7 @@ public class MedicalDetailsFragment extends Fragment {
                    ApiManager.login(portal.username, portal.password, new ApiResponse<LoginObject>() {
                        @Override
                        public void success(LoginObject value) {
-                           doRequest(portal);
+                           doRequest(portal, ignoreCache);
                        }
 
                        @Override
@@ -137,7 +149,7 @@ public class MedicalDetailsFragment extends Fragment {
                                    .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                                        @Override
                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                           doRequest(portal);
+                                           doRequest(portal, ignoreCache);
                                        }
                                    })
                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -152,7 +164,7 @@ public class MedicalDetailsFragment extends Fragment {
                    });
                }
            }
-       });
+       }, ignoreCache);
     }
 
     private void setText(String text, int id) {

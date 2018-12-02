@@ -1,4 +1,4 @@
-package sheasmith.me.betterkamar;
+package sheasmith.me.betterkamar.pages;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.pages.details.DetailsFragment;
 import sheasmith.me.betterkamar.pages.groups.GroupFragment;
 import sheasmith.me.betterkamar.pages.notices.NoticesFragment;

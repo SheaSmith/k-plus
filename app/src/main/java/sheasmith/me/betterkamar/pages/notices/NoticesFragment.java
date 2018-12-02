@@ -2,11 +2,12 @@ package sheasmith.me.betterkamar.pages.notices;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,18 +19,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import sheasmith.me.betterkamar.util.ApiManager;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
@@ -37,8 +40,11 @@ import sheasmith.me.betterkamar.dataModels.NoticesObject;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
+import sheasmith.me.betterkamar.util.ApiManager;
+import sheasmith.me.betterkamar.util.OnSwipeTouchListener;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.support.v4.util.Preconditions.checkArgument;
 
 public class NoticesFragment extends Fragment {
 
@@ -56,6 +62,8 @@ public class NoticesFragment extends Fragment {
 
     private HashMap<Date, NoticesObject> notices = new HashMap<>();
     private Tracker mTracker;
+    private TextView mCurrentDate;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static NoticesFragment newInstance() {
         return new NoticesFragment();
@@ -71,12 +79,13 @@ public class NoticesFragment extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        getActivity().setTheme(R.style.NoActionBarShadow);
         super.onActivityCreated(savedInstanceState);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(10);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
         getActivity().setTitle("Notices");
 
         if (mAdapter == null ||  mAdapter.getItemCount() == 0)
-            doRequest(mPortal, new Date(System.currentTimeMillis()));
+            doRequest(mPortal, new Date(System.currentTimeMillis()), false);
 
         KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
         mTracker = application.getDefaultTracker();
@@ -136,7 +145,65 @@ public class NoticesFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        mRecyclerView.setOnTouchListener(new OnSwipeTouchListener(getContext()) {
+            @Override
+            public void onSwipeRight() {
+                super.onSwipeRight();
+                Calendar c = Calendar.getInstance();
+                c.setTime(lastDate);
+                c.add(Calendar.DAY_OF_YEAR, -1);
+                Date newDate = c.getTime();
+                mLoader.setVisibility(View.VISIBLE);
+                doRequest(mPortal, newDate, false);
+            }
+
+            @Override
+            public void onSwipeLeft() {
+                super.onSwipeLeft();
+                Calendar c = Calendar.getInstance();
+                c.setTime(lastDate);
+                c.add(Calendar.DAY_OF_YEAR, 1);
+                Date newDate = c.getTime();
+                mLoader.setVisibility(View.VISIBLE);
+                doRequest(mPortal, newDate, false);
+            }
+        });
+
         mLoader = view.findViewById(R.id.loader);
+        mCurrentDate = view.findViewById(R.id.current_date);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                doRequest(mPortal, lastDate, true);
+            }
+        });
+
+        view.findViewById(R.id.previous).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar c = Calendar.getInstance();
+                c.setTime(lastDate);
+                c.add(Calendar.DAY_OF_YEAR, -1);
+                Date newDate = c.getTime();
+                mLoader.setVisibility(View.VISIBLE);
+                doRequest(mPortal, newDate, false);
+            }
+        });
+
+        view.findViewById(R.id.next).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar c = Calendar.getInstance();
+                c.setTime(lastDate);
+                c.add(Calendar.DAY_OF_YEAR, 1);
+                Date newDate = c.getTime();
+                mLoader.setVisibility(View.VISIBLE);
+                doRequest(mPortal, newDate, false);
+            }
+        });
 
         SharedPreferences preferences = getActivity().getPreferences(MODE_PRIVATE);
         mDisabled = (HashSet<String>) preferences.getStringSet(mPortal.schoolFile.replace(".jpg", "_notices_disabled"), new HashSet<String>());
@@ -154,9 +221,15 @@ public class NoticesFragment extends Fragment {
         return view;
     }
 
-    private void doRequest(final PortalObject portal, final Date date) {
+    private void doRequest(final PortalObject portal, final Date date, final boolean ignoreCache) {
         lastDate = date;
-        if (!notices.containsKey(date))
+        SimpleDateFormat titleFormat = new SimpleDateFormat("EEEE, d'[p]' MMMM yyyy");
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        String title = titleFormat.format(date).replace("[p]", getDayOfMonthSuffix(day));
+        mCurrentDate.setText(title);
+        if (!notices.containsKey(date) || ignoreCache)
             ApiManager.getNotices(new ApiResponse<NoticesObject>() {
                 @Override
                 public void success(final NoticesObject value) {
@@ -169,6 +242,7 @@ public class NoticesFragment extends Fragment {
                             mRecyclerView.setAdapter(mAdapter);
                             mLoader.setVisibility(View.GONE);
                             mRecyclerView.setVisibility(View.VISIBLE);
+                            mSwipeRefreshLayout.setRefreshing(false);
                         }
                     });
 
@@ -193,7 +267,7 @@ public class NoticesFragment extends Fragment {
                         ApiManager.login(portal.username, portal.password, new ApiResponse<LoginObject>() {
                             @Override
                             public void success(LoginObject value) {
-                                doRequest(portal, date);
+                                doRequest(portal, date, ignoreCache);
                             }
 
                             @Override
@@ -209,13 +283,14 @@ public class NoticesFragment extends Fragment {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    mSwipeRefreshLayout.setRefreshing(false);
                                     new AlertDialog.Builder(getContext())
                                             .setTitle("No Internet")
                                             .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
                                             .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                                    doRequest(portal, date);
+                                                    doRequest(portal, date, ignoreCache);
                                                 }
                                             })
                                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -232,7 +307,7 @@ public class NoticesFragment extends Fragment {
                     }
                     e.printStackTrace();
                 }
-            }, date);
+            }, date, ignoreCache);
         else {
             NoticesObject value = notices.get(date);
 
@@ -293,5 +368,22 @@ public class NoticesFragment extends Fragment {
         }
 
         diag.show();
+    }
+
+    String getDayOfMonthSuffix(final int n) {
+        checkArgument(n >= 1 && n <= 31, "illegal day of month: " + n);
+        if (n >= 11 && n <= 13) {
+            return "th";
+        }
+        switch (n % 10) {
+            case 1:
+                return "st";
+            case 2:
+                return "nd";
+            case 3:
+                return "rd";
+            default:
+                return "th";
+        }
     }
 }

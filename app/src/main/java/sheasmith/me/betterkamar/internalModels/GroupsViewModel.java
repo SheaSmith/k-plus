@@ -1,11 +1,10 @@
 package sheasmith.me.betterkamar.internalModels;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import sheasmith.me.betterkamar.dataModels.GroupObject;
-import sheasmith.me.betterkamar.dataModels.ResultObject;
+import sheasmith.me.betterkamar.dataModels.htmlModels.GroupsObject;
 
 /**
  * Created by TheDiamondPicks on 22/09/2018.
@@ -17,6 +16,7 @@ public class GroupsViewModel {
     public String name;
     public String teacher;
     public String comment;
+    public String section = "";
 
     public boolean expanded = false;
     public boolean justRotated = false;
@@ -32,6 +32,15 @@ public class GroupsViewModel {
         name = group.Name;
         teacher = group.Teacher;
         comment = group.Comment;
+        section = "";
+    }
+
+    public GroupsViewModel(GroupsObject group) {
+        isYear = false;
+        name = group.title;
+        teacher = group.teacher;
+        comment = group.comment;
+        section = group.section;
     }
 
     public static List<GroupsViewModel> generate(List<GroupObject.Year> years) {
@@ -41,6 +50,20 @@ public class GroupsViewModel {
             for (GroupObject.Group group : year.Groups) {
                 groups.add(new GroupsViewModel(group));
             }
+        }
+
+        return groups;
+    }
+
+    public static List<GroupsViewModel> generate(ArrayList<GroupsObject> years) {
+        List<GroupsViewModel> groups = new ArrayList<>();
+        String lastYear = "";
+        for (GroupsObject group : years) {
+            if (!group.year.equals(lastYear)) {
+                groups.add(new GroupsViewModel(group.year));
+                lastYear = group.year;
+            }
+            groups.add(new GroupsViewModel(group));
         }
 
         return groups;

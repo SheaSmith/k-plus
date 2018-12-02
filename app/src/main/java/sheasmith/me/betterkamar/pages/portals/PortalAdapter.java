@@ -14,9 +14,9 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import sheasmith.me.betterkamar.DataActivity;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
+import sheasmith.me.betterkamar.pages.DataActivity;
 import sheasmith.me.betterkamar.pages.editPortal.EditPortalActivity;
 
 /**

@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.google.android.gms.analytics.HitBuilders;
@@ -17,12 +18,12 @@ import com.google.android.gms.analytics.Tracker;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import sheasmith.me.betterkamar.util.ApiManager;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
+import sheasmith.me.betterkamar.util.ApiManager;
 
 public class EditPortalActivity extends AppCompatActivity {
 
@@ -73,16 +74,19 @@ public class EditPortalActivity extends AppCompatActivity {
             }
         });
 
+        final CheckBox student = findViewById(R.id.refreshStudentPhoto);
+        final CheckBox school = findViewById(R.id.refreshSchoolPhoto);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doRequest(usernameText, passwordText, urlText, index, portal);
+                doRequest(usernameText, passwordText, urlText, index, portal, student.isChecked(), school.isChecked());
             }
         });
     }
 
-    private void doRequest(final EditText usernameText, final EditText passwordText, final EditText urlText, final int index, final PortalObject portal) {
+    private void doRequest(final EditText usernameText, final EditText passwordText, final EditText urlText, final int index, final PortalObject portal, final boolean refreshStudent, final boolean refreshSchool) {
         String url = urlText.getText().toString();
         String username = usernameText.getText().toString();
         String password = passwordText.getText().toString();
@@ -106,6 +110,12 @@ public class EditPortalActivity extends AppCompatActivity {
         portal.username = username;
         if (!password.isEmpty())
             portal.password = password;
+
+        if (refreshStudent)
+            portal.studentFile = null;
+
+        if (refreshSchool)
+            portal.schoolFile = null;
 
         final ProgressDialog dialog = new ProgressDialog(EditPortalActivity.this);
         dialog.setTitle("Updating Portal");
@@ -170,7 +180,7 @@ public class EditPortalActivity extends AppCompatActivity {
                                     .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
-                                            doRequest(usernameText, passwordText, urlText, index, portal);
+                                            doRequest(usernameText, passwordText, urlText, index, portal, refreshStudent, refreshSchool);
                                         }
                                     })
                                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

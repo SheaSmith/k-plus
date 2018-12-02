@@ -14,15 +14,17 @@
         android:layout_height="match_parent"
         android:layout_gravity="center" />
 
-        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-            android:id="@+id/calendarView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:mcv_calendarMode="week"
-            app:mcv_selectionColor="@color/colorPrimary"
-            app:mcv_showOtherDates="all">
 
-        </com.prolificinteractive.materialcalendarview.MaterialCalendarView>
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mcv_calendarMode="week"
+        app:mcv_selectionColor="@color/colorPrimary"
+        app:mcv_showOtherDates="all">
+
+    </com.prolificinteractive.materialcalendarview.MaterialCalendarView>
+
 
     <TextView
         android:id="@+id/schoolStatus"
@@ -35,7 +37,12 @@
         android:text="School Status: Open. Term 2 Week 1."
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-    <android.support.v7.widget.RecyclerView
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipe_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/events"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -49,6 +56,5 @@
             android:padding="16dp"
             android:text="There are no events or classes on the day you selected"
             android:visibility="gone" />
-
-
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

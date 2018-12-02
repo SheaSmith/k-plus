@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +20,6 @@ import com.google.android.gms.analytics.Tracker;
 import java.io.IOException;
 import java.util.List;
 
-import sheasmith.me.betterkamar.ApiManager;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
@@ -28,6 +28,7 @@ import sheasmith.me.betterkamar.internalModels.ApiResponse;
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
 import sheasmith.me.betterkamar.internalModels.ResultsViewModel;
+import sheasmith.me.betterkamar.util.ApiManager;
 
 public class AllResultsFragment extends Fragment {
 
@@ -38,6 +39,7 @@ public class AllResultsFragment extends Fragment {
     private AllResultsParentAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private Tracker mTracker;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static AllResultsFragment newInstance() {
         return new AllResultsFragment();
@@ -59,7 +61,7 @@ public class AllResultsFragment extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                doRequest(mPortal);
+                doRequest(mPortal, false);
             }
         }).start();
 
@@ -88,10 +90,19 @@ public class AllResultsFragment extends Fragment {
 
         ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                doRequest(mPortal, true);
+            }
+        });
+
         return mView;
     }
 
-    private void doRequest(final PortalObject portal) {
+    private void doRequest(final PortalObject portal, final boolean ignoreCache) {
         ApiManager.getAllResults(new ApiResponse<ResultObject>() {
             @Override
             public void success(ResultObject value) {
@@ -104,6 +115,7 @@ public class AllResultsFragment extends Fragment {
                         mAdapter = new AllResultsParentAdapter(results, getContext());
                         mRecyclerView.setAdapter(mAdapter);
                         mLoader.setVisibility(View.GONE);
+                        mSwipeRefreshLayout.setRefreshing(false);
                     }
                 });
             }
@@ -116,7 +128,7 @@ public class AllResultsFragment extends Fragment {
                     ApiManager.login(portal.username, portal.password, new ApiResponse<LoginObject>() {
                         @Override
                         public void success(LoginObject value) {
-                            doRequest(portal);
+                            doRequest(portal, ignoreCache);
                         }
 
                         @Override
@@ -135,7 +147,7 @@ public class AllResultsFragment extends Fragment {
                                     .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
-                                            doRequest(portal);
+                                            doRequest(portal, ignoreCache);
                                         }
                                     })
                                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -150,6 +162,6 @@ public class AllResultsFragment extends Fragment {
                     });
                 }
             }
-        });
+        }, ignoreCache);
     }
 }

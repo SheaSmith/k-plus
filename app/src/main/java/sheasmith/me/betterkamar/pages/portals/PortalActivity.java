@@ -2,9 +2,9 @@ package sheasmith.me.betterkamar.pages.portals;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -59,6 +59,7 @@ public class PortalActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_portal);
 
@@ -95,6 +96,12 @@ public class PortalActivity extends AppCompatActivity {
         mAdapter = new PortalAdapter(servers, this);
         mRecyclerView.setAdapter(mAdapter);
 
+        if (servers.size() == 0) {
+            findViewById(R.id.empty).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.empty).setVisibility(View.GONE);
+        }
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addButton);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,6 +120,13 @@ public class PortalActivity extends AppCompatActivity {
         if (requestCode == 1 && data != null) {
             servers.add((PortalObject) data.getSerializableExtra("portal"));
             mAdapter.notifyDataSetChanged();
+
+            if (servers.size() == 0) {
+                findViewById(R.id.empty).setVisibility(View.VISIBLE);
+            } else {
+                findViewById(R.id.empty).setVisibility(View.GONE);
+            }
+
             save();
         }
         else {
@@ -123,6 +137,12 @@ public class PortalActivity extends AppCompatActivity {
                     servers.remove(data.getIntExtra("index", -1));
                 mAdapter.notifyDataSetChanged();
                 save();
+
+                if (servers.size() == 0) {
+                    findViewById(R.id.empty).setVisibility(View.VISIBLE);
+                } else {
+                    findViewById(R.id.empty).setVisibility(View.GONE);
+                }
             }
         }
     }

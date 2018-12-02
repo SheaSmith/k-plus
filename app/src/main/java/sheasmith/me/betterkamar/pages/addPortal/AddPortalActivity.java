@@ -3,27 +3,29 @@ package sheasmith.me.betterkamar.pages.addPortal;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.UnknownHostException;
 
-import sheasmith.me.betterkamar.ApiManager;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.internalModels.ApiResponse;
 import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
+import sheasmith.me.betterkamar.util.ApiManager;
 
 public class AddPortalActivity extends AppCompatActivity {
 
@@ -103,6 +105,13 @@ public class AddPortalActivity extends AppCompatActivity {
             hostnameText.setError("The address must either have http:// or https://");
             return;
         }
+        try {
+            URL urlValid = new URL(url);
+            urlValid.toURI();
+        } catch (MalformedURLException | URISyntaxException e) {
+            hostnameText.setError("Invalid address. Please make sure there are no spaces!");
+        }
+
         PortalObject portal = new PortalObject();
         portal.hostname = url;
         portal.username = username;
@@ -146,26 +155,33 @@ public class AddPortalActivity extends AppCompatActivity {
                             passwordText.setError("Either the username or password is incorrect. Please check and try again");
                         }
                     });
-                }
-
-                else if (e instanceof NullPointerException) {
+                } else if (e instanceof Exceptions.TooManyAttempts) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new AlertDialog.Builder(AddPortalActivity.this)
+                                    .setTitle("Too many login attempts!")
+                                    .setMessage("There has been too many unsuccessful login attempts! Try again in 20 minutes.")
+                                    .setPositiveButton("OK", null)
+                                    .create()
+                                    .show();
+                        }
+                    });
+                } else if (e instanceof NullPointerException) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             hostnameText.setError("Incorrect prefix. Try using http or https instead.");
                         }
                     });
-                }
-
-                else if (e instanceof Exceptions.InvalidServer || e instanceof UnknownHostException) {
+                } else if (e instanceof Exceptions.InvalidServer || e instanceof UnknownHostException) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             hostnameText.setError("This website is not a valid KAMAR portal");
                         }
                     });
-                }
-                else if (e instanceof IOException) {
+                } else if (e instanceof IOException) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
