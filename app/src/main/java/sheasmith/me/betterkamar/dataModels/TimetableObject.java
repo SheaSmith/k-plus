@@ -1,3 +1,9 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 18/01/19 11:45 PM
+ */
+
 package sheasmith.me.betterkamar.dataModels;
 
 import org.w3c.dom.Document;
@@ -26,7 +32,7 @@ import sheasmith.me.betterkamar.internalModels.Exceptions;
 public class TimetableObject implements Serializable {
     public StudentTimetableResults StudentTimetableResults;
 
-    public TimetableObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.ExpiredToken, Exceptions.UnknownServerError {
+    public TimetableObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.ExpiredToken, Exceptions.UnknownServerError, Exceptions.AccessDenied {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setIgnoringElementContentWhitespace(true);
@@ -39,6 +45,8 @@ public class TimetableObject implements Serializable {
             String error = root.getElementsByTagName("Error").item(0).getTextContent();
             if (error.equalsIgnoreCase("invalid key")) {
                 throw new Exceptions.ExpiredToken();
+            } else if (error.equalsIgnoreCase("access denied") || error.equalsIgnoreCase("access denied (1)")) {
+                throw new Exceptions.AccessDenied();
             } else {
                 throw new Exceptions.UnknownServerError();
             }

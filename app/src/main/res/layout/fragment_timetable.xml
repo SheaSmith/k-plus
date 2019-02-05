@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Created by Shea Smith on 6/02/19 12:54 PM
+  ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+  ~ Last modified 26/01/19 5:37 PM
+  -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -20,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:mcv_calendarMode="week"
-        app:mcv_selectionColor="@color/colorPrimary"
+        app:mcv_selectionColor="?colorPrimary"
         app:mcv_showOtherDates="all">
 
     </com.prolificinteractive.materialcalendarview.MaterialCalendarView>

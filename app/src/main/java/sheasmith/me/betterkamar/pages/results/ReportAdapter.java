@@ -1,3 +1,9 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:50 PM
+ */
+
 package sheasmith.me.betterkamar.pages.results;
 
 import android.content.Context;
@@ -49,7 +55,7 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ReportView
 
     @Override
     public ReportViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
+        LinearLayout v = (LinearLayout) LayoutInflater.from(parent.requireContext())
                 .inflate(R.layout.adapter_reports, parent, false);
         ReportViewHolder vh = new ReportViewHolder(v);
         return vh;

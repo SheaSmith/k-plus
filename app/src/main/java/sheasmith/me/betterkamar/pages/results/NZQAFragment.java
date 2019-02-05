@@ -1,6 +1,14 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:54 PM
+ */
+
 package sheasmith.me.betterkamar.pages.results;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,9 +58,9 @@ public class NZQAFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final PortalObject portal = (PortalObject) getActivity().getIntent().getSerializableExtra("portal");
+        final PortalObject portal = (PortalObject) requireActivity().getIntent().getSerializableExtra("portal");
         mPortal = portal;
-        ApiManager.setVariables(portal, getContext());
+        ApiManager.setVariables(portal, requireContext());
     }
 
     @Override
@@ -64,7 +73,7 @@ public class NZQAFragment extends Fragment {
             }
         }).start();
 
-        KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
+        KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
         mTracker = application.getDefaultTracker();
         mTracker.setScreenName("NZQA Results");
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -79,7 +88,7 @@ public class NZQAFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == 1) {
-            new AlertDialog.Builder(getContext())
+            new AlertDialog.Builder(requireContext())
                     .setTitle("NZQA Qualifications Information")
                     .setMessage("These qualifications and endorsements have been officially awarded by NZQA. They should properly reflect official records.")
                     .setPositiveButton("Close", null)
@@ -93,7 +102,13 @@ public class NZQAFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mView = inflater.inflate(R.layout.fragment_results_nzqa, container, false);
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
+        String stringColor = sharedPreferences.getString("color", "E65100");
+
+        final Context contextThemeWrapper = new ContextThemeWrapper(requireActivity(), getResources().getIdentifier("T_" + stringColor, "style", requireContext().getPackageName()));
+
+        LayoutInflater localInflator = inflater.cloneInContext(contextThemeWrapper);
+        mView = localInflator.inflate(R.layout.fragment_results_nzqa, container, false);
         mLoader = mView.findViewById(R.id.loader);
 
         mRecyclerView = mView.findViewById(R.id.results);
@@ -103,7 +118,7 @@ public class NZQAFragment extends Fragment {
         mRecyclerView.setHasFixedSize(false);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(getContext());
+        mLayoutManager = new LinearLayoutManager(requireContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -124,14 +139,14 @@ public class NZQAFragment extends Fragment {
         ApiManager.getNZQAResults(new ApiResponse<NZQAObject>() {
             @Override
             public void success(final NZQAObject value) {
-                if (getActivity() == null)
+                if (requireActivity() == null)
                     return;
-                getActivity().runOnUiThread(new Runnable() {
+                requireActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         TextView noResults = mView.findViewById(R.id.noResults);
                         if (value.StudentOfficialResultsResults.Types.size() == 3) {
-                            mAdapter = new NZQAAdapter(value.StudentOfficialResultsResults.Types.get(0).Qualifications, value.StudentOfficialResultsResults.Types.get(1).Qualifications, value.StudentOfficialResultsResults.Types.get(2).Qualifications, getContext());
+                            mAdapter = new NZQAAdapter(value.StudentOfficialResultsResults.Types.get(0).Qualifications, value.StudentOfficialResultsResults.Types.get(1).Qualifications, value.StudentOfficialResultsResults.Types.get(2).Qualifications, requireContext());
                             mRecyclerView.setAdapter(mAdapter);
                             noResults.setVisibility(View.GONE);
                             mRecyclerView.setVisibility(View.VISIBLE);
@@ -166,10 +181,10 @@ public class NZQAFragment extends Fragment {
                     });
                     return;
                 } else if (e instanceof IOException) {
-                    getActivity().runOnUiThread(new Runnable() {
+                    requireActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            new AlertDialog.Builder(getContext())
+                            new AlertDialog.Builder(requireContext())
                                     .setTitle("No Internet")
                                     .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
                                     .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
@@ -181,13 +196,39 @@ public class NZQAFragment extends Fragment {
                                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
-                                            getActivity().finish();
+                                            requireActivity().finish();
                                         }
                                     })
                                     .create()
                                     .show();
                         }
                     });
+                } else if (e instanceof Exceptions.AccessDenied) {
+                    if (requireActivity() != null) {
+                        requireActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new AlertDialog.Builder(requireActivity())
+                                        .setTitle("Access Denied")
+                                        .setMessage("Your school has disabled access to this section. You may still be able to view it via the web portal.")
+                                        .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                doRequest(portal, ignoreCache);
+                                            }
+                                        })
+                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                if (requireActivity() != null)
+                                                    requireActivity().finish();
+                                            }
+                                        })
+                                        .create()
+                                        .show();
+                            }
+                        });
+                    }
                 }
             }
         }, ignoreCache);

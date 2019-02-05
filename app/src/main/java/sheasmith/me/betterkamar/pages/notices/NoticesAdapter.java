@@ -1,7 +1,19 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:54 PM
+ */
+
 package sheasmith.me.betterkamar.pages.notices;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,13 +91,13 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_ITEM) {
-            RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.getContext())
+            RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.requireContext())
                     .inflate(R.layout.adapter_notice, parent, false);
             NoticeViewHolder vh = new NoticeViewHolder(v);
             return vh;
         } else if (viewType == TYPE_HEADER) {
             //inflate your layout and pass it to view holder
-            LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
+            LinearLayout v = (LinearLayout) LayoutInflater.from(parent.requireContext())
                     .inflate(R.layout.adapter_notice_heading, parent, false);
             HeadingViewHolder vh = new HeadingViewHolder(v);
             return vh;
@@ -114,6 +126,18 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                 ((NoticeViewHolder) holder).title.setText(notice.Subject);
                 ((NoticeViewHolder) holder).group.setText(notice.Level);
+
+                TypedValue typedValue = new TypedValue();
+                Resources.Theme theme = mContext.getTheme();
+                theme.resolveAttribute(R.attr.colorAccent, typedValue, true);
+                @ColorInt int color = typedValue.data;
+
+                Drawable mDrawable = mContext.getResources().getDrawable(R.drawable.circle);
+                mDrawable.setColorFilter(new
+                        PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
+
+                ((NoticeViewHolder) holder).teacher.setBackground(mDrawable);
+
                 ((NoticeViewHolder) holder).teacher.setText(notice.Teacher);
                 ((NoticeViewHolder) holder).description.setText(notice.Body);
                 ((NoticeViewHolder) holder).details.setText(String.format("Location: %s • When: %s", notice.PlaceMeet, notice.DateMeet));
@@ -158,6 +182,18 @@ public class NoticesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                 ((NoticeViewHolder) holder).title.setText(notice.Subject);
                 ((NoticeViewHolder) holder).group.setText(notice.Level);
+
+                TypedValue typedValue = new TypedValue();
+                Resources.Theme theme = mContext.getTheme();
+                theme.resolveAttribute(R.attr.colorAccent, typedValue, true);
+                @ColorInt int color = typedValue.data;
+
+                Drawable mDrawable = mContext.getResources().getDrawable(R.drawable.circle);
+                mDrawable.setColorFilter(new
+                        PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
+
+                ((NoticeViewHolder) holder).teacher.setBackground(mDrawable);
+
                 ((NoticeViewHolder) holder).teacher.setText(notice.Teacher);
                 ((NoticeViewHolder) holder).description.setText(notice.Body);
                 ((NoticeViewHolder) holder).details.setVisibility(View.GONE);

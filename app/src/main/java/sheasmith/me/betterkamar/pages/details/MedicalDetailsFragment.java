@@ -1,11 +1,20 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:54 PM
+ */
+
 package sheasmith.me.betterkamar.pages.details;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,9 +52,9 @@ public class MedicalDetailsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final PortalObject portal = (PortalObject) getActivity().getIntent().getSerializableExtra("portal");
+        final PortalObject portal = (PortalObject) requireActivity().getIntent().getSerializableExtra("portal");
         mPortal = portal;
-        ApiManager.setVariables(portal, getContext());
+        ApiManager.setVariables(portal, requireContext());
     }
 
     @Override
@@ -58,7 +67,7 @@ public class MedicalDetailsFragment extends Fragment {
             }
         }).start();
 
-        KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
+        KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
         mTracker = application.getDefaultTracker();
         mTracker.setScreenName("Medical Details");
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -68,7 +77,13 @@ public class MedicalDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mView = inflater.inflate(R.layout.fragment_details_medical, container, false);
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
+        String stringColor = sharedPreferences.getString("color", "E65100");
+
+        final Context contextThemeWrapper = new ContextThemeWrapper(requireActivity(), getResources().getIdentifier("T_" + stringColor, "style", requireContext().getPackageName()));
+
+        LayoutInflater localInflator = inflater.cloneInContext(contextThemeWrapper);
+        mView = localInflator.inflate(R.layout.fragment_details_medical, container, false);
         mLoader = mView.findViewById(R.id.loader);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_container);
@@ -87,11 +102,11 @@ public class MedicalDetailsFragment extends Fragment {
        ApiManager.getDetails(new ApiResponse<DetailsObject>() {
            @Override
            public void success(final DetailsObject value) {
-               if (getActivity() == null) {
+               if (requireActivity() == null) {
                    // TODO: Error?
                    return;
                }
-               getActivity().runOnUiThread(new Runnable() {
+               requireActivity().runOnUiThread(new Runnable() {
                    @Override
                    public void run() {
                        DetailsObject.Student student = value.StudentDetailsResults.Student;
@@ -140,10 +155,10 @@ public class MedicalDetailsFragment extends Fragment {
                    });
                    return;
                } else if (e instanceof IOException) {
-                   getActivity().runOnUiThread(new Runnable() {
+                   requireActivity().runOnUiThread(new Runnable() {
                        @Override
                        public void run() {
-                           new AlertDialog.Builder(getContext())
+                           new AlertDialog.Builder(requireContext())
                                    .setTitle("No Internet")
                                    .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
                                    .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
@@ -155,13 +170,39 @@ public class MedicalDetailsFragment extends Fragment {
                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                        @Override
                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                           getActivity().finish();
+                                           requireActivity().finish();
                                        }
                                    })
                                    .create()
                                    .show();
                        }
                    });
+               } else if (e instanceof Exceptions.AccessDenied) {
+                   if (requireActivity() != null) {
+                       requireActivity().runOnUiThread(new Runnable() {
+                           @Override
+                           public void run() {
+                               new AlertDialog.Builder(requireActivity())
+                                       .setTitle("Access Denied")
+                                       .setMessage("Your school has disabled access to this section. You may still be able to view it via the web portal.")
+                                       .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                           @Override
+                                           public void onClick(DialogInterface dialogInterface, int i) {
+                                               doRequest(portal, ignoreCache);
+                                           }
+                                       })
+                                       .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                           @Override
+                                           public void onClick(DialogInterface dialogInterface, int i) {
+                                               if (requireActivity() != null)
+                                                   requireActivity().finish();
+                                           }
+                                       })
+                                       .create()
+                                       .show();
+                           }
+                       });
+                   }
                }
            }
        }, ignoreCache);

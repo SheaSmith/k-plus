@@ -1,8 +1,15 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 9:11 AM
+ */
+
 package sheasmith.me.betterkamar.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -206,27 +213,32 @@ public class ApiManager {
 
                 MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
                 RequestBody body = RequestBody.create(mediaType, "Command=Logon&Key=vtku&Username=" + username + "&Password=" + password);
-                Request request = new Request.Builder()
-                        .url(URL)
-                        .post(body)
-                        .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                        .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
-                        .addHeader("X-Requested-With", "nz.co.KAMAR")
-                        .addHeader("Origin", "file://")
-                        .build();
-
                 try {
-                    Response response = client.newCall(request).execute();
-                    String xml = response.body().string();
+                    Request request = new Request.Builder()
+                            .url(URL)
+                            .post(body)
+                            .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                            .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                            .addHeader("X-Requested-With", "nz.co.KAMAR")
+                            .addHeader("Origin", "file://")
+                            .build();
 
-                    LoginObject loginObject = new LoginObject(xml);
+
+                    try {
+                        Response response = client.newCall(request).execute();
+                        String xml = response.body().string();
+
+                        LoginObject loginObject = new LoginObject(xml);
 //                       TOKEN = login.getKey();
-                    ID = username;
-                    PASSWORD = password;
-                    TOKEN = loginObject.LogonResults.Key;
-                    callback.success(loginObject);
+                        ID = username;
+                        PASSWORD = password;
+                        TOKEN = loginObject.LogonResults.Key;
+                        callback.success(loginObject);
 
-                } catch (Exception e) {
+                    } catch (Exception e) {
+                        callback.error(e);
+                    }
+                } catch (IllegalArgumentException e) {
                     callback.error(e);
                 }
             }
@@ -236,7 +248,8 @@ public class ApiManager {
     }
 
     public static void getSettings(final ApiResponse<SettingsObject> callback) {
-        SettingsObject cache = (SettingsObject) cacheManager.get("SettingsObject" + ID, SettingsObject.class, new TypeToken<SettingsObject>(){}.getType());
+        SettingsObject cache = (SettingsObject) cacheManager.get("SettingsObject" + ID, SettingsObject.class, new TypeToken<SettingsObject>() {
+        }.getType());
         if (cache != null) {
             callback.success(cache);
             return;
@@ -279,7 +292,8 @@ public class ApiManager {
     }
 
     public static void getGlobals(final ApiResponse<GlobalObject> callback, boolean ignoreCache) {
-        GlobalObject cache = (GlobalObject) cacheManager.get("GlobalObject" + ID, GlobalObject.class, new TypeToken<GlobalObject>(){}.getType());
+        GlobalObject cache = (GlobalObject) cacheManager.get("GlobalObject" + ID, GlobalObject.class, new TypeToken<GlobalObject>() {
+        }.getType());
         if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
@@ -322,11 +336,14 @@ public class ApiManager {
     }
 
     public static void getEvents(final ApiResponse<EventsObject> callback, final int year, boolean ignoreCache) {
-        EventsObject cache = (EventsObject) cacheManager.get("EventsObject" + ID, EventsObject.class, new TypeToken<EventsObject>(){}.getType());
+        EventsObject cache = (EventsObject) cacheManager.get("EventsObject" + year + ID, EventsObject.class, new TypeToken<EventsObject>() {
+        }.getType());
         if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
         }
+
+        Log.d("Events", year + "");
 
         if (TOKEN != null) {
             Thread webThread = new Thread(new Runnable() {
@@ -365,7 +382,7 @@ public class ApiManager {
                         String xml = response.body().string();
                         EventsObject eventsObject = new EventsObject(xml);
                         callback.success(eventsObject);
-                        cacheManager.put("EventsObject" + ID, eventsObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), false);
+                        cacheManager.put("EventsObject" + year + ID, eventsObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), false);
 
                     } catch (Exception e) {
                         callback.error(e);
@@ -429,7 +446,8 @@ public class ApiManager {
     }
 
     public static void getAbsenceStats(final ApiResponse<AbsenceObject> callback, boolean ignoreCache) {
-        AbsenceObject cache = (AbsenceObject) cacheManager.get("AbsenceObject" + ID, AbsenceObject.class, new TypeToken<AbsenceObject>(){}.getType());
+        AbsenceObject cache = (AbsenceObject) cacheManager.get("AbsenceObject" + ID, AbsenceObject.class, new TypeToken<AbsenceObject>() {
+        }.getType());
         if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
@@ -475,7 +493,8 @@ public class ApiManager {
     }
 
     public static void getCalendar(final ApiResponse<CalendarObject> callback, boolean ignoreCache) {
-        CalendarObject cache = (CalendarObject) cacheManager.get("CalObject" + ID, AttendanceObject.class, new TypeToken<CalendarObject>(){}.getType());
+        CalendarObject cache = (CalendarObject) cacheManager.get("CalObject" + ID, AttendanceObject.class, new TypeToken<CalendarObject>() {
+        }.getType());
         if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
@@ -515,14 +534,14 @@ public class ApiManager {
                 }
             });
             webThread.start();
-        }
-        else {
+        } else {
             callback.error(new Exceptions.InvalidToken());
         }
     }
 
     public static void getAttendance(final ApiResponse<AttendanceObject> callback, boolean ignoreCache) {
-        AttendanceObject cache = (AttendanceObject) cacheManager.get("AttendanceObject" + ID, AttendanceObject.class, new TypeToken<AttendanceObject>(){}.getType());
+        AttendanceObject cache = (AttendanceObject) cacheManager.get("AttendanceObject" + ID, AttendanceObject.class, new TypeToken<AttendanceObject>() {
+        }.getType());
         if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
@@ -568,7 +587,8 @@ public class ApiManager {
     }
 
     public static void getNCEADetails(final ApiResponse<NCEAObject> callback, boolean ignoreCache) {
-        NCEAObject cache = (NCEAObject) cacheManager.get("NCEAObject" + ID, NCEAObject.class, new TypeToken<NCEAObject>(){}.getType());
+        NCEAObject cache = (NCEAObject) cacheManager.get("NCEAObject" + ID, NCEAObject.class, new TypeToken<NCEAObject>() {
+        }.getType());
         if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
@@ -611,7 +631,8 @@ public class ApiManager {
     }
 
     public static void getNZQAResults(final ApiResponse<NZQAObject> callback, boolean ignoreCache) {
-        NZQAObject cache = (NZQAObject) cacheManager.get("NZQAObject" + ID, NZQAObject.class, new TypeToken<NZQAObject>(){}.getType());
+        NZQAObject cache = (NZQAObject) cacheManager.get("NZQAObject" + ID, NZQAObject.class, new TypeToken<NZQAObject>() {
+        }.getType());
         if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
@@ -654,7 +675,8 @@ public class ApiManager {
     }
 
     public static void getAllResults(final ApiResponse<ResultObject> callback, boolean ignoreCache) {
-        ResultObject cache = (ResultObject) cacheManager.get("ResultObject" + ID, ResultObject.class, new TypeToken<ResultObject>(){}.getType());
+        ResultObject cache = (ResultObject) cacheManager.get("ResultObject" + ID, ResultObject.class, new TypeToken<ResultObject>() {
+        }.getType());
         if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
@@ -700,7 +722,8 @@ public class ApiManager {
     }
 
     public static void getTimetable(final ApiResponse<TimetableObject> callback, boolean ignoreCache) {
-        TimetableObject cache = (TimetableObject) cacheManager.get("TimetableObject" + ID, TimetableObject.class, new TypeToken<TimetableObject>(){}.getType());
+        TimetableObject cache = (TimetableObject) cacheManager.get("TimetableObject" + ID, TimetableObject.class, new TypeToken<TimetableObject>() {
+        }.getType());
         if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
@@ -746,7 +769,8 @@ public class ApiManager {
     }
 
     public static void getGroupsApi(final ApiResponse<GroupObject> callback, boolean ignoreCache) {
-        GroupObject cache = (GroupObject) cacheManager.get("GroupObject" + ID, GroupObject.class, new TypeToken<GroupObject>(){}.getType());
+        GroupObject cache = (GroupObject) cacheManager.get("GroupObject" + ID, GroupObject.class, new TypeToken<GroupObject>() {
+        }.getType());
         if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
@@ -789,7 +813,8 @@ public class ApiManager {
     }
 
     public static void getDetails(final ApiResponse<DetailsObject> callback, boolean ignoreCache) {
-        DetailsObject cache = (DetailsObject) cacheManager.get("DetailsObject" + ID, DetailsObject.class, new TypeToken<DetailsObject>(){}.getType());
+        DetailsObject cache = (DetailsObject) cacheManager.get("DetailsObject" + ID, DetailsObject.class, new TypeToken<DetailsObject>() {
+        }.getType());
         if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
@@ -871,7 +896,7 @@ public class ApiManager {
                             callback.success(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_person));
                         }
 
-                    } catch (GooglePlayServicesNotAvailableException e) {
+                    } catch (GooglePlayServicesNotAvailableException | GooglePlayServicesRepairableException e) {
                         try {
                             // Since many schools use Lets Encrypt or roll their own self-signed certs. We are going to disable certificate checking
                             // This is bad, but there's no other solution to stop it breaking at some schools
@@ -951,7 +976,7 @@ public class ApiManager {
                     InputStream input = connection.getInputStream();
                     callback.success(BitmapFactory.decodeStream(input));
 
-                } catch (GooglePlayServicesNotAvailableException e) {
+                } catch (GooglePlayServicesNotAvailableException | GooglePlayServicesRepairableException e) {
                     try {
                         url = "http://i.imgur.com/wmHzuNg.png";
 
@@ -991,21 +1016,20 @@ public class ApiManager {
         webThread.start();
     }
 
-    public static void initializeSSLContext(Context mContext) throws GooglePlayServicesNotAvailableException {
+    public static void initializeSSLContext(Context mContext) throws GooglePlayServicesNotAvailableException, GooglePlayServicesRepairableException {
         try {
             SSLContext.getInstance("TLSv1.2");
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        try {
-            ProviderInstaller.installIfNeeded(mContext.getApplicationContext());
-        } catch (GooglePlayServicesRepairableException e) {
-            e.printStackTrace();
-        }
+
+        ProviderInstaller.installIfNeeded(mContext.getApplicationContext());
+
     }
 
     public static void getReports(final ApiResponse<List<ReportsObject>> callback, boolean ignoreCache) {
-        List<ReportsObject> cache = (List<ReportsObject>) cacheManager.get("ReportsObject" + ID, ArrayList.class, new TypeToken<List<ReportsObject>>(){}.getType());
+        List<ReportsObject> cache = (List<ReportsObject>) cacheManager.get("ReportsObject" + ID, ArrayList.class, new TypeToken<List<ReportsObject>>() {
+        }.getType());
         if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
@@ -1026,7 +1050,7 @@ public class ApiManager {
 
                     Map<String, String> cookies = login.cookies();
 //                    if (sessionCookies.containsKey("kamar_session"))
-                        cookies.put("kamar_session", sessionCookies.get("kamar_session"));
+                    cookies.put("kamar_session", sessionCookies.get("kamar_session"));
 
                     org.jsoup.nodes.Document d = Jsoup.connect(URL.replace("api/api.php", "index.php/reports/")).cookies(cookies).get();
                     Elements groups = d.getElementsByTag("tbody").first().children();
@@ -1053,7 +1077,8 @@ public class ApiManager {
     }
 
     public static void getGroupsHtml(final ApiResponse<List<GroupsObject>> callback, boolean ignoreCache) {
-        List<GroupsObject> cache = (List<GroupsObject>) cacheManager.get("GroupsObjectHTML" + ID, ArrayList.class, new TypeToken<List<GroupsObject>>(){}.getType());
+        List<GroupsObject> cache = (List<GroupsObject>) cacheManager.get("GroupsObjectHTML" + ID, ArrayList.class, new TypeToken<List<GroupsObject>>() {
+        }.getType());
         if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;

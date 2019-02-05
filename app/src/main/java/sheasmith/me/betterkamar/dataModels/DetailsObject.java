@@ -1,3 +1,9 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:54 PM
+ */
+
 package sheasmith.me.betterkamar.dataModels;
 
 import org.w3c.dom.Document;
@@ -21,7 +27,7 @@ import sheasmith.me.betterkamar.internalModels.Exceptions;
 public class DetailsObject implements Serializable {
     public StudentDetailsResults StudentDetailsResults;
 
-    public DetailsObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.ExpiredToken, Exceptions.UnknownServerError {
+    public DetailsObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.ExpiredToken, Exceptions.UnknownServerError, Exceptions.AccessDenied {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setIgnoringElementContentWhitespace(true);
@@ -34,6 +40,8 @@ public class DetailsObject implements Serializable {
             String error = root.getElementsByTagName("Error").item(0).getTextContent();
             if (error.equalsIgnoreCase("invalid key")) {
                 throw new Exceptions.ExpiredToken();
+            } else if (error.equalsIgnoreCase("access denied")) {
+                throw new Exceptions.AccessDenied();
             } else {
                 throw new Exceptions.UnknownServerError();
             }
@@ -68,19 +76,25 @@ public class DetailsObject implements Serializable {
         student.ParentTitle = studentElement.getElementsByTagName("ParentTitle").item(0).getTextContent();
         student.ParentEmail = studentElement.getElementsByTagName("ParentEmail").item(0).getTextContent();
 
-        student.HomePhoneB = studentElement.getElementsByTagName("HomePhoneB").item(0).getTextContent();
-        student.HomeAddressB = studentElement.getElementsByTagName("HomeAddressB").item(0).getTextContent();
-        student.ParentTitleB = studentElement.getElementsByTagName("ParentTitleB").item(0).getTextContent();
-        student.ParentSalutationB = studentElement.getElementsByTagName("ParentSalutationB").item(0).getTextContent();
-        student.ParentEmailB = studentElement.getElementsByTagName("ParentEmailB").item(0).getTextContent();
+        if (studentElement.getElementsByTagName("HomePhoneB").getLength() != 0) {
+            student.HomePhoneB = studentElement.getElementsByTagName("HomePhoneB").item(0).getTextContent();
+            student.HomeAddressB = studentElement.getElementsByTagName("HomeAddressB").item(0).getTextContent();
+            student.ParentTitleB = studentElement.getElementsByTagName("ParentTitleB").item(0).getTextContent();
+            student.ParentSalutationB = studentElement.getElementsByTagName("ParentSalutationB").item(0).getTextContent();
+            student.ParentEmailB = studentElement.getElementsByTagName("ParentEmailB").item(0).getTextContent();
+        }
 
-        student.DoctorName = studentElement.getElementsByTagName("DoctorName").item(0).getTextContent();
-        student.DoctorPhone = studentElement.getElementsByTagName("DoctorPhone").item(0).getTextContent();
-        student.DoctorAddress = studentElement.getElementsByTagName("DoctorAddress").item(0).getTextContent();
+        if (studentElement.getElementsByTagName("DoctorName").getLength() != 0) {
+            student.DoctorName = studentElement.getElementsByTagName("DoctorName").item(0).getTextContent();
+            student.DoctorPhone = studentElement.getElementsByTagName("DoctorPhone").item(0).getTextContent();
+            student.DoctorAddress = studentElement.getElementsByTagName("DoctorAddress").item(0).getTextContent();
+        }
 
-        student.DentistName = studentElement.getElementsByTagName("DentistName").item(0).getTextContent();
-        student.DentistPhone = studentElement.getElementsByTagName("DentistPhone").item(0).getTextContent();
-        student.DentistAddress = studentElement.getElementsByTagName("DentistAddress").item(0).getTextContent();
+        if (studentElement.getElementsByTagName("DentistName").getLength() != 0) {
+            student.DentistName = studentElement.getElementsByTagName("DentistName").item(0).getTextContent();
+            student.DentistPhone = studentElement.getElementsByTagName("DentistPhone").item(0).getTextContent();
+            student.DentistAddress = studentElement.getElementsByTagName("DentistAddress").item(0).getTextContent();
+        }
 
         student.AllowedPanadol = studentElement.getElementsByTagName("AllowedPanadol").item(0).getTextContent();
         student.AllowedIbuprofen = studentElement.getElementsByTagName("AllowedIbuprofen").item(0).getTextContent();

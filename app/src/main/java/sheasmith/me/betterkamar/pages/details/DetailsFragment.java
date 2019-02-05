@@ -1,11 +1,22 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:53 PM
+ */
+
 package sheasmith.me.betterkamar.pages.details;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -40,8 +51,8 @@ public class DetailsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
-        getActivity().setTitle("Details");
+        ((AppCompatActivity) requireActivity()).getSupportActionBar().setElevation(0);
+        requireActivity().setTitle("Details");
     }
 
     @Override
@@ -53,13 +64,23 @@ public class DetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mView = inflater.inflate(R.layout.fragment_details, container, false);
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
+        String stringColor = sharedPreferences.getString("color", "E65100");
+
+        final Context contextThemeWrapper = new ContextThemeWrapper(requireActivity(), getResources().getIdentifier("T_" + stringColor, "style", requireContext().getPackageName()));
+
+        LayoutInflater localInflator = inflater.cloneInContext(contextThemeWrapper);
+        mView = localInflator.inflate(R.layout.fragment_details, container, false);
         firstViewPager = mView.findViewById(R.id.pager);
 
         tabLayout = mView.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(firstViewPager);
         tabLayout.setTabTextColors(getResources().getColor(R.color.colorHintTextLight),
                 getResources().getColor(R.color.colorPrimaryTextLight));
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = contextThemeWrapper.getTheme();
+        theme.resolveAttribute(R.attr.colorAccent, typedValue, true);
+        tabLayout.setBackgroundColor(typedValue.data);
 
         setupViewPager(firstViewPager);
 
@@ -67,7 +88,7 @@ public class DetailsFragment extends Fragment {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        mAdapter = new TabViewPagerAdapter(getActivity().getSupportFragmentManager());
+        mAdapter = new TabViewPagerAdapter(requireActivity().getSupportFragmentManager());
         mAdapter.addFragment(StudentDetailsFragment.newInstance(), "Student");
         mAdapter.addFragment(CaregiverDetailsFragment.newInstance(), "Caregivers");
         mAdapter.addFragment(EmergencyDetailsFragment.newInstance(), "Emergency");

@@ -1,6 +1,14 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:54 PM
+ */
+
 package sheasmith.me.betterkamar.pages.groups;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -52,10 +61,10 @@ public class GroupFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(10);
-        getActivity().setTitle("Groups");
+        ((AppCompatActivity) requireActivity()).getSupportActionBar().setElevation(10);
+        requireActivity().setTitle("Groups");
 
-        KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
+        KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
         mTracker = application.getDefaultTracker();
         mTracker.setScreenName("Groups");
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -70,9 +79,9 @@ public class GroupFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final PortalObject portal = (PortalObject) getActivity().getIntent().getSerializableExtra("portal");
+        final PortalObject portal = (PortalObject) requireActivity().getIntent().getSerializableExtra("portal");
         mPortal = portal;
-        ApiManager.setVariables(portal, getContext());
+        ApiManager.setVariables(portal, requireContext());
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -85,7 +94,13 @@ public class GroupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mView = inflater.inflate(R.layout.fragment_group, container, false);
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
+        String stringColor = sharedPreferences.getString("color", "E65100");
+
+        final Context contextThemeWrapper = new ContextThemeWrapper(requireActivity(), getResources().getIdentifier("T_" + stringColor, "style", requireContext().getPackageName()));
+
+        LayoutInflater localInflator = inflater.cloneInContext(contextThemeWrapper);
+        mView = localInflator.inflate(R.layout.fragment_group, container, false);
         mLoader = mView.findViewById(R.id.loader);
 
         mRecyclerView = mView.findViewById(R.id.groups);
@@ -95,7 +110,7 @@ public class GroupFragment extends Fragment {
         mRecyclerView.setHasFixedSize(false);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(getContext());
+        mLayoutManager = new LinearLayoutManager(requireContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_container);
@@ -118,12 +133,12 @@ public class GroupFragment extends Fragment {
             ApiManager.getGroupsHtml(new ApiResponse<List<GroupsObject>>() {
                 @Override
                 public void success(final List<GroupsObject> value) {
-                    if (getActivity() == null)
+                    if (requireActivity() == null)
                         return;
-                    getActivity().runOnUiThread(new Runnable() {
+                    requireActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mAdapter = new GroupAdapter(GroupsViewModel.generate((ArrayList<GroupsObject>) value), getContext());
+                            mAdapter = new GroupAdapter(GroupsViewModel.generate((ArrayList<GroupsObject>) value), requireContext());
                             mRecyclerView.setAdapter(mAdapter);
                             mLoader.setVisibility(View.GONE);
                             mSwipeRefreshLayout.setRefreshing(false);
@@ -148,30 +163,58 @@ public class GroupFragment extends Fragment {
                         });
                         return;
                     } else if (e instanceof IOException) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                new AlertDialog.Builder(getContext())
-                                        .setTitle("No Internet")
-                                        .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
-                                        .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                doRequest(portal, ignoreCache, useHtml);
-                                            }
-                                        })
-                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                getActivity().finish();
-                                            }
-                                        })
-                                        .create()
-                                        .show();
-                            }
-                        });
+                        if (requireActivity() != null) {
+                            requireActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    new AlertDialog.Builder(requireContext())
+                                            .setTitle("No Internet")
+                                            .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
+                                            .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    doRequest(portal, ignoreCache, useHtml);
+                                                }
+                                            })
+                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    requireActivity().finish();
+                                                }
+                                            })
+                                            .create()
+                                            .show();
+                                }
+                            });
+                        }
+                    } else if (e instanceof Exceptions.AccessDenied) {
+                        if (requireActivity() != null) {
+                            requireActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    new AlertDialog.Builder(requireActivity())
+                                            .setTitle("Access Denied")
+                                            .setMessage("Your school has disabled access to this section. You may still be able to view it via the web portal.")
+                                            .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    doRequest(portal, ignoreCache, useHtml);
+                                                }
+                                            })
+                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    if (requireActivity() != null)
+                                                        requireActivity().finish();
+                                                }
+                                            })
+                                            .create()
+                                            .show();
+                                }
+                            });
+                        }
                     } else {
-                        doRequest(portal, ignoreCache, useHtml);
+                        doRequest(portal, ignoreCache, false);
                     }
                 }
             }, ignoreCache);
@@ -179,12 +222,12 @@ public class GroupFragment extends Fragment {
             ApiManager.getGroupsApi(new ApiResponse<GroupObject>() {
                 @Override
                 public void success(final GroupObject value) {
-                    if (getActivity() == null)
+                    if (requireActivity() == null)
                         return;
-                    getActivity().runOnUiThread(new Runnable() {
+                    requireActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mAdapter = new GroupAdapter(GroupsViewModel.generate(value.StudentGroupsResults.Years), getContext());
+                            mAdapter = new GroupAdapter(GroupsViewModel.generate(value.StudentGroupsResults.Years), requireContext());
                             mRecyclerView.setAdapter(mAdapter);
                             mLoader.setVisibility(View.GONE);
                             mSwipeRefreshLayout.setRefreshing(false);
@@ -207,30 +250,57 @@ public class GroupFragment extends Fragment {
                                 e.printStackTrace();
                             }
                         });
-                        return;
                     } else if (e instanceof IOException) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                new AlertDialog.Builder(getContext())
-                                        .setTitle("No Internet")
-                                        .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
-                                        .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                doRequest(portal, ignoreCache, useHtml);
-                                            }
-                                        })
-                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                getActivity().finish();
-                                            }
-                                        })
-                                        .create()
-                                        .show();
-                            }
-                        });
+                        if (requireActivity() != null) {
+                            requireActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    new AlertDialog.Builder(requireActivity())
+                                            .setTitle("No Internet")
+                                            .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
+                                            .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    doRequest(portal, ignoreCache, useHtml);
+                                                }
+                                            })
+                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    requireActivity().finish();
+                                                }
+                                            })
+                                            .create()
+                                            .show();
+                                }
+                            });
+                        }
+                    } else if (e instanceof Exceptions.AccessDenied) {
+                        if (requireActivity() != null) {
+                            requireActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    new AlertDialog.Builder(requireActivity())
+                                            .setTitle("Access Denied")
+                                            .setMessage("Your school has disabled access to this section. You may still be able to view it via the web portal.")
+                                            .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    doRequest(portal, ignoreCache, useHtml);
+                                                }
+                                            })
+                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    if (requireActivity() != null)
+                                                        requireActivity().finish();
+                                                }
+                                            })
+                                            .create()
+                                            .show();
+                                }
+                            });
+                        }
                     }
                 }
             }, ignoreCache);

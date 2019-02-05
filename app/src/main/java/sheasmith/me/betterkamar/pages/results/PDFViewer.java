@@ -1,13 +1,21 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:53 PM
+ */
+
 package sheasmith.me.betterkamar.pages.results;
 
 /**
  * Created by TheDiamondPicks on 23/09/2018.
  */
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -20,9 +28,6 @@ import android.widget.TextView;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,7 +57,11 @@ public class PDFViewer extends Activity {
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme);
+        SharedPreferences sharedPreferences = getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
+        String stringColor = sharedPreferences.getString("color", "E65100");
+
+        setTheme(getResources().getIdentifier("T_" + stringColor, "style", getPackageName()));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reports_viewer);
         mPortal = (PortalObject) getIntent().getSerializableExtra("portal");

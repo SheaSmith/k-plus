@@ -1,6 +1,14 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:54 PM
+ */
+
 package sheasmith.me.betterkamar.pages.timetable;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +18,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -56,7 +65,6 @@ public class TimetableFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private TimetableAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private ProgressBar mLoader;
     private TextView noEvents;
     private TextView status;
@@ -70,14 +78,13 @@ public class TimetableFragment extends Fragment {
     private AbsenceObject absenceStats;
     private Date lastDate;
     private PortalObject mPortal;
-    private Tracker mTracker;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(10);
-        getActivity().setTitle("Timetable");
+        ((AppCompatActivity) requireActivity()).getSupportActionBar().setElevation(10);
+        requireActivity().setTitle("Timetable");
         if (mAdapter == null ||  mAdapter.getItemCount() == 0)
             new Thread(new Runnable() {
                 @Override
@@ -85,10 +92,10 @@ public class TimetableFragment extends Fragment {
                     doRequest(mPortal, false);
                 }
             }).start();
-        getActivity().invalidateOptionsMenu();
+        requireActivity().invalidateOptionsMenu();
 
-        KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
-        mTracker = application.getDefaultTracker();
+        KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
+        Tracker mTracker = application.getDefaultTracker();
         mTracker.setScreenName("Timetable");
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
@@ -101,11 +108,12 @@ public class TimetableFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("periodDefinitions", periodDefinitions);
-        outState.putSerializable("attendanceResults", attendanceResults);
+        if (attendanceResults != null)
+            outState.putSerializable("attendanceResults", attendanceResults);
         outState.putSerializable("events", events);
         outState.putSerializable("timetable", timetable);
         if (mCalendarView.getSelectedDate() != null)
-        outState.putSerializable("selectedDate", new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+            outState.putSerializable("selectedDate", new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()));
         outState.putSerializable("days", days);
     }
 
@@ -124,14 +132,14 @@ public class TimetableFragment extends Fragment {
             lastDate = (Date) savedInstanceState.getSerializable("selectedDate");
         }
 
-        mPortal = (PortalObject) getActivity().getIntent().getSerializableExtra("portal");
-        ApiManager.setVariables(mPortal, getContext());
+        mPortal = (PortalObject) requireActivity().getIntent().getSerializableExtra("portal");
+        ApiManager.setVariables(mPortal, requireContext());
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == 1) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
             builder.setTitle("Attendance Statistics").setPositiveButton("close", null);
             if (absenceStats == null) {
                 builder.setMessage("Please wait for the timetable to load");
@@ -146,7 +154,7 @@ public class TimetableFragment extends Fragment {
             LayoutInflater inflater = getLayoutInflater();
             View contentView = inflater.inflate(R.layout.timetable_info, null);
 
-            new AlertDialog.Builder(getContext())
+            new AlertDialog.Builder(requireContext())
                     .setTitle("Attendance Codes (based on MoE rules)")
                     .setView(contentView)
                     .setPositiveButton("Close", null)
@@ -173,14 +181,20 @@ public class TimetableFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_timetable, container, false);
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
+        String stringColor = sharedPreferences.getString("color", "E65100");
+
+        final Context contextThemeWrapper = new ContextThemeWrapper(requireActivity(), getResources().getIdentifier("T_" + stringColor, "style", requireContext().getPackageName()));
+
+        LayoutInflater localInflator = inflater.cloneInContext(contextThemeWrapper);
+        View view = localInflator.inflate(R.layout.fragment_timetable, container, false);
         mLoader = view.findViewById(R.id.progressBar);
         noEvents = view.findViewById(R.id.noEvents);
         status = view.findViewById(R.id.schoolStatus);
         setHasOptionsMenu(true);
 
         mRecyclerView = view.findViewById(R.id.events);
-        mRecyclerView.setOnTouchListener(new OnSwipeTouchListener(getContext()) {
+        mRecyclerView.setOnTouchListener(new OnSwipeTouchListener(requireContext()) {
             @Override
             public void onSwipeRight() {
                 mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
@@ -198,7 +212,7 @@ public class TimetableFragment extends Fragment {
             }
         });
 
-        noEvents.setOnTouchListener(new OnSwipeTouchListener(getContext()) {
+        noEvents.setOnTouchListener(new OnSwipeTouchListener(requireContext()) {
             @Override
             public void onSwipeRight() {
                 mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
@@ -221,7 +235,7 @@ public class TimetableFragment extends Fragment {
         mRecyclerView.setHasFixedSize(false);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(requireContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         Date now = new Date(System.currentTimeMillis());
@@ -278,7 +292,7 @@ public class TimetableFragment extends Fragment {
         ApiManager.getGlobals(new ApiResponse<GlobalObject>() {
             @Override
             public void success(GlobalObject value) {
-                if (getActivity() == null)
+                if (requireActivity() == null)
                     return;
                 periodDefinitions = value.GlobalsResults.PeriodDefinitions;
                 finished[0] = true;
@@ -297,7 +311,7 @@ public class TimetableFragment extends Fragment {
         ApiManager.getAttendance(new ApiResponse<AttendanceObject>() {
             @Override
             public void success(AttendanceObject value) {
-                if (getActivity() == null)
+                if (requireActivity() == null)
                     return;
                 attendanceResults = value.StudentAttendanceResults.Weeks;
                 finished[1] = true;
@@ -315,7 +329,7 @@ public class TimetableFragment extends Fragment {
         ApiManager.getEvents(new ApiResponse<EventsObject>() {
             @Override
             public void success(EventsObject value) {
-                if (getActivity() == null)
+                if (requireActivity() == null)
                     return;
                 events = value.EventsResults.Events;
                 finished[2] = true;
@@ -328,12 +342,12 @@ public class TimetableFragment extends Fragment {
                 finished[2] = true;
                 handleError(portal, e, ignoreCache);
             }
-        }, new Date(System.currentTimeMillis()).getYear(), ignoreCache);
+        }, Calendar.getInstance().get(Calendar.YEAR), ignoreCache);
 
         ApiManager.getTimetable(new ApiResponse<TimetableObject>() {
             @Override
             public void success(TimetableObject value) {
-                if (getActivity() == null)
+                if (requireActivity() == null)
                     return;
                 timetable = value.StudentTimetableResults.Student.Timetable;
                 finished[3] = true;
@@ -352,7 +366,7 @@ public class TimetableFragment extends Fragment {
         ApiManager.getCalendar(new ApiResponse<CalendarObject>() {
             @Override
             public void success(CalendarObject value) {
-                if (getActivity() == null)
+                if (requireActivity() == null)
                     return;
                 days = value.CalendarResults.Days;
                 finished[4] = true;
@@ -371,7 +385,7 @@ public class TimetableFragment extends Fragment {
         ApiManager.getAbsenceStats(new ApiResponse<AbsenceObject>() {
             @Override
             public void success(AbsenceObject value) {
-                if (getActivity() == null)
+                if (requireActivity() == null)
                     return;
                 absenceStats = value;
                 finished[5] = true;
@@ -403,12 +417,12 @@ public class TimetableFragment extends Fragment {
             });
             return;
         } else if (e instanceof IOException) {
-            if (getActivity() == null)
+            if (requireActivity() == null)
                 return;
-            getActivity().runOnUiThread(new Runnable() {
+            requireActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    new AlertDialog.Builder(getContext())
+                    new AlertDialog.Builder(requireContext())
                             .setTitle("No Internet")
                             .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
                             .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
@@ -420,13 +434,39 @@ public class TimetableFragment extends Fragment {
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    getActivity().finish();
+                                    requireActivity().finish();
                                 }
                             })
                             .create()
                             .show();
                 }
             });
+        } else if (e instanceof Exceptions.AccessDenied) {
+            if (requireActivity() != null) {
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(requireActivity())
+                                .setTitle("Access Denied")
+                                .setMessage("Your school has disabled access to this section. You may still be able to view it via the web portal.")
+                                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        doRequest(portal, ignoreCache);
+                                    }
+                                })
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        if (requireActivity() != null)
+                                            requireActivity().finish();
+                                    }
+                                })
+                                .create()
+                                .show();
+                    }
+                });
+            }
         }
     }
 
@@ -435,7 +475,7 @@ public class TimetableFragment extends Fragment {
             if (!f)
                 return;
         }
-        getActivity().runOnUiThread(new Runnable() {
+        requireActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mLoader.setVisibility(View.GONE);
@@ -465,34 +505,37 @@ public class TimetableFragment extends Fragment {
 
         AttendanceObject.Week attendanceWeek = null;
 
-        for (CalendarObject.Day day : days) {
-            try {
-                Date start = format.parse(day.Date);
-                temp.setTime(start);
-                if (current.get(Calendar.DAY_OF_YEAR) == temp.get(Calendar.DAY_OF_YEAR) && !day.WeekYear.equals("") && !day.Status.equals("Holidays")) {
-                    weekNumber = Integer.parseInt(day.WeekYear);
-                    for (AttendanceObject.Week aw : attendanceResults) {
-                        if (Integer.parseInt(aw.index) == weekNumber) {
-                            attendanceWeek = aw;
-                            break;
+        if (days != null) {
+            for (CalendarObject.Day day : days) {
+                try {
+                    Date start = format.parse(day.Date);
+                    temp.setTime(start);
+                    if (current.get(Calendar.DAY_OF_YEAR) == temp.get(Calendar.DAY_OF_YEAR) && !day.WeekYear.equals("") && !day.Status.equals("Holidays")) {
+                        weekNumber = Integer.parseInt(day.WeekYear);
+                        if (attendanceResults != null) {
+                            for (AttendanceObject.Week aw : attendanceResults) {
+                                if (Integer.parseInt(aw.index) == weekNumber) {
+                                    attendanceWeek = aw;
+                                    break;
+                                }
+                            }
                         }
+                        thisDay = day;
+                        break;
+                    } else if (current.get(Calendar.DAY_OF_YEAR) == temp.get(Calendar.DAY_OF_YEAR)) {
+                        thisDay = day;
+                        break;
                     }
-                    thisDay = day;
-                    break;
-                }
-                else if (current.get(Calendar.DAY_OF_YEAR) == temp.get(Calendar.DAY_OF_YEAR)) {
-                    thisDay = day;
-                    break;
-                }
 
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
 
         if (thisDay != null) {
             final CalendarObject.Day finalThisDay = thisDay;
-            getActivity().runOnUiThread(new Runnable() {
+            requireActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
 //                    if (finalThisDay.Week.equals("") || finalThisDay.DayTT.equals("")) {
@@ -531,7 +574,7 @@ public class TimetableFragment extends Fragment {
         }
 
         if (weekNumber == 0) {
-            getActivity().runOnUiThread(new Runnable() {
+            requireActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mRecyclerView.setVisibility(View.GONE);
@@ -541,7 +584,7 @@ public class TimetableFragment extends Fragment {
             return;
         }
         else {
-            getActivity().runOnUiThread(new Runnable() {
+            requireActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mRecyclerView.setVisibility(View.VISIBLE);
@@ -552,71 +595,75 @@ public class TimetableFragment extends Fragment {
 
         AttendanceObject.Day attendanceDay = null;
 
-        weekLoop:
-        for (TimetableObject.Week week : timetable) {
-            if (week.WeekNumber == weekNumber) {
-                for (Integer day : week.Classes.keySet()) {
-                    Calendar cal = Calendar.getInstance();
-                    cal.setFirstDayOfWeek(Calendar.SUNDAY);
-                    cal.setTime(date);
-                    cal.set(Calendar.HOUR_OF_DAY, 0);
-                    cal.set(Calendar.MINUTE, 0);
-                    cal.set(Calendar.SECOND, 0);
-                    cal.set(Calendar.MILLISECOND, 0);
-                    cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-                    cal.add(Calendar.DAY_OF_WEEK, day);
+        if (timetable != null) {
+            weekLoop:
+            for (TimetableObject.Week week : timetable) {
+                if (week.WeekNumber == weekNumber) {
+                    for (Integer day : week.Classes.keySet()) {
+                        Calendar cal = Calendar.getInstance();
+                        cal.setFirstDayOfWeek(Calendar.SUNDAY);
+                        cal.setTime(date);
+                        cal.set(Calendar.HOUR_OF_DAY, 0);
+                        cal.set(Calendar.MINUTE, 0);
+                        cal.set(Calendar.SECOND, 0);
+                        cal.set(Calendar.MILLISECOND, 0);
+                        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+                        cal.add(Calendar.DAY_OF_WEEK, day);
 
-                    if (cal.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)) {
-                        periods = week.Classes.get(day);
-                        if (attendanceWeek != null) {
-                            for (AttendanceObject.Day ad : attendanceWeek.Days) {
-                                if (ad.index.equals(day.toString())) {
-                                    attendanceDay = ad;
-                                    break;
+                        if (cal.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)) {
+                            periods = week.Classes.get(day);
+                            if (attendanceWeek != null) {
+                                for (AttendanceObject.Day ad : attendanceWeek.Days) {
+                                    if (ad.index.equals(day.toString())) {
+                                        attendanceDay = ad;
+                                        break;
+                                    }
                                 }
                             }
+                            break weekLoop;
                         }
-                        break weekLoop;
                     }
                 }
             }
         }
 
-        for (TimetableObject.Class c : periods) {
-            if (attendanceDay != null) {
-                try {
-                    c.attendance = attendanceDay.content.charAt(periods.indexOf(c));
-                }
-                catch (IndexOutOfBoundsException e) {
-                    c.attendance = '.';
-                }
+        if (periods != null) {
+            for (TimetableObject.Class c : periods) {
+                if (attendanceDay != null) {
+                    try {
+                        c.attendance = attendanceDay.content.charAt(periods.indexOf(c));
+                    } catch (IndexOutOfBoundsException e) {
+                        c.attendance = '.';
+                    }
+                } else
+                    break;
             }
-            else
-                break;
         }
 
         final List<EventsObject.Event> dayEvents = new ArrayList<>();
 
-        for (EventsObject.Event event : events) {
-            try {
-                Date start = format.parse(event.Start);
-                Date end = format.parse(event.Finish);
+        if (events != null) {
+            for (EventsObject.Event event : events) {
+                try {
+                    Date start = format.parse(event.Start);
+                    Date end = format.parse(event.Finish);
 
-                Calendar c = Calendar.getInstance();
-                c.setTime(start);
-                int startDay = c.get(Calendar.DAY_OF_YEAR);
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(start);
+                    int startDay = c.get(Calendar.DAY_OF_YEAR);
 
-                c.setTime(end);
-                int endDay = c.get(Calendar.DAY_OF_YEAR);
+                    c.setTime(end);
+                    int endDay = c.get(Calendar.DAY_OF_YEAR);
 
-                c.setTime(date);
-                int currentDay = c.get(Calendar.DAY_OF_YEAR);
+                    c.setTime(date);
+                    int currentDay = c.get(Calendar.DAY_OF_YEAR);
 
-                if (startDay >= currentDay && endDay <= currentDay) {
-                    dayEvents.add(event);
+                    if (startDay >= currentDay && endDay <= currentDay) {
+                        dayEvents.add(event);
+                    }
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
             }
         }
 
@@ -625,7 +672,7 @@ public class TimetableFragment extends Fragment {
         }
 
         if (dayEvents.size() == 0 && periods.size() == 0) {
-            getActivity().runOnUiThread(new Runnable() {
+            requireActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mRecyclerView.setVisibility(View.GONE);
@@ -636,10 +683,10 @@ public class TimetableFragment extends Fragment {
         }
 
         final List<TimetableObject.Class> finalPeriods = periods;
-        getActivity().runOnUiThread(new Runnable() {
+        requireActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mAdapter = new TimetableAdapter(dayEvents, finalPeriods, periodDefinitions, getContext());
+                mAdapter = new TimetableAdapter(dayEvents, finalPeriods, periodDefinitions, requireContext());
                 mRecyclerView.setAdapter(mAdapter);
 //                                                mLoader.setVisibility(View.GONE);
             }

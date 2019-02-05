@@ -1,3 +1,9 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:53 PM
+ */
+
 package sheasmith.me.betterkamar.dataModels;
 
 import org.w3c.dom.Document;
@@ -10,7 +16,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,7 +27,7 @@ public class ResultObject implements Serializable
 {
     public StudentResultsResults StudentResultsResults;
 
-    public ResultObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.UnknownServerError, Exceptions.ExpiredToken {
+    public ResultObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.UnknownServerError, Exceptions.ExpiredToken, Exceptions.AccessDenied {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setIgnoringElementContentWhitespace(true);
@@ -35,6 +40,8 @@ public class ResultObject implements Serializable
             String error = root.getElementsByTagName("Error").item(0).getTextContent();
             if (error.equalsIgnoreCase("invalid key")) {
                 throw new Exceptions.ExpiredToken();
+            } else if (error.equalsIgnoreCase("access denied")) {
+                throw new Exceptions.AccessDenied();
             } else {
                 throw new Exceptions.UnknownServerError();
             }

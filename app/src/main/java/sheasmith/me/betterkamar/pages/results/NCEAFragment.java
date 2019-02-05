@@ -1,11 +1,20 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:54 PM
+ */
+
 package sheasmith.me.betterkamar.pages.results;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,9 +59,9 @@ public class NCEAFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final PortalObject portal = (PortalObject) getActivity().getIntent().getSerializableExtra("portal");
+        final PortalObject portal = (PortalObject) requireActivity().getIntent().getSerializableExtra("portal");
         mPortal = portal;
-        ApiManager.setVariables(portal, getContext());
+        ApiManager.setVariables(portal, requireContext());
     }
 
     @Override
@@ -78,7 +87,7 @@ public class NCEAFragment extends Fragment {
             }
         }).start();
 
-        KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
+        KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
         mTracker = application.getDefaultTracker();
         mTracker.setScreenName("NCEA Results");
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -88,7 +97,13 @@ public class NCEAFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mView = inflater.inflate(R.layout.fragment_results_ncea, container, false);
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
+        String stringColor = sharedPreferences.getString("color", "E65100");
+
+        final Context contextThemeWrapper = new ContextThemeWrapper(requireActivity(), getResources().getIdentifier("T_" + stringColor, "style", requireContext().getPackageName()));
+
+        LayoutInflater localInflator = inflater.cloneInContext(contextThemeWrapper);
+        mView = localInflator.inflate(R.layout.fragment_results_ncea, container, false);
         mLoader = mView.findViewById(R.id.loader);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_container);
@@ -107,11 +122,11 @@ public class NCEAFragment extends Fragment {
         ApiManager.getNCEADetails(new ApiResponse<NCEAObject>() {
             @Override
             public void success(final NCEAObject value) {
-                if (getActivity() == null) {
+                if (requireActivity() == null) {
                     // TODO: Error?
                     return;
                 }
-                getActivity().runOnUiThread(new Runnable() {
+                requireActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         NCEAObject.Student student = value.StudentNCEASummaryResults.Student;
@@ -281,10 +296,10 @@ public class NCEAFragment extends Fragment {
                         chart.animateXY(1000, 1000);
 
                         PieDataSet dataSet = new PieDataSet(entries, "");
-                        dataSet.setColors(new int[]{R.color.notachieved, R.color.achieved, R.color.merit, R.color.excellence}, getContext());
+                        dataSet.setColors(new int[]{R.color.notachieved, R.color.achieved, R.color.merit, R.color.excellence}, requireContext());
                         PieData data = new PieData(dataSet);
                         chart.setDrawEntryLabels(false);
-                        data.setValueTextColor(getContext().getResources().getColor(R.color.white));
+                        data.setValueTextColor(requireContext().getResources().getColor(R.color.white));
                         chart.setData(data);
 
                         if (!enrolledInNCEA) {
@@ -321,12 +336,12 @@ public class NCEAFragment extends Fragment {
                     });
                     return;
                 } else if (e instanceof IOException) {
-                    if (getActivity() == null)
+                    if (requireActivity() == null)
                         return;
-                    getActivity().runOnUiThread(new Runnable() {
+                    requireActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            new AlertDialog.Builder(getContext())
+                            new AlertDialog.Builder(requireContext())
                                     .setTitle("No Internet")
                                     .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
                                     .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
@@ -338,13 +353,39 @@ public class NCEAFragment extends Fragment {
                                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
-                                            getActivity().finish();
+                                            requireActivity().finish();
                                         }
                                     })
                                     .create()
                                     .show();
                         }
                     });
+                } else if (e instanceof Exceptions.AccessDenied) {
+                    if (requireActivity() != null) {
+                        requireActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new AlertDialog.Builder(requireActivity())
+                                        .setTitle("Access Denied")
+                                        .setMessage("Your school has disabled access to this section. You may still be able to view it via the web portal.")
+                                        .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                doRequest(portal, ignoreCache);
+                                            }
+                                        })
+                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                if (requireActivity() != null)
+                                                    requireActivity().finish();
+                                            }
+                                        })
+                                        .create()
+                                        .show();
+                            }
+                        });
+                    }
                 }
             }
         }, ignoreCache);

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Created by Shea Smith on 6/02/19 12:54 PM
+  ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+  ~ Last modified 6/02/19 12:54 PM
+  -->
+
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:configure="sheasmith.me.betterkamar.widgets.TimetableWidgetConfigureActivity"
+    android:initialKeyguardLayout="@layout/timetable_widget"
+    android:initialLayout="@layout/timetable_widget"
+    android:minWidth="180dp"
+    android:minHeight="110dp"
+    android:previewImage="@drawable/example_appwidget_preview"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="100"
+    android:widgetCategory="home_screen|keyguard"></appwidget-provider>

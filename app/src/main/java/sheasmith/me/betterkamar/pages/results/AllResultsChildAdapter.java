@@ -1,3 +1,9 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:53 PM
+ */
+
 package sheasmith.me.betterkamar.pages.results;
 
 import android.content.Context;
@@ -5,9 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.text.ParseException;
@@ -18,7 +22,6 @@ import java.util.List;
 
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.ResultObject;
-import sheasmith.me.betterkamar.internalModels.ResultsViewModel;
 
 /**
  * Created by TheDiamondPicks on 9/09/2018.
@@ -58,7 +61,7 @@ public class AllResultsChildAdapter extends RecyclerView.Adapter<AllResultsChild
 
     @Override
     public ChildResultViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
+        LinearLayout v = (LinearLayout) LayoutInflater.from(parent.requireContext())
                 .inflate(R.layout.adapter_result_child, parent, false);
         ChildResultViewHolder vh = new ChildResultViewHolder(v);
         return vh;

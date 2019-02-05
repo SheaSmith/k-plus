@@ -1,6 +1,16 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:53 PM
+ */
+
 package sheasmith.me.betterkamar.pages.results;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,10 +18,11 @@ import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,10 +55,10 @@ public class ResultsFragment extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        getActivity().setTheme(R.style.NoActionBarShadow);
+        requireActivity().setTheme(R.style.NoActionBarShadow);
         super.onActivityCreated(savedInstanceState);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
-        getActivity().setTitle("Results");
+        ((AppCompatActivity) requireActivity()).getSupportActionBar().setElevation(0);
+        requireActivity().setTitle("Results");
     }
 
     @Override
@@ -58,7 +69,7 @@ public class ResultsFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == 1) {
-            new AlertDialog.Builder(getContext())
+            new AlertDialog.Builder(requireContext())
                     .setTitle("NCEA Information")
                     .setMessage("Stored results may not be confirmed with NZQA and should not be considered official. To attain a Merit or Excellence endorsement 50 merit or excellence credits are needed. To achieve NCEA, 60 credits, plus 20 credits from the previous level are needed (80 credits in Level 1). For more information about NCEA please contact your school or visit NZQA's website: http://nzqa.govt.nz\n\nThe university entrance literacy field indicates if the student has  met the requirements for UE literacy. If \"No\", the current progress is shown as follows: [reading credits/writing credits/reading OR writing credits]. An [M] indicates obtaining UE Literacy with credits in Maori assessments. \n\nThe Level 1 Literacy field indicates if the student has met the requirements for Level 1 Literacy. If \"No\", the current progress is shown as follows: [pre-2011 requirements credits/2012 achievement standard credits/2012 unit standard credits].\n\nThe Numeracy field indicates if the student has met the requirements for Numeracy. If \"No\", the progress towards numeracy is shown, giving a number of credits contributing so far.")
                     .setPositiveButton("Close", null)
@@ -66,7 +77,7 @@ public class ResultsFragment extends Fragment {
                     .show();
         }
         else if (item.getItemId() == 2) {
-            new AlertDialog.Builder(getContext())
+            new AlertDialog.Builder(requireContext())
                     .setTitle("NZQA Qualifications Information")
                     .setMessage("These qualifications and endorsements have been officially awarded by NZQA. They should properly reflect official records.")
                     .setPositiveButton("Close", null)
@@ -74,23 +85,25 @@ public class ResultsFragment extends Fragment {
                     .show();
         }
         else if (item.getItemId() == 3) {
-            setStatusBarColor(R.color.colorPrimary);
             String url = "https://nzqa.govt.nz";
             CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-            builder.setToolbarColor(getContext().getResources().getColor(R.color.colorPrimary));
+            SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
+            String stringColor = "#" + sharedPreferences.getString("color", "E65100");
+            builder.setToolbarColor(Color.parseColor(stringColor));
+            setStatusBarColor(Color.parseColor(stringColor));
             builder.setCloseButtonIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_back));
             CustomTabsIntent customTabsIntent = builder.build();
-            customTabsIntent.launchUrl(getContext(), Uri.parse(url));
+            customTabsIntent.launchUrl(requireContext(), Uri.parse(url));
 
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void setStatusBarColor(int colorId) {
+    private void setStatusBarColor(int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getActivity().getWindow();
+            Window window = requireActivity().getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(ContextCompat.getColor(getContext(), colorId));
+            window.setStatusBarColor(color);
         }
     }
 
@@ -118,20 +131,30 @@ public class ResultsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mView = inflater.inflate(R.layout.fragment_results, container, false);
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
+        String stringColor = sharedPreferences.getString("color", "E65100");
+
+        final Context contextThemeWrapper = new ContextThemeWrapper(requireActivity(), getResources().getIdentifier("T_" + stringColor, "style", requireContext().getPackageName()));
+
+        LayoutInflater localInflator = inflater.cloneInContext(contextThemeWrapper);
+        mView = localInflator.inflate(R.layout.fragment_results, container, false);
         firstViewPager = mView.findViewById(R.id.pager);
 
         tabLayout = mView.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(firstViewPager);
         tabLayout.setTabTextColors(getResources().getColor(R.color.colorHintTextLight),
                 getResources().getColor(R.color.colorPrimaryTextLight));
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = contextThemeWrapper.getTheme();
+        theme.resolveAttribute(R.attr.colorAccent, typedValue, true);
+        tabLayout.setBackgroundColor(typedValue.data);
 
         setupViewPager(firstViewPager);
 
         firstViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                getActivity().invalidateOptionsMenu();
+                requireActivity().invalidateOptionsMenu();
             }
 
             @Override
@@ -149,7 +172,7 @@ public class ResultsFragment extends Fragment {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        mAdapter = new TabViewPagerAdapter(getActivity().getSupportFragmentManager());
+        mAdapter = new TabViewPagerAdapter(requireActivity().getSupportFragmentManager());
         mAdapter.addFragment(AllResultsFragment.newInstance(), "All Results");
         mAdapter.addFragment(NCEAFragment.newInstance(), "NCEA");
         mAdapter.addFragment(NZQAFragment.newInstance(), "Qualifications");

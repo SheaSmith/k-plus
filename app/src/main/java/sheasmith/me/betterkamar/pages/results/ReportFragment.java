@@ -1,6 +1,14 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:50 PM
+ */
+
 package sheasmith.me.betterkamar.pages.results;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,9 +56,9 @@ public class ReportFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final PortalObject portal = (PortalObject) getActivity().getIntent().getSerializableExtra("portal");
+        final PortalObject portal = (PortalObject) requireActivity().getIntent().getSerializableExtra("portal");
         mPortal = portal;
-        ApiManager.setVariables(portal, getContext());
+        ApiManager.setVariables(portal, requireContext());
     }
 
     @Override
@@ -63,7 +72,7 @@ public class ReportFragment extends Fragment {
                 }
             }).start();
 
-        KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
+        KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
         mTracker = application.getDefaultTracker();
         mTracker.setScreenName("Reports");
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -73,7 +82,13 @@ public class ReportFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mView = inflater.inflate(R.layout.fragment_results_report, container, false);
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
+        String stringColor = sharedPreferences.getString("color", "E65100");
+
+        final Context contextThemeWrapper = new ContextThemeWrapper(requireActivity(), getResources().getIdentifier("T_" + stringColor, "style", requireContext().getPackageName()));
+
+        LayoutInflater localInflator = inflater.cloneInContext(contextThemeWrapper);
+        mView = localInflator.inflate(R.layout.fragment_results_report, container, false);
         mLoader = mView.findViewById(R.id.loader);
 
         mRecyclerView = mView.findViewById(R.id.reports);
@@ -83,7 +98,7 @@ public class ReportFragment extends Fragment {
         mRecyclerView.setHasFixedSize(false);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(getContext());
+        mLayoutManager = new LinearLayoutManager(requireContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -110,12 +125,12 @@ public class ReportFragment extends Fragment {
         ApiManager.getReports(new ApiResponse<List<ReportsObject>>() {
             @Override
             public void success(final List<ReportsObject> value) {
-                if (getActivity() == null)
+                if (requireActivity() == null)
                     return;
-                getActivity().runOnUiThread(new Runnable() {
+                requireActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mAdapter = new ReportAdapter(value, getContext(), mPortal);
+                        mAdapter = new ReportAdapter(value, requireContext(), mPortal);
                         mRecyclerView.setAdapter(mAdapter);
                         mLoader.setVisibility(View.GONE);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -141,11 +156,11 @@ public class ReportFragment extends Fragment {
                     });
                     return;
                 } else if (e instanceof IOException) {
-                    if (getActivity() != null) {
-                        getActivity().runOnUiThread(new Runnable() {
+                    if (requireActivity() != null) {
+                        requireActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                new AlertDialog.Builder(getContext())
+                                new AlertDialog.Builder(requireContext())
                                         .setTitle("No Internet")
                                         .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
                                         .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
@@ -157,7 +172,8 @@ public class ReportFragment extends Fragment {
                                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
-                                                getActivity().finish();
+                                                if (requireActivity() != null)
+                                                    requireActivity().finish();
                                             }
                                         })
                                         .create()
@@ -166,11 +182,11 @@ public class ReportFragment extends Fragment {
                         });
                     }
                 } else {
-                    if (getActivity() != null) {
-                        getActivity().runOnUiThread(new Runnable() {
+                    if (requireActivity() != null) {
+                        requireActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                new AlertDialog.Builder(getContext())
+                                new AlertDialog.Builder(requireContext())
                                         .setTitle("Reports not supported")
                                         .setMessage("Your school's portal does not seem to support reports. You will have to view them via the web portal.")
                                         .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
@@ -182,7 +198,8 @@ public class ReportFragment extends Fragment {
                                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
-                                                getActivity().finish();
+                                                if (requireActivity() != null)
+                                                    requireActivity().finish();
                                             }
                                         })
                                         .create()
@@ -191,6 +208,7 @@ public class ReportFragment extends Fragment {
                         });
                     }
                 }
+
             }
         }, ignoreCache);
     }

@@ -1,3 +1,9 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:50 PM
+ */
+
 package sheasmith.me.betterkamar.pages.portals;
 
 import android.app.Activity;
@@ -55,7 +61,7 @@ public class PortalAdapter extends RecyclerView.Adapter<PortalAdapter.PortalView
 
     @Override
     public PortalViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.getContext())
+        RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.requireContext())
                 .inflate(R.layout.adapter_portal, parent, false);
         PortalViewHolder vh = new PortalViewHolder(v);
         return vh;

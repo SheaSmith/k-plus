@@ -1,25 +1,42 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 26/01/19 5:35 PM
+ */
+
 package sheasmith.me.betterkamar.pages;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.io.File;
+
 import sheasmith.me.betterkamar.R;
+import sheasmith.me.betterkamar.internalModels.PortalObject;
 import sheasmith.me.betterkamar.pages.details.DetailsFragment;
 import sheasmith.me.betterkamar.pages.groups.GroupFragment;
 import sheasmith.me.betterkamar.pages.notices.NoticesFragment;
 import sheasmith.me.betterkamar.pages.results.ResultsFragment;
 import sheasmith.me.betterkamar.pages.timetable.TimetableFragment;
 import sheasmith.me.betterkamar.util.BottomNavigationViewHelper;
+import sheasmith.me.betterkamar.util.ThemeColours;
 
 public class DataActivity extends AppCompatActivity {
 
     Integer lastFragment = null;
+    boolean firstRun = true;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -39,6 +56,12 @@ public class DataActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        SharedPreferences sharedPreferences = getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
+        String stringColor = sharedPreferences.getString("color", "E65100");
+
+        setTheme(getResources().getIdentifier("T_" + stringColor, "style", getPackageName()));
+
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
@@ -70,10 +93,22 @@ public class DataActivity extends AppCompatActivity {
 
                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.frame_layout, selectedFragment);
-                        transaction.commit();
+                        transaction.commitAllowingStateLoss();
                         return true;
                     }
                 });
+
+        if (savedInstanceState == null) {
+            final PortalObject portal = (PortalObject) getIntent().getSerializableExtra("portal");
+            String schoolPathName = getFilesDir().toString() + "/" + portal.schoolFile;
+            File image = new File(schoolPathName);
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), bmOptions);
+            Palette palette = Palette.from(bitmap).generate();
+            int color = palette.getVibrantColor(getResources().getColor(R.color.colorAccent));
+            ThemeColours.setNewThemeColor(this, Color.red(color), Color.green(color), Color.blue(color));
+            firstRun = false;
+        }
 
 
         //Used to select an item programmatically

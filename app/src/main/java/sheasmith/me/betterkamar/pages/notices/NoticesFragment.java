@@ -1,5 +1,12 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:54 PM
+ */
+
 package sheasmith.me.betterkamar.pages.notices;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -79,15 +87,20 @@ public class NoticesFragment extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        getActivity().setTheme(R.style.NoActionBarShadow);
+        requireActivity().setTheme(R.style.NoActionBarShadow);
         super.onActivityCreated(savedInstanceState);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
-        getActivity().setTitle("Notices");
+        ((AppCompatActivity) requireActivity()).getSupportActionBar().setElevation(0);
+        requireActivity().setTitle("Notices");
+
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
+        String stringColor = sharedPreferences.getString("color", "E65100");
+
+        final Context contextThemeWrapper = new ContextThemeWrapper(requireActivity(), getResources().getIdentifier("T_" + stringColor, "style", requireContext().getPackageName()));
 
         if (mAdapter == null ||  mAdapter.getItemCount() == 0)
-            doRequest(mPortal, new Date(System.currentTimeMillis()), false);
+            doRequest(mPortal, new Date(System.currentTimeMillis()), false, contextThemeWrapper);
 
-        KamarPlusApplication application = (KamarPlusApplication) getActivity().getApplication();
+        KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
         mTracker = application.getDefaultTracker();
         mTracker.setScreenName("Notices");
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -117,9 +130,9 @@ public class NoticesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final PortalObject portal = (PortalObject) getActivity().getIntent().getSerializableExtra("portal");
+        final PortalObject portal = (PortalObject) requireActivity().getIntent().getSerializableExtra("portal");
         mPortal = portal;
-        ApiManager.setVariables(portal, getContext());
+        ApiManager.setVariables(portal, requireContext());
 
         if (savedInstanceState != null) {
             notices = (HashMap<Date, NoticesObject>) savedInstanceState.getSerializable("notices");
@@ -133,7 +146,13 @@ public class NoticesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_notices, container, false);
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
+        String stringColor = sharedPreferences.getString("color", "E65100");
+
+        final Context contextThemeWrapper = new ContextThemeWrapper(requireActivity(), getResources().getIdentifier("T_" + stringColor, "style", requireContext().getPackageName()));
+
+        LayoutInflater localInflator = inflater.cloneInContext(contextThemeWrapper);
+        View view = localInflator.inflate(R.layout.fragment_notices, container, false);
         mRecyclerView = view.findViewById(R.id.notices);
         setHasOptionsMenu(true);
 
@@ -142,10 +161,10 @@ public class NoticesFragment extends Fragment {
         mRecyclerView.setHasFixedSize(false);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(getContext());
+        mLayoutManager = new LinearLayoutManager(requireContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mRecyclerView.setOnTouchListener(new OnSwipeTouchListener(getContext()) {
+        mRecyclerView.setOnTouchListener(new OnSwipeTouchListener(requireContext()) {
             @Override
             public void onSwipeRight() {
                 super.onSwipeRight();
@@ -154,7 +173,7 @@ public class NoticesFragment extends Fragment {
                 c.add(Calendar.DAY_OF_YEAR, -1);
                 Date newDate = c.getTime();
                 mLoader.setVisibility(View.VISIBLE);
-                doRequest(mPortal, newDate, false);
+                doRequest(mPortal, newDate, false, contextThemeWrapper);
             }
 
             @Override
@@ -165,7 +184,7 @@ public class NoticesFragment extends Fragment {
                 c.add(Calendar.DAY_OF_YEAR, 1);
                 Date newDate = c.getTime();
                 mLoader.setVisibility(View.VISIBLE);
-                doRequest(mPortal, newDate, false);
+                doRequest(mPortal, newDate, false, contextThemeWrapper);
             }
         });
 
@@ -177,7 +196,7 @@ public class NoticesFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                doRequest(mPortal, lastDate, true);
+                doRequest(mPortal, lastDate, true, contextThemeWrapper);
             }
         });
 
@@ -189,7 +208,7 @@ public class NoticesFragment extends Fragment {
                 c.add(Calendar.DAY_OF_YEAR, -1);
                 Date newDate = c.getTime();
                 mLoader.setVisibility(View.VISIBLE);
-                doRequest(mPortal, newDate, false);
+                doRequest(mPortal, newDate, false, contextThemeWrapper);
             }
         });
 
@@ -201,11 +220,11 @@ public class NoticesFragment extends Fragment {
                 c.add(Calendar.DAY_OF_YEAR, 1);
                 Date newDate = c.getTime();
                 mLoader.setVisibility(View.VISIBLE);
-                doRequest(mPortal, newDate, false);
+                doRequest(mPortal, newDate, false, contextThemeWrapper);
             }
         });
 
-        SharedPreferences preferences = getActivity().getPreferences(MODE_PRIVATE);
+        SharedPreferences preferences = requireActivity().getPreferences(MODE_PRIVATE);
         mDisabled = (HashSet<String>) preferences.getStringSet(mPortal.schoolFile.replace(".jpg", "_notices_disabled"), new HashSet<String>());
 
         ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -213,15 +232,17 @@ public class NoticesFragment extends Fragment {
         if (lastDate != null) {
             NoticesObject value = notices.get(lastDate);
 
-            mAdapter = new NoticesAdapter(value.NoticesResults.MeetingNotices.Meeting, value.NoticesResults.GeneralNotices.General, getContext(), mDisabled);
-            mRecyclerView.setAdapter(mAdapter);
-            mLoader.setVisibility(View.GONE);
+            if (value != null) {
+                mAdapter = new NoticesAdapter(value.NoticesResults.MeetingNotices.Meeting, value.NoticesResults.GeneralNotices.General, contextThemeWrapper, mDisabled);
+                mRecyclerView.setAdapter(mAdapter);
+                mLoader.setVisibility(View.GONE);
+            }
         }
 
         return view;
     }
 
-    private void doRequest(final PortalObject portal, final Date date, final boolean ignoreCache) {
+    private void doRequest(final PortalObject portal, final Date date, final boolean ignoreCache, final Context contextThemeWrapper) {
         lastDate = date;
         SimpleDateFormat titleFormat = new SimpleDateFormat("EEEE, d'[p]' MMMM yyyy");
         Calendar c = Calendar.getInstance();
@@ -233,12 +254,12 @@ public class NoticesFragment extends Fragment {
             ApiManager.getNotices(new ApiResponse<NoticesObject>() {
                 @Override
                 public void success(final NoticesObject value) {
-                    if (getActivity() == null)
+                    if (requireActivity() == null)
                         return;
-                    getActivity().runOnUiThread(new Runnable() {
+                    requireActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mAdapter = new NoticesAdapter(value.NoticesResults.MeetingNotices.Meeting, value.NoticesResults.GeneralNotices.General, getContext(), mDisabled);
+                            mAdapter = new NoticesAdapter(value.NoticesResults.MeetingNotices.Meeting, value.NoticesResults.GeneralNotices.General, contextThemeWrapper, mDisabled);
                             mRecyclerView.setAdapter(mAdapter);
                             mLoader.setVisibility(View.GONE);
                             mRecyclerView.setVisibility(View.VISIBLE);
@@ -267,7 +288,7 @@ public class NoticesFragment extends Fragment {
                         ApiManager.login(portal.username, portal.password, new ApiResponse<LoginObject>() {
                             @Override
                             public void success(LoginObject value) {
-                                doRequest(portal, date, ignoreCache);
+                                doRequest(portal, date, ignoreCache, contextThemeWrapper);
                             }
 
                             @Override
@@ -279,24 +300,49 @@ public class NoticesFragment extends Fragment {
                     }
 
                     else if (e instanceof IOException) {
-                        if (getActivity() != null) {
-                            getActivity().runOnUiThread(new Runnable() {
+                        if (requireActivity() != null) {
+                            requireActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     mSwipeRefreshLayout.setRefreshing(false);
-                                    new AlertDialog.Builder(getContext())
+                                    new AlertDialog.Builder(requireContext())
                                             .setTitle("No Internet")
                                             .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
                                             .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                                    doRequest(portal, date, ignoreCache);
+                                                    doRequest(portal, date, ignoreCache, contextThemeWrapper);
                                                 }
                                             })
                                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                                    getActivity().finish();
+                                                    requireActivity().finish();
+                                                }
+                                            })
+                                            .create()
+                                            .show();
+                                }
+                            });
+                        }
+                    } else if (e instanceof Exceptions.AccessDenied) {
+                        if (requireActivity() != null) {
+                            requireActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    new AlertDialog.Builder(requireActivity())
+                                            .setTitle("Access Denied")
+                                            .setMessage("Your school has disabled access to this section. You may still be able to view it via the web portal.")
+                                            .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    doRequest(portal, date, ignoreCache, contextThemeWrapper);
+                                                }
+                                            })
+                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    // Since notices is the first section we aren't going to go back to portals activity. This isn't great, but we don't want to brick the rest of the app
                                                 }
                                             })
                                             .create()
@@ -311,7 +357,7 @@ public class NoticesFragment extends Fragment {
         else {
             NoticesObject value = notices.get(date);
 
-            mAdapter = new NoticesAdapter(value.NoticesResults.MeetingNotices.Meeting, value.NoticesResults.GeneralNotices.General, getContext(), mDisabled);
+            mAdapter = new NoticesAdapter(value.NoticesResults.MeetingNotices.Meeting, value.NoticesResults.GeneralNotices.General, contextThemeWrapper, mDisabled);
             mRecyclerView.setAdapter(mAdapter);
             mLoader.setVisibility(View.GONE);
 
@@ -331,14 +377,14 @@ public class NoticesFragment extends Fragment {
 
 
     private void createFilterDiag(final PortalObject portal) {
-        final AlertDialog.Builder diag = new AlertDialog.Builder(getContext())
+        final AlertDialog.Builder diag = new AlertDialog.Builder(requireContext())
                 .setTitle("Include Notices From");
 
         if (groups == null) {
             diag.setMessage("The notices are still loading. Please wait");
         }
         else {
-            final SharedPreferences preferences = getActivity().getPreferences(MODE_PRIVATE);
+            final SharedPreferences preferences = requireActivity().getPreferences(MODE_PRIVATE);
             Set<String> disabled = preferences.getStringSet(portal.schoolFile.replace(".jpg", "_notices_disabled"), new HashSet<String>());
             boolean[] disabledBoolean = new boolean[groups.size()];
             for (String group : groups) {
@@ -360,7 +406,7 @@ public class NoticesFragment extends Fragment {
                 public void onClick(DialogInterface dialogInterface, int i) {
                     mDisabled = mTempEnabled;
                     preferences.edit().putStringSet(portal.schoolFile.replace(".jpg", "_notices_disabled"), mDisabled).apply();
-                    mAdapter = new NoticesAdapter(mAdapter.meetingNotices, mAdapter.generalNotices, getContext(), mDisabled);
+                    mAdapter = new NoticesAdapter(mAdapter.meetingNotices, mAdapter.generalNotices, requireContext(), mDisabled);
                     mRecyclerView.setAdapter(mAdapter);
                     mAdapter.notifyDataSetChanged();
                 }

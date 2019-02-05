@@ -1,3 +1,9 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:53 PM
+ */
+
 package sheasmith.me.betterkamar.pages.results;
 
 import android.content.Context;
@@ -5,20 +11,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 
 import java.util.List;
-import java.util.Set;
 
-import io.fabric.sdk.android.Fabric;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.NZQAObject;
-import sheasmith.me.betterkamar.dataModels.NoticesObject;
 
 import static android.view.View.GONE;
 
@@ -79,12 +80,12 @@ public class NZQAAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_ITEM) {
-            LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
+            LinearLayout v = (LinearLayout) LayoutInflater.from(parent.requireContext())
                     .inflate(R.layout.adapter_nzqa, parent, false);
             return new QualificationViewHolder(v);
         } else if (viewType == TYPE_HEADER) {
             //inflate your layout and pass it to view holder
-            LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
+            LinearLayout v = (LinearLayout) LayoutInflater.from(parent.requireContext())
                     .inflate(R.layout.adapter_nzqa_heading, parent, false);
             return new HeadingViewHolder(v);
         }

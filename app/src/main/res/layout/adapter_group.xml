@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Created by Shea Smith on 6/02/19 12:54 PM
+  ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+  ~ Last modified 17/01/19 10:04 AM
+  -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -27,21 +33,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/expandArrow"
-            android:layout_toStartOf="@+id/expandArrow"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
-            android:text="Title"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:layout_marginBottom="16dp"
+            android:layout_toStartOf="@+id/expandArrow"
+            android:layout_toLeftOf="@+id/expandArrow"
 
-            android:layout_alignParentLeft="true" />
+            android:text="Title"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <LinearLayout
             android:id="@+id/subItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/expandArrow"
+            android:layout_below="@+id/title"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"

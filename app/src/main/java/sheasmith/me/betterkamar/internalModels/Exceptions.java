@@ -1,3 +1,9 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:54 PM
+ */
+
 package sheasmith.me.betterkamar.internalModels;
 
 /**
@@ -16,4 +22,7 @@ public class Exceptions {
     public static class ExpiredToken extends Exception {
     }
     public static class TooManyAttempts extends Exception {}
+
+    public static class AccessDenied extends Exception {
+    }
 }

@@ -1,3 +1,9 @@
+/*
+ * Created by Shea Smith on 6/02/19 12:54 PM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 6/02/19 12:51 PM
+ */
+
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
@@ -36,8 +42,8 @@ android {
         applicationId "sheasmith.me.betterkamar"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 12
-        versionName "3.2.0"
+        versionCode 16
+        versionName "3.3.0"
     }
     buildTypes {
         release {
@@ -72,6 +78,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-perf:16.2.0'
     implementation 'com.google.android.gms:play-services-analytics:16.0.5'
     implementation 'com.android.support:customtabs:27.1.1'
+    implementation 'com.android.support:palette-v7:27.1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
