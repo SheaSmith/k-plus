@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Created by Shea Smith on 18/05/19 9:45 AM
+  ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+  ~ Last modified 17/05/19 11:04 PM
+  -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,7 +21,7 @@
         android:layout_height="wrap_content"
         android:text="Yr11-13 Mid Year Report"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/black" />
+        android:textColor="?android:attr/textColorPrimary" />
 
     <TextView
         android:id="@+id/date"

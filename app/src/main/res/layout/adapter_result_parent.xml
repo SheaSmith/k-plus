@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Created by Shea Smith on 18/05/19 9:45 AM
+  ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+  ~ Last modified 17/05/19 11:02 PM
+  -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="?android:attr/colorBackground"
     android:foreground="?android:attr/selectableItemBackground"
     android:orientation="vertical">
 

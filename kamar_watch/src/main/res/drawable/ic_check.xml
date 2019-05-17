@@ -1,0 +1,15 @@
+<!--
+  ~ Created by Shea Smith on 18/05/19 9:45 AM
+  ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+  ~ Last modified 9/09/18 3:22 PM
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="24dp"
+        android:height="24dp"
+        android:viewportWidth="24.0"
+        android:viewportHeight="24.0">
+    <path
+        android:fillColor="#ffffff"
+        android:pathData="M9,16.17L4.83,12l-1.42,1.41L9,19 21,7l-1.41,-1.41z"/>
+</vector>

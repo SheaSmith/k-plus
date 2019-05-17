@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 6/02/19 12:54 PM
+ * Created by Shea Smith on 18/05/19 9:45 AM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 12:54 PM
+ * Last modified 17/05/19 10:29 PM
  */
 
 package sheasmith.me.betterkamar.pages.timetable;
@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -44,7 +45,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
@@ -67,7 +70,6 @@ public class TimetableFragment extends Fragment {
     private TimetableAdapter mAdapter;
     private ProgressBar mLoader;
     private TextView noEvents;
-    private TextView status;
     private MaterialCalendarView mCalendarView;
 
     private ArrayList<GlobalObject.PeriodDefinition> periodDefinitions;
@@ -83,21 +85,23 @@ public class TimetableFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((AppCompatActivity) requireActivity()).getSupportActionBar().setElevation(10);
-        requireActivity().setTitle("Timetable");
-        if (mAdapter == null ||  mAdapter.getItemCount() == 0)
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    doRequest(mPortal, false);
-                }
-            }).start();
-        requireActivity().invalidateOptionsMenu();
+        if (isAdded()) {
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setElevation(10);
+            requireActivity().setTitle("Timetable");
+            if (mAdapter == null || mAdapter.getItemCount() == 0)
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        doRequest(mPortal, false);
+                    }
+                }).start();
+            requireActivity().invalidateOptionsMenu();
 
-        KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
-        Tracker mTracker = application.getDefaultTracker();
-        mTracker.setScreenName("Timetable");
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+            KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
+            Tracker mTracker = application.getDefaultTracker();
+            mTracker.setScreenName("Timetable");
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
     }
 
     public static TimetableFragment newInstance() {
@@ -129,37 +133,39 @@ public class TimetableFragment extends Fragment {
             days = (ArrayList<CalendarObject.Day>) savedInstanceState.getSerializable("days");
 
             if (savedInstanceState.containsKey("selectedDate"))
-            lastDate = (Date) savedInstanceState.getSerializable("selectedDate");
+                lastDate = (Date) savedInstanceState.getSerializable("selectedDate");
         }
 
-        mPortal = (PortalObject) requireActivity().getIntent().getSerializableExtra("portal");
-        ApiManager.setVariables(mPortal, requireContext());
+        if (isAdded()) {
+            mPortal = (PortalObject) requireActivity().getIntent().getSerializableExtra("portal");
+            ApiManager.setVariables(mPortal, requireContext());
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == 1) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-            builder.setTitle("Attendance Statistics").setPositiveButton("close", null);
-            if (absenceStats == null) {
-                builder.setMessage("Please wait for the timetable to load");
-            }
-            else {
-                AbsenceObject.Student student = absenceStats.StudentAbsenceStatsResults.Student;
-                builder.setMessage(String.format("Unjustified: %s%%\nJustified: %s%%\nOverseas: %s%%\nTotal Absences: %s%%\nTotal Present: %s%%", student.PctgeU, student.PctgeJ, student.PctgeO, student.PctgeT, student.PctgeP));
-            }
-            builder.create().show();
-        }
-        else if (item.getItemId() == 2) {
-            LayoutInflater inflater = getLayoutInflater();
-            View contentView = inflater.inflate(R.layout.timetable_info, null);
+        if (isAdded()) {
+            if (item.getItemId() == 1) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                builder.setTitle("Attendance Statistics").setPositiveButton("close", null);
+                if (absenceStats == null) {
+                    builder.setMessage("Please wait for the timetable to load");
+                } else {
+                    AbsenceObject.Student student = absenceStats.StudentAbsenceStatsResults.Student;
+                    builder.setMessage(String.format("Unjustified: %s%%\nJustified: %s%%\nOverseas: %s%%\nTotal Absences: %s%%\nTotal Present: %s%%", student.PctgeU, student.PctgeJ, student.PctgeO, student.PctgeT, student.PctgeP));
+                }
+                builder.create().show();
+            } else if (item.getItemId() == 2) {
+                LayoutInflater inflater = getLayoutInflater();
+                View contentView = inflater.inflate(R.layout.timetable_info, null);
 
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("Attendance Codes (based on MoE rules)")
-                    .setView(contentView)
-                    .setPositiveButton("Close", null)
-                    .create()
-                    .show();
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Attendance Codes (based on MoE rules)")
+                        .setView(contentView)
+                        .setPositiveButton("Close", null)
+                        .create()
+                        .show();
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -181,108 +187,111 @@ public class TimetableFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
-        String stringColor = sharedPreferences.getString("color", "E65100");
+        if (isAdded()) {
+            SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
+            String stringColor = sharedPreferences.getString("color", "E65100");
 
-        final Context contextThemeWrapper = new ContextThemeWrapper(requireActivity(), getResources().getIdentifier("T_" + stringColor, "style", requireContext().getPackageName()));
+            final Context contextThemeWrapper = new ContextThemeWrapper(requireActivity(), getResources().getIdentifier("T_" + stringColor, "style", requireContext().getPackageName()));
 
-        LayoutInflater localInflator = inflater.cloneInContext(contextThemeWrapper);
-        View view = localInflator.inflate(R.layout.fragment_timetable, container, false);
-        mLoader = view.findViewById(R.id.progressBar);
-        noEvents = view.findViewById(R.id.noEvents);
-        status = view.findViewById(R.id.schoolStatus);
-        setHasOptionsMenu(true);
+            LayoutInflater localInflator = inflater.cloneInContext(contextThemeWrapper);
+            View view = localInflator.inflate(R.layout.fragment_timetable, container, false);
+            mLoader = view.findViewById(R.id.progressBar);
+            noEvents = view.findViewById(R.id.noEvents);
+            setHasOptionsMenu(true);
 
-        mRecyclerView = view.findViewById(R.id.events);
-        mRecyclerView.setOnTouchListener(new OnSwipeTouchListener(requireContext()) {
-            @Override
-            public void onSwipeRight() {
-                mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
-                mCalendarView.setSelectedDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
-                final Date date = new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
-                updateList(date);
-            }
+            mRecyclerView = view.findViewById(R.id.events);
+            mRecyclerView.setOnTouchListener(new OnSwipeTouchListener(requireContext()) {
+                @Override
+                public void onSwipeRight() {
+                    mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
+                    mCalendarView.setSelectedDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
+                    final Date date = new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                    updateList(date);
+                }
 
-            @Override
-            public void onSwipeLeft() {
-                mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().plusDays(1));
-                mCalendarView.setSelectedDate(mCalendarView.getSelectedDate().getDate().plusDays(1));
-                final Date date = new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
-                updateList(date);
-            }
-        });
+                @Override
+                public void onSwipeLeft() {
+                    mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().plusDays(1));
+                    mCalendarView.setSelectedDate(mCalendarView.getSelectedDate().getDate().plusDays(1));
+                    final Date date = new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                    updateList(date);
+                }
+            });
 
-        noEvents.setOnTouchListener(new OnSwipeTouchListener(requireContext()) {
-            @Override
-            public void onSwipeRight() {
-                mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
-                mCalendarView.setSelectedDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
-                final Date date = new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
-                updateList(date);
-            }
+            noEvents.setOnTouchListener(new OnSwipeTouchListener(requireContext()) {
+                @Override
+                public void onSwipeRight() {
+                    mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
+                    mCalendarView.setSelectedDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
+                    final Date date = new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                    updateList(date);
+                }
 
-            @Override
-            public void onSwipeLeft() {
-                mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().plusDays(1));
-                mCalendarView.setSelectedDate(mCalendarView.getSelectedDate().getDate().plusDays(1));
-                final Date date = new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
-                updateList(date);
-            }
-        });
+                @Override
+                public void onSwipeLeft() {
+                    mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().plusDays(1));
+                    mCalendarView.setSelectedDate(mCalendarView.getSelectedDate().getDate().plusDays(1));
+                    final Date date = new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                    updateList(date);
+                }
+            });
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(false);
+            // use this setting to improve performance if you know that changes
+            // in content do not change the layout size of the RecyclerView
+            mRecyclerView.setHasFixedSize(false);
 
-        // use a linear layout manager
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(requireContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+            // use a linear layout manager
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(requireContext());
+            mRecyclerView.setLayoutManager(mLayoutManager);
 
-        Date now = new Date(System.currentTimeMillis());
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(now);
+            Date now = new Date(System.currentTimeMillis());
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(now);
 
-        cal.set(Calendar.MILLISECOND, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.HOUR, 0);
-        cal.set(Calendar.MONTH, 0);
-        cal.set(Calendar.DAY_OF_MONTH, 1);
+            cal.set(Calendar.MILLISECOND, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.HOUR, 0);
+            cal.set(Calendar.MONTH, 0);
+            cal.set(Calendar.DAY_OF_MONTH, 1);
 
-        Date min = cal.getTime();
+            Date min = cal.getTime();
 
-        cal.set(Calendar.MONTH, 11);
-        cal.set(Calendar.DAY_OF_MONTH, 31);
+            cal.set(Calendar.MONTH, 11);
+            cal.set(Calendar.DAY_OF_MONTH, 31);
 
-        Date max = cal.getTime();
+            Date max = cal.getTime();
 
-        mCalendarView = view.findViewById(R.id.calendarView);
+            mCalendarView = view.findViewById(R.id.calendarView);
 //        mCalendarView.setCurrentDate(new Date(System.currentTimeMillis()));
-        mCalendarView.state().edit().setMaximumDate(Instant.ofEpochMilli(max.getTime()).atZone(ZoneId.systemDefault()).toLocalDate()).setMinimumDate(Instant.ofEpochMilli(min.getTime()).atZone(ZoneId.systemDefault()).toLocalDate()).commit();
+            mCalendarView.state().edit().setMaximumDate(Instant.ofEpochMilli(max.getTime()).atZone(ZoneId.systemDefault()).toLocalDate()).setMinimumDate(Instant.ofEpochMilli(min.getTime()).atZone(ZoneId.systemDefault()).toLocalDate()).commit();
 
-        mCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
-            @Override
-            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay calDate, boolean selected) {
-                final Date date = new Date(calDate.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
-                updateList(date);
+            mCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
+                @Override
+                public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay calDate, boolean selected) {
+                    final Date date = new Date(calDate.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                    updateList(date);
+                }
+            });
+
+            if (lastDate != null) {
+                mCalendarView.setSelectedDate(Instant.ofEpochMilli(lastDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate());
+                updateList(lastDate);
             }
-        });
 
-        if (lastDate != null) {
-            mCalendarView.setSelectedDate(Instant.ofEpochMilli(lastDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate());
-            updateList(lastDate);
+            mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+            mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    doRequest(mPortal, true);
+                }
+            });
+
+
+            return view;
         }
-
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
-        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                doRequest(mPortal, true);
-            }
-        });
-
-        return view;
+        return inflater.inflate(R.layout.fragment_timetable, container, false);
     }
 
 
@@ -292,11 +301,11 @@ public class TimetableFragment extends Fragment {
         ApiManager.getGlobals(new ApiResponse<GlobalObject>() {
             @Override
             public void success(GlobalObject value) {
-                if (requireActivity() == null)
-                    return;
-                periodDefinitions = value.GlobalsResults.PeriodDefinitions;
-                finished[0] = true;
-                hideLoader(finished);
+                if (isAdded()) {
+                    periodDefinitions = value.GlobalsResults.PeriodDefinitions;
+                    finished[0] = true;
+                    hideLoader(finished);
+                }
             }
 
             @Override
@@ -311,11 +320,11 @@ public class TimetableFragment extends Fragment {
         ApiManager.getAttendance(new ApiResponse<AttendanceObject>() {
             @Override
             public void success(AttendanceObject value) {
-                if (requireActivity() == null)
-                    return;
-                attendanceResults = value.StudentAttendanceResults.Weeks;
-                finished[1] = true;
-                hideLoader(finished);
+                if (isAdded()) {
+                    attendanceResults = value.StudentAttendanceResults.Weeks;
+                    finished[1] = true;
+                    hideLoader(finished);
+                }
             }
 
             @Override
@@ -329,11 +338,11 @@ public class TimetableFragment extends Fragment {
         ApiManager.getEvents(new ApiResponse<EventsObject>() {
             @Override
             public void success(EventsObject value) {
-                if (requireActivity() == null)
-                    return;
-                events = value.EventsResults.Events;
-                finished[2] = true;
-                hideLoader(finished);
+                if (isAdded()) {
+                    events = value.EventsResults.Events;
+                    finished[2] = true;
+                    hideLoader(finished);
+                }
             }
 
             @Override
@@ -347,11 +356,11 @@ public class TimetableFragment extends Fragment {
         ApiManager.getTimetable(new ApiResponse<TimetableObject>() {
             @Override
             public void success(TimetableObject value) {
-                if (requireActivity() == null)
-                    return;
-                timetable = value.StudentTimetableResults.Student.Timetable;
-                finished[3] = true;
-                hideLoader(finished);
+                if (isAdded()) {
+                    timetable = value.StudentTimetableResults.Student.Timetable;
+                    finished[3] = true;
+                    hideLoader(finished);
+                }
             }
 
             @Override
@@ -366,11 +375,11 @@ public class TimetableFragment extends Fragment {
         ApiManager.getCalendar(new ApiResponse<CalendarObject>() {
             @Override
             public void success(CalendarObject value) {
-                if (requireActivity() == null)
-                    return;
-                days = value.CalendarResults.Days;
-                finished[4] = true;
-                hideLoader(finished);
+                if (isAdded()) {
+                    days = value.CalendarResults.Days;
+                    finished[4] = true;
+                    hideLoader(finished);
+                }
             }
 
             @Override
@@ -385,11 +394,11 @@ public class TimetableFragment extends Fragment {
         ApiManager.getAbsenceStats(new ApiResponse<AbsenceObject>() {
             @Override
             public void success(AbsenceObject value) {
-                if (requireActivity() == null)
-                    return;
-                absenceStats = value;
-                finished[5] = true;
-                hideLoader(finished);
+                if (isAdded()) {
+                    absenceStats = value;
+                    finished[5] = true;
+                    hideLoader(finished);
+                }
             }
 
             @Override
@@ -417,32 +426,32 @@ public class TimetableFragment extends Fragment {
             });
             return;
         } else if (e instanceof IOException) {
-            if (requireActivity() == null)
-                return;
-            requireActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    new AlertDialog.Builder(requireContext())
-                            .setTitle("No Internet")
-                            .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
-                            .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    doRequest(portal, ignoreCache);
-                                }
-                            })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    requireActivity().finish();
-                                }
-                            })
-                            .create()
-                            .show();
-                }
-            });
+            if (isAdded())
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(requireContext())
+                                .setTitle("No Internet")
+                                .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
+                                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        doRequest(portal, ignoreCache);
+                                    }
+                                })
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        if (isAdded())
+                                            requireActivity().finish();
+                                    }
+                                })
+                                .create()
+                                .show();
+                    }
+                });
         } else if (e instanceof Exceptions.AccessDenied) {
-            if (requireActivity() != null) {
+            if (isAdded()) {
                 requireActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -458,7 +467,7 @@ public class TimetableFragment extends Fragment {
                                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        if (requireActivity() != null)
+                                        if (isAdded())
                                             requireActivity().finish();
                                     }
                                 })
@@ -475,18 +484,20 @@ public class TimetableFragment extends Fragment {
             if (!f)
                 return;
         }
-        requireActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mLoader.setVisibility(View.GONE);
-                mSwipeRefreshLayout.setRefreshing(false);
-                // So we get the weeks to show up
-                mCalendarView.setCurrentDate(mCalendarView.getCurrentDate().getDate().minusWeeks(1));
-                mCalendarView.setCurrentDate(mCalendarView.getCurrentDate().getDate().plusWeeks(1));
-                mCalendarView.setSelectedDate(Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.systemDefault()).toLocalDate());
-                updateList(new Date(System.currentTimeMillis()));
-            }
-        });
+        if (isAdded()) {
+            requireActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mLoader.setVisibility(View.GONE);
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    // So we get the weeks to show up
+                    mCalendarView.setCurrentDate(mCalendarView.getCurrentDate().getDate().minusWeeks(1));
+                    mCalendarView.setCurrentDate(mCalendarView.getCurrentDate().getDate().plusWeeks(1));
+                    mCalendarView.setSelectedDate(Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.systemDefault()).toLocalDate());
+                    updateList(new Date(System.currentTimeMillis()));
+                }
+            });
+        }
     }
 
     private void updateList(final Date date) {
@@ -505,16 +516,31 @@ public class TimetableFragment extends Fragment {
 
         AttendanceObject.Week attendanceWeek = null;
 
+        HashMap<String, List<CalendarDay>> dotsSortedByType = new HashMap<>();
+
         if (days != null) {
             for (CalendarObject.Day day : days) {
                 try {
+
                     Date start = format.parse(day.Date);
                     temp.setTime(start);
+
+                    List<CalendarDay> tempList = new ArrayList<>();
+                    if (dotsSortedByType.containsKey(day.Status))
+                        tempList = dotsSortedByType.get(day.Status);
+
+                    tempList.add(CalendarDay.from(temp.get(Calendar.YEAR), temp.get(Calendar.MONTH) + 1, temp.get(Calendar.DAY_OF_MONTH)));
+
+                    dotsSortedByType.put(day.Status, tempList);
+
                     if (current.get(Calendar.DAY_OF_YEAR) == temp.get(Calendar.DAY_OF_YEAR) && !day.WeekYear.equals("") && !day.Status.equals("Holidays")) {
                         weekNumber = Integer.parseInt(day.WeekYear);
                         if (attendanceResults != null) {
                             for (AttendanceObject.Week aw : attendanceResults) {
-                                if (Integer.parseInt(aw.index) == weekNumber) {
+                                Date weekStart = format.parse(aw.WeekStart);
+                                Calendar weekCal = Calendar.getInstance();
+                                weekCal.setTime(weekStart);
+                                if (weekCal.get(Calendar.DAY_OF_YEAR) == monday.get(Calendar.DAY_OF_YEAR) && weekCal.get(Calendar.YEAR) == monday.get(Calendar.YEAR)) {
                                     attendanceWeek = aw;
                                     break;
                                 }
@@ -533,64 +559,95 @@ public class TimetableFragment extends Fragment {
             }
         }
 
+        for (Map.Entry<String, List<CalendarDay>> entry : dotsSortedByType.entrySet()) {
+            int color;
+            switch (entry.getKey()) {
+                case "Holidays":
+                    color = ResourcesCompat.getColor(getResources(), R.color.merit, null);
+                    break;
+                case "Holiday":
+                    color = ResourcesCompat.getColor(getResources(), R.color.merit, null);
+                    break;
+                case "Open":
+                    color = ResourcesCompat.getColor(getResources(), R.color.achieved, null);
+                    break;
+                case "Teacher Only Day":
+                    color = ResourcesCompat.getColor(getResources(), R.color.excellence, null);
+                    break;
+                case "School Closed":
+                    color = ResourcesCompat.getColor(getResources(), R.color.notachieved, null);
+                    break;
+                default:
+                    color = -1;
+                    break;
+            }
+
+            if (color != -1)
+                mCalendarView.addDecorator(new DayTypeDecorator(color, entry.getValue()));
+        }
+
         if (thisDay != null) {
             final CalendarObject.Day finalThisDay = thisDay;
-            requireActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+            if (isAdded()) {
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
 //                    if (finalThisDay.Week.equals("") || finalThisDay.DayTT.equals("")) {
-                        status.setText(String.format("School Status: %s", finalThisDay.Status));
 //                    }
 //                    else {
 //                        status.setText(String.format("School Status: %s. Term %s Week %s", finalThisDay.Status, finalThisDay.Term, finalThisDay.Week));
 //                    }
-                    mCalendarView.setTitleFormatter(new TitleFormatter() {
-                        @Override
-                        public CharSequence format(CalendarDay calendarDay) {
-                            SimpleDateFormat form = new SimpleDateFormat("MMMM, yyyy");
-                            CalendarObject.Day weekDay = null;
-                            int dayOfYear = mCalendarView.getCurrentDate().getDate().getDayOfYear();
-                            for (CalendarObject.Day day : days) {
-                                try {
-                                    Date start = format.parse(day.Date);
-                                    temp.setTime(start);
-                                    if (dayOfYear == temp.get(Calendar.DAY_OF_YEAR)) {
-                                        weekDay = day;
-                                    }
+                        mCalendarView.setTitleFormatter(new TitleFormatter() {
+                            @Override
+                            public CharSequence format(CalendarDay calendarDay) {
+                                SimpleDateFormat form = new SimpleDateFormat("MMMM, yyyy");
+                                CalendarObject.Day weekDay = null;
+                                int dayOfYear = mCalendarView.getCurrentDate().getDate().getDayOfYear();
+                                for (CalendarObject.Day day : days) {
+                                    try {
+                                        Date start = format.parse(day.Date);
+                                        temp.setTime(start);
+                                        if (dayOfYear == temp.get(Calendar.DAY_OF_YEAR)) {
+                                            weekDay = day;
+                                        }
 
-                                } catch (ParseException e) {
-                                    throw new RuntimeException(e);
+                                    } catch (ParseException e) {
+                                        throw new RuntimeException(e);
+                                    }
                                 }
+                                if (weekDay.Status.equals("Holidays"))
+                                    return form.format(new Date(calendarDay.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+                                else
+                                    return form.format(new Date(calendarDay.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())) + "\nTerm " + weekDay.TermA + " Week " + weekDay.WeekA;
                             }
-                            if (weekDay.Status.equals("Holidays"))
-                                return form.format(new Date(calendarDay.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()));
-                            else
-                                return form.format(new Date(calendarDay.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())) + "\nTerm " + weekDay.TermA + " Week " + weekDay.WeekA;
-                        }
-                    });
-                    mCalendarView.invalidate();
-                }
-            });
+                        });
+                        mCalendarView.invalidate();
+                    }
+                });
+            }
         }
 
         if (weekNumber == 0) {
-            requireActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mRecyclerView.setVisibility(View.GONE);
-                    noEvents.setVisibility(View.VISIBLE);
-                }
-            });
+            if (isAdded()) {
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRecyclerView.setVisibility(View.GONE);
+                        noEvents.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
             return;
-        }
-        else {
-            requireActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mRecyclerView.setVisibility(View.VISIBLE);
-                    noEvents.setVisibility(View.GONE);
-                }
-            });
+        } else {
+            if (isAdded()) {
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRecyclerView.setVisibility(View.VISIBLE);
+                        noEvents.setVisibility(View.GONE);
+                    }
+                });
+            }
         }
 
         AttendanceObject.Day attendanceDay = null;
@@ -672,24 +729,30 @@ public class TimetableFragment extends Fragment {
         }
 
         if (dayEvents.size() == 0 && periods.size() == 0) {
-            requireActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mRecyclerView.setVisibility(View.GONE);
-                    noEvents.setVisibility(View.VISIBLE);
-                }
-            });
+            if (isAdded()) {
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRecyclerView.setVisibility(View.GONE);
+                        noEvents.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
             return;
         }
 
         final List<TimetableObject.Class> finalPeriods = periods;
-        requireActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter = new TimetableAdapter(dayEvents, finalPeriods, periodDefinitions, requireContext());
-                mRecyclerView.setAdapter(mAdapter);
+        if (isAdded()) {
+            requireActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (isAdded()) {
+                        mAdapter = new TimetableAdapter(dayEvents, finalPeriods, periodDefinitions, requireContext());
+                        mRecyclerView.setAdapter(mAdapter);
 //                                                mLoader.setVisibility(View.GONE);
-            }
-        });
+                    }
+                }
+            });
+        }
     }
 }

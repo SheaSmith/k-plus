@@ -1,0 +1,79 @@
+/*
+ * Created by Shea Smith on 18/05/19 9:45 AM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 14/03/19 8:30 PM
+ */
+
+apply plugin: 'com.android.application'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+    maven {
+        url 'https://maven.google.com/'
+        name 'Google'
+    }
+}
+
+android {
+    compileSdkVersion 28
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId "sheasmith.me.betterkamar"
+        minSdkVersion 23
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+    maven {
+        url 'https://maven.google.com/'
+        name 'Google'
+    }
+    maven {
+        url 'https://raw.github.com/iainconnor/ObjectCache/master/maven/'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'com.google.android.support:wearable:2.4.0'
+    implementation 'com.google.android.gms:play-services-wearable:16.0.1'
+    implementation 'com.android.support:percent:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'com.android.support:wear:28.0.0'
+    compileOnly 'com.google.android.wearable:wearable:2.4.0'
+
+    implementation 'com.github.barteksc:android-pdf-viewer:2.4.0'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'org.jsoup:jsoup:1.10.2'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.scottyab:secure-preferences-lib:0.1.4'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.squareup.okhttp3:okhttp:3.13.1'
+    implementation 'com.android.support:cardview-v7:28.0.0'
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
+    implementation 'com.iainconnor:objectcache:0.0.18-SNAPSHOT'
+    implementation 'com.google.android.gms:play-services-analytics:16.0.7'
+    implementation 'com.android.support:customtabs:28.0.0'
+    implementation 'com.android.support:palette-v7:28.0.0'
+}

@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 6/02/19 12:54 PM
+ * Created by Shea Smith on 18/05/19 9:45 AM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 12:54 PM
+ * Last modified 6/02/19 1:15 PM
  */
 
 package sheasmith.me.betterkamar.widgets;
@@ -63,7 +63,14 @@ public class TimetableWidgetRemoteViewsFactory implements RemoteViewsService.Rem
         mContext = applicationContext;
         mIntent = intent;
 
-        String key = TimetableWidgetConfigureActivity.loadTitlePref(mContext, Integer.valueOf(intent.getData().getSchemeSpecificPart()));
+        String key = "NOTHING_RANDOM_DATA_SHOULD_RETURN_NO_PORTAL";
+
+        try {
+            key = TimetableWidgetConfigureActivity.loadTitlePref(mContext, Integer.valueOf(intent.getData().getSchemeSpecificPart()));
+        }
+        catch (NullPointerException e) {
+            // DO NOTHING
+        }
 
         SharedPreferences prefs = new SecurePreferences(mContext);
 
@@ -186,8 +193,7 @@ public class TimetableWidgetRemoteViewsFactory implements RemoteViewsService.Rem
                             cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
                             cal.add(Calendar.DAY_OF_WEEK, day);
 
-                            if (cal.get(Calendar.DAY_OF_YEAR) == 38) {
-//                        if (cal.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)) {
+                        if (cal.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)) {
                                 periods = week.Classes.get(day);
                                 break weekLoop;
                             }
@@ -243,23 +249,18 @@ public class TimetableWidgetRemoteViewsFactory implements RemoteViewsService.Rem
     @Override
     public int getCount() {
         if (dayEvents != null && mPeriodDefinitions != null && days != null && periods != null) {
+            if (dayEvents.size() + periods.size() == 0)
+                return 1;
             return dayEvents.size() + periods.size();
         } else if (error == null) {
             return 1;
         } else {
-            return 0;
+            return 1;
         }
     }
 
     @Override
     public RemoteViews getViewAt(int position) {
-        while (error == null && (position == AdapterView.INVALID_POSITION || timetable == null || mPeriodDefinitions == null || mEvents == null)) {
-            try {
-                Thread.sleep(20);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
 
         if (error != null) {
             RemoteViews errorView = new RemoteViews(mContext.getPackageName(), R.layout.timetable_widget_error);

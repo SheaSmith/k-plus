@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Created by Shea Smith on 18/05/19 9:45 AM
+  ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+  ~ Last modified 23/09/18 8:41 AM
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Heading"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+</LinearLayout>

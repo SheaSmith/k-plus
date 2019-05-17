@@ -1,11 +1,12 @@
 /*
- * Created by Shea Smith on 6/02/19 12:54 PM
+ * Created by Shea Smith on 18/05/19 9:45 AM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 12:54 PM
+ * Last modified 6/02/19 1:31 PM
  */
 
 package sheasmith.me.betterkamar.widgets;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
@@ -32,6 +33,7 @@ public class TimetableWidget extends AppWidgetProvider {
             views.setTextViewText(R.id.student, p.student + " (" + p.schoolName + ")");
         intent.setData(Uri.fromParts("content", appWidgetId + "", null));
         views.setRemoteAdapter(R.id.timetable, intent);
+
 
 //        views.setBoolean(R.id.timetable, "setEnabled", false);
 

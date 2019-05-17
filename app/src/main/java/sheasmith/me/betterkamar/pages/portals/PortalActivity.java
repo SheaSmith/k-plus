@@ -1,3 +1,9 @@
+/*
+ * Created by Shea Smith on 18/05/19 9:45 AM
+ * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+ * Last modified 17/05/19 11:16 PM
+ */
+
 package sheasmith.me.betterkamar.pages.portals;
 
 import android.content.Intent;
@@ -5,6 +11,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -14,6 +21,7 @@ import android.view.View;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.FirebaseApp;
 import com.google.gson.Gson;
 import com.securepreferences.SecurePreferences;
 
@@ -54,6 +62,23 @@ public class PortalActivity extends AppCompatActivity {
             Intent i = new Intent(this, AboutActivity.class);
             startActivity(i);
         }
+        else if (id == R.id.action_theme) {
+            if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            }
+            else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            }
+            else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            }
+
+            SharedPreferences.Editor editor = getSharedPreferences("sheasmith.me.betterkamar", MODE_PRIVATE).edit();
+            editor.putInt("night-mode", AppCompatDelegate.getDefaultNightMode());
+            editor.apply();
+
+            recreate();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -80,6 +105,10 @@ public class PortalActivity extends AppCompatActivity {
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        SharedPreferences preferences = getSharedPreferences("sheasmith.me.betterkamar", MODE_PRIVATE);
+        AppCompatDelegate.setDefaultNightMode(preferences.getInt("night-mode", 1));
+
 
         SharedPreferences prefs = new SecurePreferences(this);
 

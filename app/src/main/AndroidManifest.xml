@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Created by Shea Smith on 6/02/19 12:54 PM
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Created by Shea Smith on 18/05/19 9:45 AM
   ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
-  ~ Last modified 6/02/19 12:54 PM
+  ~ Last modified 13/03/19 7:09 PM
   -->
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="sheasmith.me.betterkamar">
@@ -61,7 +59,9 @@
                 android:resource="@xml/timetable_widget_info" />
         </receiver>
 
-        <activity android:name=".widgets.TimetableWidgetConfigureActivity">
+        <activity
+            android:name=".widgets.TimetableWidgetConfigureActivity"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
@@ -69,7 +69,7 @@
 
         <service
             android:name=".widgets.TimetableWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS"></service>
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>

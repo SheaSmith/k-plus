@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Created by Shea Smith on 18/05/19 9:45 AM
+  ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+  ~ Last modified 17/05/19 10:46 PM
+  -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -51,7 +57,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="0800 123 4567"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                     <TextView
                         android:id="@+id/emergency_mobile_phone_heading"
@@ -65,7 +71,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="027 123 4567"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                     <TextView
                         android:id="@+id/emergency_work_phone_heading"
@@ -79,7 +85,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="03 230 4567"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                     <TextView
                         android:id="@+id/emergency_extension_heading"
@@ -93,7 +99,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="256"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                 </LinearLayout>
 

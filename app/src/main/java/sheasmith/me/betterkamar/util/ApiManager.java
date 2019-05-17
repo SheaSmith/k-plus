@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 6/02/19 12:54 PM
+ * Created by Shea Smith on 18/05/19 9:45 AM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 9:11 AM
+ * Last modified 9/02/19 6:44 PM
  */
 
 package sheasmith.me.betterkamar.util;
@@ -1028,8 +1028,7 @@ public class ApiManager {
     }
 
     public static void getReports(final ApiResponse<List<ReportsObject>> callback, boolean ignoreCache) {
-        List<ReportsObject> cache = (List<ReportsObject>) cacheManager.get("ReportsObject" + ID, ArrayList.class, new TypeToken<List<ReportsObject>>() {
-        }.getType());
+        List<ReportsObject> cache = (List<ReportsObject>) cacheManager.get("ReportsObject" + ID, ArrayList.class, new TypeToken<List<ReportsObject>>() {}.getType());
         if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;

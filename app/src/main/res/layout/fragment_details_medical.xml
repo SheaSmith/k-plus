@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Created by Shea Smith on 18/05/19 9:45 AM
+  ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+  ~ Last modified 17/05/19 10:46 PM
+  -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -51,7 +57,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="1"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                     <TextView
                         android:id="@+id/general_information_allowed_ibuprofen_heading"
@@ -65,7 +71,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="No"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                     <TextView
                         android:id="@+id/general_information_medical_conditions_heading"
@@ -79,7 +85,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="None"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                     <TextView
                         android:id="@+id/general_information_reactions_heading"
@@ -93,7 +99,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="None"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                     <TextView
                         android:id="@+id/general_information_vaccinations_heading"
@@ -107,7 +113,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="All"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                     <TextView
                         android:id="@+id/general_information_special_circumstances_heading"
@@ -121,7 +127,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="None"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                     <TextView
                         android:id="@+id/general_information_general_notes_heading"
@@ -135,7 +141,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="None"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                     <TextView
                         android:id="@+id/general_information_health_notes_heading"
@@ -149,7 +155,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="None"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                 </LinearLayout>
 
@@ -178,7 +184,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="Dr M. Frankenstein"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                     <TextView
                         android:id="@+id/doctor_phone_heading"
@@ -192,7 +198,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="111"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                     <TextView
                         android:id="@+id/doctor_address_heading"
@@ -206,7 +212,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="2 Infinity Loop"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                 </LinearLayout>
 
@@ -235,7 +241,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="Dr V. Dracula"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                     <TextView
                         android:id="@+id/dentist_phone_heading"
@@ -249,7 +255,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="111"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                     <TextView
                         android:id="@+id/dentist_address_heading"
@@ -263,7 +269,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:text="2 Infinity Loop"
-                        android:textColor="@android:color/black" />
+                        android:textColor="?android:attr/textColorPrimary" />
 
                 </LinearLayout>
 

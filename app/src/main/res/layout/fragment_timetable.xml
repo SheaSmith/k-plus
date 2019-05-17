@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Created by Shea Smith on 6/02/19 12:54 PM
+  ~ Created by Shea Smith on 18/05/19 9:45 AM
   ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
-  ~ Last modified 26/01/19 5:37 PM
+  ~ Last modified 17/05/19 10:52 PM
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -26,22 +26,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:mcv_calendarMode="week"
+        app:mcv_dateTextAppearance="@style/CalendarStyle"
         app:mcv_selectionColor="?colorPrimary"
         app:mcv_showOtherDates="all">
 
     </com.prolificinteractive.materialcalendarview.MaterialCalendarView>
-
-
-    <TextView
-        android:id="@+id/schoolStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="4dp"
-        android:text="School Status: Open. Term 2 Week 1."
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipe_container"

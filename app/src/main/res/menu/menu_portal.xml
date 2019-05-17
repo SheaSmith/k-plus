@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Created by Shea Smith on 18/05/19 9:45 AM
+  ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
+  ~ Last modified 17/05/19 10:38 PM
+  -->
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:yourapp="http://schemas.android.com/apk/res-auto"   >
     <!-- Search, should appear as action button -->
     <item android:id="@+id/action_info"
         android:icon="@drawable/ic_info"
         android:title="About this app"
+        yourapp:showAsAction="always" />
+
+    <item android:id="@+id/action_theme"
+        android:icon="@drawable/ic_theme"
+        android:title="Switch Theme"
         yourapp:showAsAction="always" />
 </menu>

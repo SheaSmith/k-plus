@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 6/02/19 12:54 PM
+ * Created by Shea Smith on 18/05/19 9:45 AM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 12:53 PM
+ * Last modified 6/02/19 1:03 PM
  */
 
 package sheasmith.me.betterkamar.pages.results;
@@ -80,12 +80,12 @@ public class NZQAAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_ITEM) {
-            LinearLayout v = (LinearLayout) LayoutInflater.from(parent.requireContext())
+            LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.adapter_nzqa, parent, false);
             return new QualificationViewHolder(v);
         } else if (viewType == TYPE_HEADER) {
             //inflate your layout and pass it to view holder
-            LinearLayout v = (LinearLayout) LayoutInflater.from(parent.requireContext())
+            LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.adapter_nzqa_heading, parent, false);
             return new HeadingViewHolder(v);
         }

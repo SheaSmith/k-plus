@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 6/02/19 12:54 PM
+ * Created by Shea Smith on 18/05/19 9:45 AM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 12:54 PM
+ * Last modified 17/05/19 10:01 PM
  */
 
 package sheasmith.me.betterkamar.pages.groups;
@@ -61,13 +61,26 @@ public class GroupFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((AppCompatActivity) requireActivity()).getSupportActionBar().setElevation(10);
-        requireActivity().setTitle("Groups");
 
-        KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
-        mTracker = application.getDefaultTracker();
-        mTracker.setScreenName("Groups");
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                doRequest(mPortal, false, true);
+            }
+        }).start();
+
+        if (isAdded()) {
+
+
+            ((AppCompatActivity) requireActivity()).getSupportActionBar().setElevation(10);
+            requireActivity().setTitle("Groups");
+
+
+            KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
+            mTracker = application.getDefaultTracker();
+            mTracker.setScreenName("Groups");
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
     }
 
     @Override
@@ -81,50 +94,46 @@ public class GroupFragment extends Fragment {
         super.onCreate(savedInstanceState);
         final PortalObject portal = (PortalObject) requireActivity().getIntent().getSerializableExtra("portal");
         mPortal = portal;
-        ApiManager.setVariables(portal, requireContext());
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                doRequest(mPortal, false, true);
-            }
-        }).start();
+        ApiManager.setVariables(mPortal, requireContext());
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
-        String stringColor = sharedPreferences.getString("color", "E65100");
 
-        final Context contextThemeWrapper = new ContextThemeWrapper(requireActivity(), getResources().getIdentifier("T_" + stringColor, "style", requireContext().getPackageName()));
+        if (isAdded()) {
+            // Inflate the layout for this fragment
+            SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
+            String stringColor = sharedPreferences.getString("color", "E65100");
+            final Context contextThemeWrapper = new ContextThemeWrapper(requireActivity(), getResources().getIdentifier("T_" + stringColor, "style", requireContext().getPackageName()));
 
-        LayoutInflater localInflator = inflater.cloneInContext(contextThemeWrapper);
-        mView = localInflator.inflate(R.layout.fragment_group, container, false);
-        mLoader = mView.findViewById(R.id.loader);
+            LayoutInflater localInflator = inflater.cloneInContext(contextThemeWrapper);
+            mView = localInflator.inflate(R.layout.fragment_group, container, false);
+            mLoader = mView.findViewById(R.id.loader);
 
-        mRecyclerView = mView.findViewById(R.id.groups);
+            mRecyclerView = mView.findViewById(R.id.groups);
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(false);
+            // use this setting to improve performance if you know that changes
+            // in content do not change the layout size of the RecyclerView
+            mRecyclerView.setHasFixedSize(false);
 
-        // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(requireContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+            // use a linear layout manager
+            mLayoutManager = new LinearLayoutManager(requireContext());
+            mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_container);
-        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                doRequest(mPortal, true, true);
-            }
-        });
+            mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_container);
+            mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    doRequest(mPortal, true, true);
+                }
+            });
 
-        ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+            ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 
-
+        }
         return mView;
     }
 
@@ -133,17 +142,17 @@ public class GroupFragment extends Fragment {
             ApiManager.getGroupsHtml(new ApiResponse<List<GroupsObject>>() {
                 @Override
                 public void success(final List<GroupsObject> value) {
-                    if (requireActivity() == null)
-                        return;
-                    requireActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mAdapter = new GroupAdapter(GroupsViewModel.generate((ArrayList<GroupsObject>) value), requireContext());
-                            mRecyclerView.setAdapter(mAdapter);
-                            mLoader.setVisibility(View.GONE);
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        }
-                    });
+                    if (isAdded()) {
+                        requireActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mAdapter = new GroupAdapter(GroupsViewModel.generate((ArrayList<GroupsObject>) value), requireContext());
+                                mRecyclerView.setAdapter(mAdapter);
+                                mLoader.setVisibility(View.GONE);
+                                mSwipeRefreshLayout.setRefreshing(false);
+                            }
+                        });
+                    }
                 }
 
                 @Override
@@ -163,7 +172,7 @@ public class GroupFragment extends Fragment {
                         });
                         return;
                     } else if (e instanceof IOException) {
-                        if (requireActivity() != null) {
+                        if (isAdded()) {
                             requireActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -179,7 +188,8 @@ public class GroupFragment extends Fragment {
                                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                                    requireActivity().finish();
+                                                    if (isAdded())
+                                                        requireActivity().finish();
                                                 }
                                             })
                                             .create()
@@ -188,7 +198,7 @@ public class GroupFragment extends Fragment {
                             });
                         }
                     } else if (e instanceof Exceptions.AccessDenied) {
-                        if (requireActivity() != null) {
+                        if (isAdded()) {
                             requireActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -204,7 +214,7 @@ public class GroupFragment extends Fragment {
                                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                                    if (requireActivity() != null)
+                                                    if (isAdded())
                                                         requireActivity().finish();
                                                 }
                                             })
@@ -222,17 +232,16 @@ public class GroupFragment extends Fragment {
             ApiManager.getGroupsApi(new ApiResponse<GroupObject>() {
                 @Override
                 public void success(final GroupObject value) {
-                    if (requireActivity() == null)
-                        return;
-                    requireActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mAdapter = new GroupAdapter(GroupsViewModel.generate(value.StudentGroupsResults.Years), requireContext());
-                            mRecyclerView.setAdapter(mAdapter);
-                            mLoader.setVisibility(View.GONE);
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        }
-                    });
+                    if (isAdded())
+                        requireActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mAdapter = new GroupAdapter(GroupsViewModel.generate(value.StudentGroupsResults.Years), requireContext());
+                                mRecyclerView.setAdapter(mAdapter);
+                                mLoader.setVisibility(View.GONE);
+                                mSwipeRefreshLayout.setRefreshing(false);
+                            }
+                        });
                 }
 
                 @Override
@@ -251,7 +260,7 @@ public class GroupFragment extends Fragment {
                             }
                         });
                     } else if (e instanceof IOException) {
-                        if (requireActivity() != null) {
+                        if (isAdded()) {
                             requireActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -267,7 +276,8 @@ public class GroupFragment extends Fragment {
                                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                                    requireActivity().finish();
+                                                    if (isAdded())
+                                                        requireActivity().finish();
                                                 }
                                             })
                                             .create()
@@ -276,7 +286,7 @@ public class GroupFragment extends Fragment {
                             });
                         }
                     } else if (e instanceof Exceptions.AccessDenied) {
-                        if (requireActivity() != null) {
+                        if (isAdded()) {
                             requireActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -292,7 +302,7 @@ public class GroupFragment extends Fragment {
                                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                                    if (requireActivity() != null)
+                                                    if (isAdded())
                                                         requireActivity().finish();
                                                 }
                                             })
