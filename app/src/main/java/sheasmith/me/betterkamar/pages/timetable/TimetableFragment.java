@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 18/05/19 9:45 AM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 17/05/19 10:29 PM
+ * Last modified 26/05/19 9:35 PM
  */
 
 package sheasmith.me.betterkamar.pages.timetable;
@@ -26,11 +26,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
@@ -81,6 +83,8 @@ public class TimetableFragment extends Fragment {
     private Date lastDate;
     private PortalObject mPortal;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private ImageView art;
+    private View mView;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -101,6 +105,7 @@ public class TimetableFragment extends Fragment {
             Tracker mTracker = application.getDefaultTracker();
             mTracker.setScreenName("Timetable");
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+            FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "Timetable", null);
         }
     }
 
@@ -197,7 +202,10 @@ public class TimetableFragment extends Fragment {
             View view = localInflator.inflate(R.layout.fragment_timetable, container, false);
             mLoader = view.findViewById(R.id.progressBar);
             noEvents = view.findViewById(R.id.noEvents);
+            art = view.findViewById(R.id.art);
             setHasOptionsMenu(true);
+
+            mView = view;
 
             mRecyclerView = view.findViewById(R.id.events);
             mRecyclerView.setOnTouchListener(new OnSwipeTouchListener(requireContext()) {
@@ -219,6 +227,24 @@ public class TimetableFragment extends Fragment {
             });
 
             noEvents.setOnTouchListener(new OnSwipeTouchListener(requireContext()) {
+                @Override
+                public void onSwipeRight() {
+                    mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
+                    mCalendarView.setSelectedDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
+                    final Date date = new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                    updateList(date);
+                }
+
+                @Override
+                public void onSwipeLeft() {
+                    mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().plusDays(1));
+                    mCalendarView.setSelectedDate(mCalendarView.getSelectedDate().getDate().plusDays(1));
+                    final Date date = new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                    updateList(date);
+                }
+            });
+
+            art.setOnTouchListener(new OnSwipeTouchListener(requireContext()) {
                 @Override
                 public void onSwipeRight() {
                     mCalendarView.setCurrentDate(mCalendarView.getSelectedDate().getDate().minusDays(1));
@@ -287,6 +313,9 @@ public class TimetableFragment extends Fragment {
                     doRequest(mPortal, true);
                 }
             });
+
+            mCalendarView.setLeftArrow(R.drawable.calendar_previous);
+            mCalendarView.setRightArrow(R.drawable.calendar_next);
 
 
             return view;
@@ -430,24 +459,11 @@ public class TimetableFragment extends Fragment {
                 requireActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        new AlertDialog.Builder(requireContext())
-                                .setTitle("No Internet")
-                                .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
-                                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        doRequest(portal, ignoreCache);
-                                    }
-                                })
-                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        if (isAdded())
-                                            requireActivity().finish();
-                                    }
-                                })
-                                .create()
-                                .show();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mView.findViewById(R.id.noInternet).setVisibility(View.VISIBLE);
+                        art.setVisibility(View.GONE);
+                        noEvents.setVisibility(View.GONE);
+                        mRecyclerView.setVisibility(View.GONE);
                     }
                 });
         } else if (e instanceof Exceptions.AccessDenied) {
@@ -494,6 +510,8 @@ public class TimetableFragment extends Fragment {
                     mCalendarView.setCurrentDate(mCalendarView.getCurrentDate().getDate().minusWeeks(1));
                     mCalendarView.setCurrentDate(mCalendarView.getCurrentDate().getDate().plusWeeks(1));
                     mCalendarView.setSelectedDate(Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.systemDefault()).toLocalDate());
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    mView.findViewById(R.id.noInternet).setVisibility(View.GONE);
                     updateList(new Date(System.currentTimeMillis()));
                 }
             });
@@ -542,15 +560,12 @@ public class TimetableFragment extends Fragment {
                                 weekCal.setTime(weekStart);
                                 if (weekCal.get(Calendar.DAY_OF_YEAR) == monday.get(Calendar.DAY_OF_YEAR) && weekCal.get(Calendar.YEAR) == monday.get(Calendar.YEAR)) {
                                     attendanceWeek = aw;
-                                    break;
                                 }
                             }
                         }
                         thisDay = day;
-                        break;
                     } else if (current.get(Calendar.DAY_OF_YEAR) == temp.get(Calendar.DAY_OF_YEAR)) {
                         thisDay = day;
-                        break;
                     }
 
                 } catch (ParseException e) {
@@ -597,6 +612,8 @@ public class TimetableFragment extends Fragment {
 //                    else {
 //                        status.setText(String.format("School Status: %s. Term %s Week %s", finalThisDay.Status, finalThisDay.Term, finalThisDay.Week));
 //                    }
+
+
                         mCalendarView.setTitleFormatter(new TitleFormatter() {
                             @Override
                             public CharSequence format(CalendarDay calendarDay) {
@@ -634,6 +651,8 @@ public class TimetableFragment extends Fragment {
                     public void run() {
                         mRecyclerView.setVisibility(View.GONE);
                         noEvents.setVisibility(View.VISIBLE);
+                        noEvents.setText("There are no events or classes on the day you selected");
+                        art.setVisibility(View.GONE);
                     }
                 });
             }
@@ -645,6 +664,7 @@ public class TimetableFragment extends Fragment {
                     public void run() {
                         mRecyclerView.setVisibility(View.VISIBLE);
                         noEvents.setVisibility(View.GONE);
+                        art.setVisibility(View.GONE);
                     }
                 });
             }
@@ -730,11 +750,49 @@ public class TimetableFragment extends Fragment {
 
         if (dayEvents.size() == 0 && periods.size() == 0) {
             if (isAdded()) {
+                CalendarObject.Day finalThisDay1 = thisDay;
                 requireActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mRecyclerView.setVisibility(View.GONE);
                         noEvents.setVisibility(View.VISIBLE);
+                        art.setVisibility(View.GONE);
+
+                        int image;
+                        String text;
+                        switch (finalThisDay1.Status) {
+                            case "Holidays":
+                                image = R.drawable.holiday;
+                                text = "School Holidays";
+                                break;
+                            case "Holiday":
+                                image = R.drawable.holiday;
+                                text = "School Holidays";
+                                break;
+                            case "Teacher Only Day":
+                                image = R.drawable.closed;
+                                text = "Teachers Only Day";
+                                break;
+                            case "School Closed":
+                                image = R.drawable.closed;
+                                text = "School Closed";
+                                break;
+                            case "Weekend":
+                                image = R.drawable.weekend;
+                                text = "Weekend";
+                                break;
+                            default:
+                                image = -1;
+                                text = "There are no events or classes on the day you selected";
+                                break;
+                        }
+
+                        if (image != -1) {
+                            art.setVisibility(View.VISIBLE);
+                            art.setImageResource(image);
+                        }
+
+                        noEvents.setText(text);
                     }
                 });
             }

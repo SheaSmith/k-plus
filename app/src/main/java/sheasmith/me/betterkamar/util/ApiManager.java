@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 18/05/19 9:45 AM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 9/02/19 6:44 PM
+ * Last modified 21/05/19 8:58 PM
  */
 
 package sheasmith.me.betterkamar.util;
@@ -1123,11 +1123,12 @@ public class ApiManager {
                                         groupsList.add(g);
                                     g = new GroupsObject();
                                     g.title = e2.child(1).text();
-                                    g.section = lastcategory + " - " + lastyear;
+                                    g.section = lastcategory;
                                     g.year = lastyear;
                                     g.teacher = e2.child(2).text();
                                 } else if (e2.children().size() == 2) {
                                     g.comment = e2.text();
+                                    g.comment = g.comment.substring(4, g.comment.length());
                                     groupsList.add(g);
                                     g = null;
                                 }

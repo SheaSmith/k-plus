@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 18/05/19 9:45 AM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 17/05/19 11:13 PM
+ * Last modified 26/05/19 9:35 PM
  */
 
 package sheasmith.me.betterkamar.pages.results;
@@ -10,11 +10,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
@@ -35,6 +35,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -97,6 +98,7 @@ public class NCEAFragment extends Fragment {
             mTracker = application.getDefaultTracker();
             mTracker.setScreenName("NCEA Results");
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+            FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "NCEA Results", null);
         }
     }
 
@@ -293,19 +295,21 @@ public class NCEAFragment extends Fragment {
 
                             boolean enrolledInNCEA = excellenceEntry.getValue() != 0 || notAchievedEntry.getValue() != 0 || achievedEntry.getValue() != 0 || meritEntry.getValue() != 0;
 
-                            Resources.Theme theme = requireContext().getTheme();
-                            int color;
-                            if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-                                color = getContext().getResources().getColor(R.color.white);
-                            }
-                            else {
-                                color = getContext().getResources().getColor(android.R.color.black);
-                            }
 
-                            TypedValue typedValue2 = new TypedValue();
-                            theme.resolveAttribute(android.R.attr.colorBackground, typedValue2, true);
-                            @ColorInt int bg = typedValue2.data;
+                            int color = ResourcesCompat.getColor(getResources(), R.color.white, null);
+                            @ColorInt int bg = ResourcesCompat.getColor(getResources(), R.color.white, null);
+                            if (isAdded()) {
+                                Resources.Theme theme = requireContext().getTheme();
+                                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                                    color = getContext().getResources().getColor(R.color.white);
+                                } else {
+                                    color = getContext().getResources().getColor(android.R.color.black);
+                                }
 
+                                TypedValue typedValue2 = new TypedValue();
+                                theme.resolveAttribute(android.R.attr.colorBackground, typedValue2, true);
+                                bg = typedValue2.data;
+                            }
 
                             Description desc = new Description();
                             desc.setText("Summary of all NCEA credits gained");
@@ -336,6 +340,8 @@ public class NCEAFragment extends Fragment {
                             }
 
                             mLoader.setVisibility(View.GONE);
+                            mView.findViewById(R.id.scrollView).setVisibility(View.VISIBLE);
+                            mView.findViewById(R.id.noInternet).setVisibility(View.GONE);
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
                     });
@@ -364,24 +370,9 @@ public class NCEAFragment extends Fragment {
                         requireActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                new AlertDialog.Builder(requireContext())
-                                        .setTitle("No Internet")
-                                        .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
-                                        .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                doRequest(portal, ignoreCache);
-                                            }
-                                        })
-                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                if (isAdded())
-                                                    requireActivity().finish();
-                                            }
-                                        })
-                                        .create()
-                                        .show();
+                                mView.findViewById(R.id.noInternet).setVisibility(View.VISIBLE);
+                                mView.findViewById(R.id.scrollView).setVisibility(View.GONE);
+                                mSwipeRefreshLayout.setRefreshing(false);
                             }
                         });
                     }

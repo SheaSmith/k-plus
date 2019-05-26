@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 6/02/19 12:54 PM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 12:53 PM
+ * Last modified 26/05/19 9:35 PM
  */
 
 package sheasmith.me.betterkamar.pages.results;
@@ -20,6 +20,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -28,6 +29,9 @@ import android.widget.TextView;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -74,6 +78,18 @@ public class PDFViewer extends Activity {
             }
         });
 
+        findViewById(R.id.noInternet).setVisibility(View.GONE);
+        findViewById(R.id.webView).setVisibility(View.VISIBLE);
+
+        SwipeRefreshLayout layout = findViewById(R.id.swipe_container);
+        layout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                recreate();
+            }
+        });
+
         KamarPlusApplication application = (KamarPlusApplication) getApplication();
         mTracker = application.getDefaultTracker();
         mTracker.setScreenName("Report Viewer");
@@ -81,7 +97,7 @@ public class PDFViewer extends Activity {
 
         report = (ReportsObject) getIntent().getSerializableExtra("report");
         ((TextView) findViewById(R.id.reportName)).setText(report.title);
-        File f = new File(getCacheDir() + "/betterkamar/" + mPortal.studentFile.replace(".jpg", ""), report.title.replace(" ", "_"));
+        File f = new File(getCacheDir() + "/betterkamar/" + mPortal.studentFile.replace(".jpg", ""), report.title.replace(" ", "_") + ".pdf");
         if (!f.exists()) {
 
             mProgressDialog = new ProgressDialog(PDFViewer.this);
@@ -106,7 +122,12 @@ public class PDFViewer extends Activity {
         }
         else {
             PDFView p = (PDFView) findViewById(R.id.webView);
-            p.fromFile(f).load();
+            if (f.length() != 0)
+                p.fromFile(f).load();
+            else {
+                f.delete();
+                recreate();
+            }
         }
 
     }
@@ -127,10 +148,23 @@ public class PDFViewer extends Activity {
             OutputStream output = null;
             HttpURLConnection connection = null;
             try {
+                Connection.Response origCookies = Jsoup.connect(mPortal.hostname + "/index.php").method(Connection.Method.GET).execute();
+                Map<String, String> sessionCookies = origCookies.cookies();
+
+                Connection.Response login;
+                if (sessionCookies.containsKey("csrf_kamar_cn"))
+                    login = Jsoup.connect(mPortal.hostname + "/index.php/login").method(Connection.Method.POST).data("username", mPortal.username, "password", mPortal.password, "csrf_kamar_sn", sessionCookies.get("csrf_kamar_cn")).cookies(sessionCookies).execute();
+                else
+                    login = Jsoup.connect(mPortal + "/index.php/login").method(Connection.Method.POST).data("username", mPortal.username, "password", mPortal.password).cookies(sessionCookies).execute();
+
+                Map<String, String> loginCookies = login.cookies();
+//                    if (sessionCookies.containsKey("kamar_session"))
+                loginCookies.put("kamar_session", sessionCookies.get("kamar_session"));
+
                 URL url = new URL(sUrl[0]);
                 connection = (HttpURLConnection) url.openConnection();
                 StringBuilder cookies = new StringBuilder();
-                for (Map.Entry<String, String> entry : report.cookies.entrySet()) {
+                for (Map.Entry<String, String> entry : loginCookies.entrySet()) {
 
                     cookies.append(entry.getKey()).append("=").append(entry.getValue()).append("; ");
                 }
@@ -217,9 +251,12 @@ public class PDFViewer extends Activity {
             mProgressDialog.dismiss();
             if (result != null)
                 if (result.contains("java.net.UnknownHostException") || result.contains("java.net.SocketTimeoutException")) {
-                    Snackbar.make(findViewById(R.id.linearView),"Can't connect! Check if you are online", Snackbar.LENGTH_LONG).show();
+                    findViewById(R.id.noInternet).setVisibility(View.VISIBLE);
+                    findViewById(R.id.webView).setVisibility(View.GONE);
                 }
                 else {
+                    findViewById(R.id.noInternet).setVisibility(View.GONE);
+                    findViewById(R.id.webView).setVisibility(View.VISIBLE);
                     Snackbar.make(findViewById(R.id.linearView),"Undefined error. Please report this.", Snackbar.LENGTH_LONG).show();
                     Log.e("PDFViewer Error", result);
                 }
@@ -228,7 +265,12 @@ public class PDFViewer extends Activity {
                 String sname = mPortal.studentFile.replace(".jpg", "");
                 String name = report.title.replace(" ", "_");
                 File f = new File(getCacheDir() + "/betterkamar/" + sname, name + ".pdf");
-                p.fromFile(f).load();
+                if (f.length() != 0)
+                    p.fromFile(f).load();
+                else {
+                    f.delete();
+                    recreate();
+                }
             }
         }
 

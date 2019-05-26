@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 18/05/19 9:45 AM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 27/02/19 8:46 PM
+ * Last modified 26/05/19 8:54 PM
  */
 
 package sheasmith.me.betterkamar.pages.details;
@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 
@@ -76,6 +77,7 @@ public class StudentDetailsFragment extends Fragment {
             mTracker = application.getDefaultTracker();
             mTracker.setScreenName("Student Details");
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+            FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "Student Details", null);
         }
     }
 
@@ -114,48 +116,52 @@ public class StudentDetailsFragment extends Fragment {
                     requireActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            DetailsObject.Student student = value.StudentDetailsResults.Student;
-                            ((TextView) mView.findViewById(R.id.name)).setText(String.format("%s %s", student.FirstName, student.LastName));
-                            String studentPathName = requireContext().getFilesDir().toString() + "/" + portal.studentFile;
-                            ((CircleImageView) mView.findViewById(R.id.studentImage)).setImageDrawable(Drawable.createFromPath(studentPathName));
-                            ((TextView) mView.findViewById(R.id.nsn)).setText(String.format("NSN: %s", student.NSN));
+                            if (isAdded()) {
+                                DetailsObject.Student student = value.StudentDetailsResults.Student;
+                                ((TextView) mView.findViewById(R.id.name)).setText(String.format("%s %s", student.FirstName, student.LastName));
+                                String studentPathName = requireContext().getFilesDir().toString() + "/" + portal.studentFile;
+                                ((CircleImageView) mView.findViewById(R.id.studentImage)).setImageDrawable(Drawable.createFromPath(studentPathName));
+                                ((TextView) mView.findViewById(R.id.nsn)).setText(String.format("NSN: %s", student.NSN));
 
-                            ClipboardManager clipboard = (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                            ClipData clip = ClipData.newPlainText("NSN", student.NSN);
-                            clipboard.setPrimaryClip(clip);
+                                ClipboardManager clipboard = (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                                ClipData clip = ClipData.newPlainText("NSN", student.NSN);
+                                clipboard.setPrimaryClip(clip);
 
-                            setText(student.FirstNameLegal, R.id.legal_name_first_name, R.id.legal_name_first_name_heading);
-                            setText(student.LastNameLegal, R.id.legal_name_last_name, R.id.legal_name_last_name_heading);
-                            setText(student.ForeNamesLegal, R.id.legal_name_fore_names, R.id.legal_name_fore_names_heading);
-                            maybeHideView(R.id.legal_name, student.FirstNameLegal, student.LastNameLegal, student.ForeNamesLegal);
+                                setText(student.FirstNameLegal, R.id.legal_name_first_name, R.id.legal_name_first_name_heading);
+                                setText(student.LastNameLegal, R.id.legal_name_last_name, R.id.legal_name_last_name_heading);
+                                setText(student.ForeNamesLegal, R.id.legal_name_fore_names, R.id.legal_name_fore_names_heading);
+                                maybeHideView(R.id.legal_name, student.FirstNameLegal, student.LastNameLegal, student.ForeNamesLegal);
 
-                            setText(student.FirstName, R.id.preferred_name_first_name, R.id.preferred_name_first_name_heading);
-                            setText(student.LastName, R.id.preferred_name_last_name, R.id.preferred_name_last_name_heading);
-                            setText(student.ForeNames, R.id.preferred_name_fore_names, R.id.preferred_name_fore_names_heading);
-                            maybeHideView(R.id.preferred_name, student.FirstName, student.LastName, student.ForeNames);
+                                setText(student.FirstName, R.id.preferred_name_first_name, R.id.preferred_name_first_name_heading);
+                                setText(student.LastName, R.id.preferred_name_last_name, R.id.preferred_name_last_name_heading);
+                                setText(student.ForeNames, R.id.preferred_name_fore_names, R.id.preferred_name_fore_names_heading);
+                                maybeHideView(R.id.preferred_name, student.FirstName, student.LastName, student.ForeNames);
 
-                            setText(student.DateBirth, R.id.other_information_date_of_birth, R.id.other_information_date_of_birth_heading);
-                            setText(student.StudentEmail, R.id.other_information_email, R.id.other_information_email_heading);
-                            setText(student.StudentSchoolEmail, R.id.other_information_email_school, R.id.other_information_email_school_heading);
-                            setText(student.Ethnicity, R.id.other_information_ethnicity, R.id.other_information_ethnicity_heading);
-                            setText(student.Gender, R.id.other_information_gender, R.id.other_information_gender_heading);
-                            setText(student.Age, R.id.other_information_age, R.id.other_information_age_heading);
-                            maybeHideView(R.id.other_information, student.DateBirth, student.StudentEmail, student.StudentSchoolEmail, student.Ethnicity, student.Age, student.Gender);
+                                setText(student.DateBirth, R.id.other_information_date_of_birth, R.id.other_information_date_of_birth_heading);
+                                setText(student.StudentEmail, R.id.other_information_email, R.id.other_information_email_heading);
+                                setText(student.StudentSchoolEmail, R.id.other_information_email_school, R.id.other_information_email_school_heading);
+                                setText(student.Ethnicity, R.id.other_information_ethnicity, R.id.other_information_ethnicity_heading);
+                                setText(student.Gender, R.id.other_information_gender, R.id.other_information_gender_heading);
+                                setText(student.Age, R.id.other_information_age, R.id.other_information_age_heading);
+                                maybeHideView(R.id.other_information, student.DateBirth, student.StudentEmail, student.StudentSchoolEmail, student.Ethnicity, student.Age, student.Gender);
 
-                            setText(student.ParentTitleB, R.id.residence_b_parent_title, R.id.residence_b_parent_title_heading);
-                            setText(student.HomePhoneB, R.id.residence_b_home_phone, R.id.residence_b_home_phone_heading);
-                            setText(student.HomeAddressB, R.id.residence_b_physical_address, R.id.residence_b_physical_address_heading);
-                            setText(student.ParentEmailB, R.id.residence_b_parent_email, R.id.residence_b_parent_email_heading);
-                            maybeHideView(R.id.residence_b, student.ParentTitleB, student.HomePhoneB, student.HomeAddressB, student.ParentEmailB);
+                                setText(student.ParentTitleB, R.id.residence_b_parent_title, R.id.residence_b_parent_title_heading);
+                                setText(student.HomePhoneB, R.id.residence_b_home_phone, R.id.residence_b_home_phone_heading);
+                                setText(student.HomeAddressB, R.id.residence_b_physical_address, R.id.residence_b_physical_address_heading);
+                                setText(student.ParentEmailB, R.id.residence_b_parent_email, R.id.residence_b_parent_email_heading);
+                                maybeHideView(R.id.residence_b, student.ParentTitleB, student.HomePhoneB, student.HomeAddressB, student.ParentEmailB);
 
-                            setText(student.ParentTitle, R.id.residence_a_parent_title, R.id.residence_a_parent_title_heading);
-                            setText(student.HomePhone, R.id.residence_a_home_phone, R.id.residence_a_home_phone_heading);
-                            setText(student.HomeAddress, R.id.residence_a_physical_address, R.id.residence_a_physical_address_heading);
-                            setText(student.ParentEmail, R.id.residence_a_parent_email, R.id.residence_a_parent_email);
-                            maybeHideView(R.id.residence_a, student.ParentTitle, student.HomePhone, student.HomeAddress, student.ParentEmail);
+                                setText(student.ParentTitle, R.id.residence_a_parent_title, R.id.residence_a_parent_title_heading);
+                                setText(student.HomePhone, R.id.residence_a_home_phone, R.id.residence_a_home_phone_heading);
+                                setText(student.HomeAddress, R.id.residence_a_physical_address, R.id.residence_a_physical_address_heading);
+                                setText(student.ParentEmail, R.id.residence_a_parent_email, R.id.residence_a_parent_email);
+                                maybeHideView(R.id.residence_a, student.ParentTitle, student.HomePhone, student.HomeAddress, student.ParentEmail);
 
-                            mLoader.setVisibility(GONE);
-                            mSwipeRefreshLayout.setRefreshing(false);
+                                mView.findViewById(R.id.scrollView).setVisibility(View.VISIBLE);
+                                mView.findViewById(R.id.noInternet).setVisibility(View.GONE);
+                                mLoader.setVisibility(GONE);
+                                mSwipeRefreshLayout.setRefreshing(false);
+                            }
                         }
                     });
                 }
@@ -182,24 +188,9 @@ public class StudentDetailsFragment extends Fragment {
                         requireActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                new AlertDialog.Builder(requireContext())
-                                        .setTitle("No Internet")
-                                        .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
-                                        .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                doRequest(portal, ignoreCache);
-                                            }
-                                        })
-                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                if (isAdded())
-                                                    requireActivity().finish();
-                                            }
-                                        })
-                                        .create()
-                                        .show();
+                                mView.findViewById(R.id.noInternet).setVisibility(View.VISIBLE);
+                                mView.findViewById(R.id.scrollView).setVisibility(View.GONE);
+                                mSwipeRefreshLayout.setRefreshing(false);
                             }
                         });
                     }
@@ -245,7 +236,7 @@ public class StudentDetailsFragment extends Fragment {
 
     private void maybeHideView(int id, String... items) {
         for (String s : items) {
-            if (!s.equals("") && !s.equals(" "))
+            if (s != null && !s.equals("") && !s.equals(" "))
                 return;
         }
         mView.findViewById(id).setVisibility(GONE);

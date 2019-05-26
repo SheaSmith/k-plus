@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 18/05/19 9:45 AM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 27/02/19 8:46 PM
+ * Last modified 26/05/19 9:07 PM
  */
 
 package sheasmith.me.betterkamar.pages.results;
@@ -25,6 +25,7 @@ import android.widget.ProgressBar;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 import java.util.List;
@@ -77,6 +78,7 @@ public class ReportFragment extends Fragment {
             mTracker = application.getDefaultTracker();
             mTracker.setScreenName("Reports");
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+            FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "Reports", null);
         }
     }
 
@@ -137,6 +139,8 @@ public class ReportFragment extends Fragment {
                                 mAdapter = new ReportAdapter(value, requireContext(), mPortal);
                                 mRecyclerView.setAdapter(mAdapter);
                                 mLoader.setVisibility(View.GONE);
+                                mRecyclerView.setVisibility(View.VISIBLE);
+                                mView.findViewById(R.id.noInternet).setVisibility(View.GONE);
                                 mSwipeRefreshLayout.setRefreshing(false);
                             }
                         }
@@ -166,24 +170,9 @@ public class ReportFragment extends Fragment {
                         requireActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                new AlertDialog.Builder(requireContext())
-                                        .setTitle("No Internet")
-                                        .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
-                                        .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                doRequest(portal, ignoreCache);
-                                            }
-                                        })
-                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                if (isAdded())
-                                                    requireActivity().finish();
-                                            }
-                                        })
-                                        .create()
-                                        .show();
+                                mSwipeRefreshLayout.setRefreshing(false);
+                                mView.findViewById(R.id.noInternet).setVisibility(View.VISIBLE);
+                                mRecyclerView.setVisibility(View.GONE);
                             }
                         });
                     }

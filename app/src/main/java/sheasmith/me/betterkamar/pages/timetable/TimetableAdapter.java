@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 18/05/19 9:45 AM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 1:03 PM
+ * Last modified 18/05/19 9:52 AM
  */
 
 package sheasmith.me.betterkamar.pages.timetable;
@@ -196,7 +196,7 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         }
                         String endTime = "";
                         if (mPeriodDefinitions.size() != pos) {
-                            if (!mPeriodDefinitions.get(pos + 1).PeriodTime.equals(""))
+                            if (mPeriodDefinitions.get(pos + 1) != null && !mPeriodDefinitions.get(pos + 1).PeriodTime.equals(""))
                                 endTime = " - " + mPeriodDefinitions.get(pos + 1).PeriodTime;
                         }
                         new AlertDialog.Builder(mContext)

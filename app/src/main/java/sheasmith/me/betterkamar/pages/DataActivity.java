@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 6/02/19 12:54 PM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 26/01/19 5:35 PM
+ * Last modified 26/05/19 8:35 AM
  */
 
 package sheasmith.me.betterkamar.pages;
@@ -17,6 +17,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.graphics.Palette;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -78,6 +79,9 @@ public class DataActivity extends AppCompatActivity {
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        SharedPreferences preferences = getSharedPreferences("sheasmith.me.betterkamar", MODE_PRIVATE);
+        AppCompatDelegate.setDefaultNightMode(preferences.getInt("night-mode", 1));
 
         setContentView(R.layout.activity_data);
         BottomNavigationView bottomNavigationView = (BottomNavigationView)

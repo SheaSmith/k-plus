@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 6/02/19 12:54 PM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 12:53 PM
+ * Last modified 26/05/19 9:09 AM
  */
 
 package sheasmith.me.betterkamar.pages.addPortal;
@@ -21,6 +21,7 @@ import android.widget.EditText;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -48,6 +49,7 @@ public class AddPortalActivity extends AppCompatActivity {
         mTracker = application.getDefaultTracker();
         mTracker.setScreenName("Add Portal");
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        FirebaseAnalytics.getInstance(this).setCurrentScreen(this, "Add Portal", null);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

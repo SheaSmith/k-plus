@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 18/05/19 9:45 AM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 1:03 PM
+ * Last modified 26/05/19 9:35 PM
  */
 
 package sheasmith.me.betterkamar.pages.groups;
@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
 
 import sheasmith.me.betterkamar.R;
@@ -29,8 +30,8 @@ import sheasmith.me.betterkamar.internalModels.GroupsViewModel;
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHolder> {
 
     public List<GroupsViewModel> groups;
+    private HashMap<String, String> groupHeadingsMap = new HashMap<>();
     private Context mContext;
-    public String lastHeading;
 
     public static class GroupViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
@@ -38,6 +39,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         public RelativeLayout groupsLayout;
         public TextView title;
         public TextView heading;
+        public TextView yearHeading;
         public TextView teacher;
         public TextView comment;
         public ImageView expandArrow;
@@ -48,6 +50,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             mView = v;
 
             heading = mView.findViewById(R.id.heading);
+            yearHeading = mView.findViewById(R.id.yearHeading);
             title = mView.findViewById(R.id.title);
             groupsLayout = mView.findViewById(R.id.group);
             expandArrow = mView.findViewById(R.id.expandArrow);
@@ -60,7 +63,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
     public GroupAdapter(List<GroupsViewModel> resultLevels, Context context) {
         groups = resultLevels;
         mContext = context;
-        lastHeading = "";
+        groupHeadingsMap = new HashMap<>();
     }
 
 
@@ -81,12 +84,19 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
 
 
         final GroupsViewModel group = groups.get(position);
+        holder.heading.setVisibility(View.VISIBLE);
 
         if (!group.isYear) {
-            if (group.section.equals(lastHeading))
+            holder.yearHeading.setVisibility(View.GONE);
+
+            if (groupHeadingsMap.containsKey(group.section + group.year) && !groupHeadingsMap.get(group.section + group.year).equals(group.name))
                 holder.heading.setVisibility(View.GONE);
             else {
-                lastHeading = group.section;
+                holder.heading.setVisibility(View.VISIBLE);
+
+                if (!groupHeadingsMap.containsKey(group.section + group.year))
+                    groupHeadingsMap.put(group.section + group.year, group.name);
+
                 holder.heading.setText(group.section);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     holder.heading.setTextAppearance(R.style.TextAppearance_AppCompat_Subhead);
@@ -97,7 +107,12 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             holder.groupsLayout.setVisibility(View.VISIBLE);
 
             holder.title.setText(group.name);
-            holder.comment.setText(group.comment);
+            if (group.comment == null || group.comment.equals(""))
+                holder.comment.setVisibility(View.GONE);
+            else {
+                holder.comment.setText(group.comment);
+                holder.comment.setVisibility(View.VISIBLE);
+            }
             holder.teacher.setText(group.teacher);
 
             boolean expanded = group.expanded;
@@ -122,22 +137,14 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
                     group.justRotated = true;
                     // Notify the adapter that item has changed
                     notifyItemChanged(position);
-
-                    if (holder.heading.getVisibility() == View.VISIBLE)
-                        lastHeading = "";
                 }
             });
         }
         else {
            holder.groupsLayout.setVisibility(View.GONE);
-           holder.heading.setVisibility(View.VISIBLE);
-
-           holder.heading.setText(group.year);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                holder.heading.setTextAppearance(R.style.TextAppearance_AppCompat_Headline);
-            } else {
-                holder.heading.setTextAppearance(mContext, R.style.TextAppearance_AppCompat_Headline);
-            }
+            holder.heading.setVisibility(View.GONE);
+            holder.yearHeading.setVisibility(View.VISIBLE);
+            holder.yearHeading.setText(group.year);
         }
 
 

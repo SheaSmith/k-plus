@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 18/05/19 9:45 AM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 17/05/19 10:01 PM
+ * Last modified 26/05/19 9:02 PM
  */
 
 package sheasmith.me.betterkamar.pages.groups;
@@ -27,6 +27,7 @@ import android.widget.ProgressBar;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -80,6 +81,7 @@ public class GroupFragment extends Fragment {
             mTracker = application.getDefaultTracker();
             mTracker.setScreenName("Groups");
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+            FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "Groups", null);
         }
     }
 
@@ -148,6 +150,10 @@ public class GroupFragment extends Fragment {
                             public void run() {
                                 mAdapter = new GroupAdapter(GroupsViewModel.generate((ArrayList<GroupsObject>) value), requireContext());
                                 mRecyclerView.setAdapter(mAdapter);
+
+                                mRecyclerView.setVisibility(View.VISIBLE);
+                                mView.findViewById(R.id.noInternet).setVisibility(View.GONE);
+
                                 mLoader.setVisibility(View.GONE);
                                 mSwipeRefreshLayout.setRefreshing(false);
                             }
@@ -176,24 +182,9 @@ public class GroupFragment extends Fragment {
                             requireActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    new AlertDialog.Builder(requireContext())
-                                            .setTitle("No Internet")
-                                            .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
-                                            .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    doRequest(portal, ignoreCache, useHtml);
-                                                }
-                                            })
-                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    if (isAdded())
-                                                        requireActivity().finish();
-                                                }
-                                            })
-                                            .create()
-                                            .show();
+                                    mSwipeRefreshLayout.setRefreshing(false);
+                                    mView.findViewById(R.id.noInternet).setVisibility(View.VISIBLE);
+                                    mRecyclerView.setVisibility(View.GONE);
                                 }
                             });
                         }
@@ -238,6 +229,10 @@ public class GroupFragment extends Fragment {
                             public void run() {
                                 mAdapter = new GroupAdapter(GroupsViewModel.generate(value.StudentGroupsResults.Years), requireContext());
                                 mRecyclerView.setAdapter(mAdapter);
+
+                                mRecyclerView.setVisibility(View.VISIBLE);
+                                mView.findViewById(R.id.noInternet).setVisibility(View.GONE);
+
                                 mLoader.setVisibility(View.GONE);
                                 mSwipeRefreshLayout.setRefreshing(false);
                             }
@@ -264,24 +259,9 @@ public class GroupFragment extends Fragment {
                             requireActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    new AlertDialog.Builder(requireActivity())
-                                            .setTitle("No Internet")
-                                            .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
-                                            .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    doRequest(portal, ignoreCache, useHtml);
-                                                }
-                                            })
-                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    if (isAdded())
-                                                        requireActivity().finish();
-                                                }
-                                            })
-                                            .create()
-                                            .show();
+                                    mSwipeRefreshLayout.setRefreshing(false);
+                                    mView.findViewById(R.id.noInternet).setVisibility(View.VISIBLE);
+                                    mRecyclerView.setVisibility(View.GONE);
                                 }
                             });
                         }

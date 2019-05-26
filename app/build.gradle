@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 18/05/19 9:45 AM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 17/05/19 11:17 PM
+ * Last modified 26/05/19 9:34 PM
  */
 
 buildscript {
@@ -46,9 +46,10 @@ android {
     defaultConfig {
         applicationId "sheasmith.me.betterkamar"
         minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 18
-        versionName "3.4.0"
+        // DO NOT CHANGE THIS UNTIL THE SALT HAS BEEN FIXED !!!
+        targetSdkVersion 27
+        versionCode 22
+        versionName "3.4.1"
     }
     buildTypes {
         release {
@@ -68,7 +69,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.android.support:support-v4:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation 'com.scottyab:secure-preferences-lib:0.1.4'
+    implementation 'com.scottyab:secure-preferences-lib:0.1.7'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     implementation(name:'library-release', ext:'aar')
     testImplementation 'junit:junit:4.12'

@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 6/02/19 12:54 PM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 12:53 PM
+ * Last modified 18/05/19 12:51 PM
  */
 
 package sheasmith.me.betterkamar.dataModels;
@@ -66,6 +66,9 @@ public class GlobalObject implements Serializable
                 definition.index = periodDefElement.getAttribute("index");
                 definition.PeriodName = periodDefElement.getElementsByTagName("PeriodName").item(0).getTextContent();
                 definition.PeriodTime = periodDefElement.getElementsByTagName("PeriodTime").item(0).getTextContent();
+
+                if (definition.PeriodTime.equals(""))
+                    definition.PeriodTime = "--";
 
                 results.PeriodDefinitions.add(definition);
             }

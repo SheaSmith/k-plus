@@ -1,14 +1,16 @@
 /*
- * Created by Shea Smith on 18/05/19 9:45 AM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 17/05/19 11:16 PM
+ * Last modified 26/05/19 9:35 PM
  */
 
 package sheasmith.me.betterkamar.pages.portals;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
@@ -21,7 +23,6 @@ import android.view.View;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.google.firebase.FirebaseApp;
 import com.google.gson.Gson;
 import com.securepreferences.SecurePreferences;
 
@@ -51,6 +52,7 @@ public class PortalActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_portal, menu);
         return true;
     }
+
     //and this to handle actions
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -61,15 +63,12 @@ public class PortalActivity extends AppCompatActivity {
         if (id == R.id.action_info) {
             Intent i = new Intent(this, AboutActivity.class);
             startActivity(i);
-        }
-        else if (id == R.id.action_theme) {
+        } else if (id == R.id.action_theme) {
             if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            }
-            else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+            } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            }
-            else {
+            } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             }
 
@@ -109,10 +108,32 @@ public class PortalActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("sheasmith.me.betterkamar", MODE_PRIVATE);
         AppCompatDelegate.setDefaultNightMode(preferences.getInt("night-mode", 1));
 
+        SharedPreferences prefNoSalt = new SecurePreferences(this);
 
-        SharedPreferences prefs = new SecurePreferences(this);
+        // TODO remove this in future version & target api level 28
+        // TODO Dialog should be shown for direct upgrades from 3.1.x -> new unsalted version (3.2.x?)
+        String serial = Build.SERIAL;
+        if (!serial.equals("UNKNOWN") && prefNoSalt.contains("sheasmith.me.betterkamar.portals") && !preferences.contains("serial"))
+            preferences.edit().putString("serial", serial).apply();
+
+        String salt = null;
+
+        if (preferences.contains("serial"))
+            salt = preferences.getString("serial", null);
+
+
+        if (salt == null)
+            salt = Settings.Secure.getString(getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+
+
+        SharedPreferences prefs = new SecurePreferences(this, salt);
 
         Set<String> jsonString = prefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+        if (jsonString != null && !jsonString.isEmpty() && jsonString.toArray()[0] == null) {
+            prefs = new SecurePreferences(this, "UNKNOWN");
+            jsonString = prefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+        }
         if (jsonString != null) {
             for (String s : jsonString) {
                 Gson gson = new Gson();
@@ -157,8 +178,7 @@ public class PortalActivity extends AppCompatActivity {
             }
 
             save();
-        }
-        else {
+        } else {
             if (data != null) {
                 if (!data.getBooleanExtra("isDeleted", false))
                     servers.set(data.getIntExtra("index", -1), (PortalObject) data.getSerializableExtra("portal"));

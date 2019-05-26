@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 18/05/19 9:45 AM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 27/02/19 8:46 PM
+ * Last modified 26/05/19 8:54 PM
  */
 
 package sheasmith.me.betterkamar.pages.details;
@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 
@@ -66,6 +67,7 @@ public class CaregiverDetailsFragment extends Fragment {
             mTracker = application.getDefaultTracker();
             mTracker.setScreenName("Caregiver Details");
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+            FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "Caregiver Details", null);
 
             new Thread(new Runnable() {
                 @Override
@@ -137,6 +139,8 @@ public class CaregiverDetailsFragment extends Fragment {
                             setText(student.FatherNotes, R.id.parent_b_notes, R.id.parent_b_notes_heading);
                             maybeHideView(R.id.parent_b, student.FatherName, student.FatherRelation, student.FatherStatus, student.FatherEmail, student.FatherPhoneHome, student.FatherPhoneCell, student.FatherPhoneWork, student.FatherPhoneExtn, student.FatherOccupation, student.FatherNotes);
 
+                            mView.findViewById(R.id.scrollView).setVisibility(View.VISIBLE);
+                            mView.findViewById(R.id.noInternet).setVisibility(View.GONE);
                             mLoader.setVisibility(GONE);
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -166,24 +170,9 @@ public class CaregiverDetailsFragment extends Fragment {
                         requireActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                new AlertDialog.Builder(requireContext())
-                                        .setTitle("No Internet")
-                                        .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
-                                        .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                doRequest(portal, ignoreCache);
-                                            }
-                                        })
-                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                if (isAdded())
-                                                    requireActivity().finish();
-                                            }
-                                        })
-                                        .create()
-                                        .show();
+                                mView.findViewById(R.id.noInternet).setVisibility(View.VISIBLE);
+                                mView.findViewById(R.id.scrollView).setVisibility(View.GONE);
+                                mSwipeRefreshLayout.setRefreshing(false);
                             }
                         });
                     }
@@ -237,7 +226,7 @@ public class CaregiverDetailsFragment extends Fragment {
 
     private void maybeHideView(int id, String... items) {
         for (String s : items) {
-            if (!s.equals(""))
+            if (s != null && !s.equals("") && !s.equals(" "))
                 return;
         }
         mView.findViewById(id).setVisibility(GONE);

@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 18/05/19 9:45 AM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 18/02/19 8:01 PM
+ * Last modified 26/05/19 9:35 PM
  */
 
 package sheasmith.me.betterkamar.pages.notices;
@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -39,7 +40,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
@@ -52,7 +53,6 @@ import sheasmith.me.betterkamar.util.ApiManager;
 import sheasmith.me.betterkamar.util.OnSwipeTouchListener;
 
 import static android.content.Context.MODE_PRIVATE;
-import static android.support.v4.util.Preconditions.checkArgument;
 
 public class NoticesFragment extends Fragment {
 
@@ -61,6 +61,7 @@ public class NoticesFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private ProgressBar mLoader;
     private PortalObject mPortal;
+    private View mView;
 
     private ArrayList<String> groups;
     private HashSet<String> mDisabled;
@@ -106,6 +107,7 @@ public class NoticesFragment extends Fragment {
             mTracker = application.getDefaultTracker();
             mTracker.setScreenName("Notices");
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+            FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "Notices", null);
         }
     }
 
@@ -160,6 +162,8 @@ public class NoticesFragment extends Fragment {
             View view = localInflator.inflate(R.layout.fragment_notices, container, false);
             mRecyclerView = view.findViewById(R.id.notices);
             setHasOptionsMenu(true);
+
+            mView = view;
 
             // use this setting to improve performance if you know that changes
             // in content do not change the layout size of the RecyclerView
@@ -230,7 +234,7 @@ public class NoticesFragment extends Fragment {
             });
 
             SharedPreferences preferences = requireActivity().getPreferences(MODE_PRIVATE);
-            mDisabled = (HashSet<String>) preferences.getStringSet(mPortal.schoolFile.replace(".jpg", "_notices_disabled"), new HashSet<String>());
+            mDisabled = (HashSet<String>) preferences.getStringSet(mPortal.studentFile.replace(".jpg", "_notices_disabled"), new HashSet<String>());
 
             ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 
@@ -267,6 +271,8 @@ public class NoticesFragment extends Fragment {
                             public void run() {
                                 mAdapter = new NoticesAdapter(value.NoticesResults.MeetingNotices.Meeting, value.NoticesResults.GeneralNotices.General, contextThemeWrapper, mDisabled);
                                 mRecyclerView.setAdapter(mAdapter);
+                                mRecyclerView.setVisibility(View.VISIBLE);
+                                mView.findViewById(R.id.noInternet).setVisibility(View.GONE);
                                 mLoader.setVisibility(View.GONE);
                                 mRecyclerView.setVisibility(View.VISIBLE);
                                 mSwipeRefreshLayout.setRefreshing(false);
@@ -310,24 +316,8 @@ public class NoticesFragment extends Fragment {
                                 @Override
                                 public void run() {
                                     mSwipeRefreshLayout.setRefreshing(false);
-                                    new AlertDialog.Builder(requireContext())
-                                            .setTitle("No Internet")
-                                            .setMessage("You do not appear to be connected to the internet. Please check your connection and try again.")
-                                            .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    doRequest(portal, date, ignoreCache, contextThemeWrapper);
-                                                }
-                                            })
-                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    if (isAdded())
-                                                        requireActivity().finish();
-                                                }
-                                            })
-                                            .create()
-                                            .show();
+                                    mView.findViewById(R.id.noInternet).setVisibility(View.VISIBLE);
+                                    mRecyclerView.setVisibility(View.GONE);
                                 }
                             });
                         }
@@ -383,7 +373,11 @@ public class NoticesFragment extends Fragment {
 
     private void createFilterDiag(final PortalObject portal) {
         if (isAdded()) {
-            final AlertDialog.Builder diag = new AlertDialog.Builder(requireContext())
+            SharedPreferences sharedPreferences = requireContext().getSharedPreferences("ThemeColours", Context.MODE_PRIVATE);
+            String stringColor = sharedPreferences.getString("color", "E65100");
+            final Context contextThemeWrapper = new ContextThemeWrapper(requireActivity(), getResources().getIdentifier("T_" + stringColor, "style", requireContext().getPackageName()));
+
+            final AlertDialog.Builder diag = new AlertDialog.Builder(contextThemeWrapper)
                     .setTitle("Include Notices From");
 
             if (groups == null) {
@@ -391,19 +385,23 @@ public class NoticesFragment extends Fragment {
             } else {
                 if (isAdded()) {
                     final SharedPreferences preferences = requireActivity().getPreferences(MODE_PRIVATE);
-                    Set<String> disabled = preferences.getStringSet(portal.schoolFile.replace(".jpg", "_notices_disabled"), new HashSet<String>());
-                    boolean[] disabledBoolean = new boolean[groups.size()];
+                    HashSet<String> disabled = (HashSet<String>) preferences.getStringSet(portal.studentFile.replace(".jpg", "_notices_disabled"), new HashSet<>());
+
+                    List<String> groupsToRender = new ArrayList<>();
+                    List<Boolean> whetherToEnable = new ArrayList<>();
+
                     for (String group : groups) {
-                        disabledBoolean[groups.indexOf(group)] = !disabled.contains(group);
+                        groupsToRender.add(group);
+                        whetherToEnable.add(!disabled.contains(group));
                     }
-                    mTempEnabled = mDisabled;
-                    diag.setMultiChoiceItems(groups.toArray(new CharSequence[groups.size()]), disabledBoolean, new DialogInterface.OnMultiChoiceClickListener() {
+                    mTempEnabled = disabled;
+                    diag.setMultiChoiceItems(groupsToRender.toArray(new CharSequence[groupsToRender.size()]), toPrimitiveArray(whetherToEnable), new DialogInterface.OnMultiChoiceClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i, boolean isChecked) {
                             if (!isChecked)
-                                mTempEnabled.add(groups.get(i));
+                                mTempEnabled.add(groupsToRender.get(i));
                             else
-                                mTempEnabled.remove(groups.get(i));
+                                mTempEnabled.remove(groupsToRender.get(i));
                         }
                     });
 
@@ -412,8 +410,8 @@ public class NoticesFragment extends Fragment {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             if (isAdded()) {
                                 mDisabled = mTempEnabled;
-                                preferences.edit().putStringSet(portal.schoolFile.replace(".jpg", "_notices_disabled"), mDisabled).apply();
-                                mAdapter = new NoticesAdapter(mAdapter.meetingNotices, mAdapter.generalNotices, requireContext(), mDisabled);
+                                preferences.edit().putStringSet(portal.studentFile.replace(".jpg", "_notices_disabled"), mDisabled).apply();
+                                mAdapter = new NoticesAdapter(mAdapter.meetingNotices, mAdapter.generalNotices, contextThemeWrapper, mDisabled);
                                 mRecyclerView.setAdapter(mAdapter);
                                 mAdapter.notifyDataSetChanged();
                             }
@@ -427,7 +425,6 @@ public class NoticesFragment extends Fragment {
     }
 
     String getDayOfMonthSuffix(final int n) {
-        checkArgument(n >= 1 && n <= 31, "illegal day of month: " + n);
         if (n >= 11 && n <= 13) {
             return "th";
         }
@@ -441,5 +438,14 @@ public class NoticesFragment extends Fragment {
             default:
                 return "th";
         }
+    }
+
+    private boolean[] toPrimitiveArray(final List<Boolean> booleanList) {
+        final boolean[] primitives = new boolean[booleanList.size()];
+        int index = 0;
+        for (Boolean object : booleanList) {
+            primitives[index++] = object;
+        }
+        return primitives;
     }
 }

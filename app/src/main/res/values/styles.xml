@@ -1,7 +1,7 @@
 <!--
-  ~ Created by Shea Smith on 18/05/19 9:45 AM
+  ~ Created by Shea Smith on 26/05/19 9:35 PM
   ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
-  ~ Last modified 17/05/19 10:51 PM
+  ~ Last modified 26/05/19 9:22 AM
   -->
 
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -20,8 +20,7 @@
     <style name="AppTheme.Launcher">
         <item name="android:windowBackground">@drawable/splash_screen</item>
         <!-- Optional, on Android 5+ you can modify the colorPrimaryDark color to match the windowBackground color for further branding-->
-        <item name="colorPrimaryDark">@android:color/white</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="colorPrimaryDark">@color/blackgray</item>
     </style>
 
     <!-- Theme without ActionBar shadow (inherits main theme) -->
@@ -30,7 +29,7 @@
     </style>
 
     <style name="CalendarStyle">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textColor">@color/calendar_text</item>
     </style>
 
 </resources>

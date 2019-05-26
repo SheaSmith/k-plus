@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 18/05/19 9:45 AM
+ * Created by Shea Smith on 26/05/19 9:35 PM
  * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 1:04 PM
+ * Last modified 21/05/19 9:25 PM
  */
 
 package sheasmith.me.betterkamar.pages.results;
@@ -98,14 +98,15 @@ public class AllResultsChildAdapter extends RecyclerView.Adapter<AllResultsChild
 
         if (!result.Grade.equals("")) {
             holder.result.setVisibility(View.VISIBLE);
+            // Outstanding and not awarded are total guesses
             holder.result.setText(result.Grade.substring(0, 1).toUpperCase() + result.Grade.substring(1));
-            if (result.Grade.equals("Achieved with Excellence"))
+            if (result.Grade.equals("Achieved with Excellence") || result.Grade.equals("Scholarship Awarded With Outstanding Performance"))
                 holder.result.setBackgroundColor(mContext.getResources().getColor(R.color.excellence));
             else if (result.Grade.equals("Achieved with Merit"))
                 holder.result.setBackgroundColor(mContext.getResources().getColor(R.color.merit));
-            else if (result.Grade.equals("Achieved"))
+            else if (result.Grade.equals("Achieved") || result.Grade.equals("Scholarship Awarded"))
                 holder.result.setBackgroundColor(mContext.getResources().getColor(R.color.achieved));
-            else if (result.Grade.equals("Not Achieved"))
+            else if (result.Grade.equals("Not Achieved") || result.Grade.equals("Scholarship Not Awarded"))
                 holder.result.setBackgroundColor(mContext.getResources().getColor(R.color.notachieved));
         }
         else {
