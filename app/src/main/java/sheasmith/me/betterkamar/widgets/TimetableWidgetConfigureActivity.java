@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 6/02/19 12:54 PM
- * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 12:53 PM
+ * Created by Shea Smith on 26/01/20 6:49 PM
+ * Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+ * Last modified 31/05/19 9:12 PM
  */
 
 package sheasmith.me.betterkamar.widgets;
@@ -11,7 +11,9 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,6 +23,7 @@ import com.google.gson.Gson;
 import com.securepreferences.SecurePreferences;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -55,9 +58,64 @@ public class TimetableWidgetConfigureActivity extends Activity {
     }
 
     public static PortalObject getPortal(Context context, int appWidgetId) {
-        SharedPreferences prefs = new SecurePreferences(context);
+        SharedPreferences preferences = context.getSharedPreferences("sheasmith.me.betterkamar", MODE_PRIVATE);
 
-        Set<String> jsonString = prefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+        Set<String> jsonString;
+        if (!preferences.contains("salt")) {
+            // There are two possible salts, Build.SERIAL and Unknown. If it is neither we will nuke the data.
+
+            SharedPreferences serialPrefs = new SecurePreferences(context, Build.SERIAL);
+            jsonString = serialPrefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+
+            String salt = null;
+
+            if (jsonString == null || jsonString.isEmpty() || jsonString.toArray()[0] == null) {
+                jsonString = null;
+            }
+            else {
+                salt = Build.SERIAL;
+            }
+
+            if (jsonString == null) {
+                SharedPreferences unknownPrefs = new SecurePreferences(context, "UNKNOWN");
+
+                jsonString = unknownPrefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+
+                if (jsonString == null || jsonString.isEmpty() || jsonString.toArray()[0] == null) {
+                    jsonString = null;
+                }
+                else {
+                    salt = "UNKNOWN";
+                }
+            }
+
+            if (jsonString == null) {
+                SharedPreferences unknownPrefs = new SecurePreferences(context, Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
+
+                jsonString = unknownPrefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+
+                if (jsonString == null || jsonString.isEmpty() || jsonString.toArray()[0] == null) {
+                    jsonString = null;
+                }
+                else {
+                    salt = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+                }
+            }
+
+            if (jsonString == null) {
+                preferences.edit().putString("serial", Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID)).apply();
+                new SecurePreferences(context).edit().remove("sheasmith.me.betterkamar.portals").apply();
+                jsonString = new HashSet<>();
+            }
+            else {
+                preferences.edit().putString("serial", salt).apply();
+            }
+        }
+        else {
+
+            jsonString = new SecurePreferences(context, preferences.getString("salt", Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID))).getStringSet("sheasmith.me.betterkamar.portals", null);
+        }
+
         if (jsonString != null) {
             for (String s : jsonString) {
                 Gson gson = new Gson();
@@ -92,9 +150,63 @@ public class TimetableWidgetConfigureActivity extends Activity {
         setResult(RESULT_CANCELED);
 
         setContentView(R.layout.timetable_widget_configure);
-        SharedPreferences prefs = new SecurePreferences(this);
+        SharedPreferences preferences = getSharedPreferences("sheasmith.me.betterkamar", MODE_PRIVATE);
 
-        Set<String> jsonString = prefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+        Set<String> jsonString;
+        if (!preferences.contains("salt")) {
+            // There are two possible salts, Build.SERIAL and Unknown. If it is neither we will nuke the data.
+
+            SharedPreferences serialPrefs = new SecurePreferences(this, Build.SERIAL);
+            jsonString = serialPrefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+
+            String salt = null;
+
+            if (jsonString == null || jsonString.isEmpty() || jsonString.toArray()[0] == null) {
+                jsonString = null;
+            }
+            else {
+                salt = Build.SERIAL;
+            }
+
+            if (jsonString == null) {
+                SharedPreferences unknownPrefs = new SecurePreferences(this, "UNKNOWN");
+
+                jsonString = unknownPrefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+
+                if (jsonString == null || jsonString.isEmpty() || jsonString.toArray()[0] == null) {
+                    jsonString = null;
+                }
+                else {
+                    salt = "UNKNOWN";
+                }
+            }
+
+            if (jsonString == null) {
+                SharedPreferences unknownPrefs = new SecurePreferences(this, Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+
+                jsonString = unknownPrefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+
+                if (jsonString == null || jsonString.isEmpty() || jsonString.toArray()[0] == null) {
+                    jsonString = null;
+                }
+                else {
+                    salt = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+                }
+            }
+
+            if (jsonString == null) {
+                preferences.edit().putString("serial", Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID)).apply();
+                new SecurePreferences(this).edit().remove("sheasmith.me.betterkamar.portals").apply();
+                jsonString = new HashSet<>();
+            }
+            else {
+                preferences.edit().putString("serial", salt).apply();
+            }
+        }
+        else {
+
+            jsonString = new SecurePreferences(this, preferences.getString("salt", Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID))).getStringSet("sheasmith.me.betterkamar.portals", null);
+        }
         if (jsonString != null) {
             for (String s : jsonString) {
                 Gson gson = new Gson();

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Created by Shea Smith on 26/05/19 9:35 PM
-  ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
-  ~ Last modified 26/05/19 8:58 PM
+  ~ Created by Shea Smith on 26/01/20 6:49 PM
+  ~ Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+  ~ Last modified 3/06/19 12:42 PM
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -12,7 +12,7 @@
     android:orientation="vertical"
     tools:context="sheasmith.me.betterkamar.pages.notices.NoticesFragment">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardBackgroundColor="?colorAccent"
@@ -58,7 +58,7 @@
                 app:srcCompat="@drawable/action_next" />
 
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
     <ProgressBar
         android:id="@+id/loader"
@@ -67,28 +67,22 @@
         android:layout_height="match_parent"
         android:layout_gravity="center" />
 
-    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <include
+        android:id="@+id/noInternet"
+        layout="@layout/no_internet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipe_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/notices"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/notices"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <include
-                android:id="@+id/noInternet"
-                layout="@layout/no_internet"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
-        </LinearLayout>
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

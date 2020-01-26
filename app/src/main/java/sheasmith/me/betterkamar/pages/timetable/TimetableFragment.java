@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 26/05/19 9:35 PM
- * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 26/05/19 9:35 PM
+ * Created by Shea Smith on 26/01/20 6:49 PM
+ * Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+ * Last modified 3/06/19 12:42 PM
  */
 
 package sheasmith.me.betterkamar.pages.timetable;
@@ -10,15 +10,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +26,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -66,6 +67,8 @@ import sheasmith.me.betterkamar.internalModels.PortalObject;
 import sheasmith.me.betterkamar.util.ApiManager;
 import sheasmith.me.betterkamar.util.OnSwipeTouchListener;
 
+import static android.view.View.GONE;
+
 public class TimetableFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
@@ -75,6 +78,7 @@ public class TimetableFragment extends Fragment {
     private MaterialCalendarView mCalendarView;
 
     private ArrayList<GlobalObject.PeriodDefinition> periodDefinitions;
+    private ArrayList<GlobalObject.Day> periodDays;
     private ArrayList<AttendanceObject.Week> attendanceResults;
     private ArrayList<EventsObject.Event> events;
     private ArrayList<TimetableObject.Week> timetable;
@@ -111,19 +115,6 @@ public class TimetableFragment extends Fragment {
 
     public static TimetableFragment newInstance() {
         return new TimetableFragment();
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable("periodDefinitions", periodDefinitions);
-        if (attendanceResults != null)
-            outState.putSerializable("attendanceResults", attendanceResults);
-        outState.putSerializable("events", events);
-        outState.putSerializable("timetable", timetable);
-        if (mCalendarView.getSelectedDate() != null)
-            outState.putSerializable("selectedDate", new Date(mCalendarView.getSelectedDate().getDate().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()));
-        outState.putSerializable("days", days);
     }
 
     @Override
@@ -307,10 +298,21 @@ public class TimetableFragment extends Fragment {
 
             mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
             mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
                     doRequest(mPortal, true);
+                }
+            };
+            mSwipeRefreshLayout.setOnRefreshListener(listener);
+
+            Button noInternetRetry = mView.findViewById(R.id.no_internet_retry);
+            noInternetRetry.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                    listener.onRefresh();
+                    mView.findViewById(R.id.noInternet).setVisibility(GONE);
                 }
             });
 
@@ -332,6 +334,7 @@ public class TimetableFragment extends Fragment {
             public void success(GlobalObject value) {
                 if (isAdded()) {
                     periodDefinitions = value.GlobalsResults.PeriodDefinitions;
+                    periodDays = value.GlobalsResults.StartTimes;
                     finished[0] = true;
                     hideLoader(finished);
                 }
@@ -523,6 +526,7 @@ public class TimetableFragment extends Fragment {
         current.setTime(date);
 
         List<TimetableObject.Class> periods = new ArrayList<>();
+        List<GlobalObject.PeriodTime> times = new ArrayList<>();
         Calendar monday = Calendar.getInstance();
         monday.setTime(date);
         monday.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
@@ -689,6 +693,15 @@ public class TimetableFragment extends Fragment {
 
                         if (cal.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)) {
                             periods = week.Classes.get(day);
+
+                            times = null;
+                            for (GlobalObject.Day periodDay : periodDays) {
+                                if (Integer.parseInt(periodDay.index) == day) {
+                                    times = periodDay.PeriodTimes;
+                                    break;
+                                }
+                            }
+
                             if (attendanceWeek != null) {
                                 for (AttendanceObject.Day ad : attendanceWeek.Days) {
                                     if (ad.index.equals(day.toString())) {
@@ -801,11 +814,12 @@ public class TimetableFragment extends Fragment {
 
         final List<TimetableObject.Class> finalPeriods = periods;
         if (isAdded()) {
+            List<GlobalObject.PeriodTime> finalTimes = times;
             requireActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     if (isAdded()) {
-                        mAdapter = new TimetableAdapter(dayEvents, finalPeriods, periodDefinitions, requireContext());
+                        mAdapter = new TimetableAdapter(dayEvents, finalPeriods, periodDefinitions, finalTimes, requireContext());
                         mRecyclerView.setAdapter(mAdapter);
 //                                                mLoader.setVisibility(View.GONE);
                     }

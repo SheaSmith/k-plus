@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 18/05/19 9:45 AM
- * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 1:15 PM
+ * Created by Shea Smith on 26/01/20 6:49 PM
+ * Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+ * Last modified 31/05/19 9:01 PM
  */
 
 package sheasmith.me.betterkamar.widgets;
@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -40,6 +43,8 @@ import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
 import sheasmith.me.betterkamar.util.ApiManager;
 import sheasmith.me.betterkamar.util.WidgetApiManager;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by TheDiamondPicks on 18/01/2019.
@@ -58,6 +63,8 @@ public class TimetableWidgetRemoteViewsFactory implements RemoteViewsService.Rem
     PortalObject portal = null;
 
     public String error = null;
+    private ArrayList<GlobalObject.Day> mPeriodDays;
+    private ArrayList<GlobalObject.PeriodTime> mPeriodTimes;
 
     public TimetableWidgetRemoteViewsFactory(Context applicationContext, Intent intent) {
         mContext = applicationContext;
@@ -67,16 +74,65 @@ public class TimetableWidgetRemoteViewsFactory implements RemoteViewsService.Rem
 
         try {
             key = TimetableWidgetConfigureActivity.loadTitlePref(mContext, Integer.valueOf(intent.getData().getSchemeSpecificPart()));
-        }
-        catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             // DO NOTHING
         }
 
-        SharedPreferences prefs = new SecurePreferences(mContext);
+        SharedPreferences preferences = applicationContext.getSharedPreferences("sheasmith.me.betterkamar", MODE_PRIVATE);
+
+        Set<String> jsonString;
+        if (!preferences.contains("salt")) {
+            // There are two possible salts, Build.SERIAL and Unknown. If it is neither we will nuke the data.
+
+            SharedPreferences serialPrefs = new SecurePreferences(applicationContext, Build.SERIAL);
+            jsonString = serialPrefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+
+            String salt = null;
+
+            if (jsonString == null || jsonString.isEmpty() || jsonString.toArray()[0] == null) {
+                jsonString = null;
+            } else {
+                salt = Build.SERIAL;
+            }
+
+            if (jsonString == null) {
+                SharedPreferences unknownPrefs = new SecurePreferences(applicationContext, "UNKNOWN");
+
+                jsonString = unknownPrefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+
+                if (jsonString == null || jsonString.isEmpty() || jsonString.toArray()[0] == null) {
+                    jsonString = null;
+                } else {
+                    salt = "UNKNOWN";
+                }
+            }
+
+            if (jsonString == null) {
+                SharedPreferences unknownPrefs = new SecurePreferences(applicationContext, Settings.Secure.getString(applicationContext.getContentResolver(), Settings.Secure.ANDROID_ID));
+
+                jsonString = unknownPrefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+
+                if (jsonString == null || jsonString.isEmpty() || jsonString.toArray()[0] == null) {
+                    jsonString = null;
+                } else {
+                    salt = Settings.Secure.getString(applicationContext.getContentResolver(), Settings.Secure.ANDROID_ID);
+                }
+            }
+
+            if (jsonString == null) {
+                preferences.edit().putString("serial", Settings.Secure.getString(applicationContext.getContentResolver(), Settings.Secure.ANDROID_ID)).apply();
+                new SecurePreferences(applicationContext).edit().remove("sheasmith.me.betterkamar.portals").apply();
+                jsonString = new HashSet<>();
+            } else {
+                preferences.edit().putString("serial", salt).apply();
+            }
+        } else {
+
+            jsonString = new SecurePreferences(applicationContext, preferences.getString("salt", Settings.Secure.getString(applicationContext.getContentResolver(), Settings.Secure.ANDROID_ID))).getStringSet("sheasmith.me.betterkamar.portals", null);
+        }
 
         servers = new ArrayList<>();
 
-        Set<String> jsonString = prefs.getStringSet("sheasmith.me.betterkamar.portals", null);
         if (jsonString != null) {
             for (String s : jsonString) {
                 Gson gson = new Gson();
@@ -106,6 +162,7 @@ public class TimetableWidgetRemoteViewsFactory implements RemoteViewsService.Rem
             WidgetApiManager.login(portal.username, portal.password);
             WidgetApiManager.setVariables(portal, mContext);
             mPeriodDefinitions = WidgetApiManager.getGlobals(false).GlobalsResults.PeriodDefinitions;
+            mPeriodDays = WidgetApiManager.getGlobals(false).GlobalsResults.StartTimes;
             timetable = WidgetApiManager.getTimetable(false).StudentTimetableResults.Student.Timetable;
             days = WidgetApiManager.getCalendar(false).CalendarResults.Days;
             mEvents = WidgetApiManager.getEvents(Calendar.getInstance().get(Calendar.YEAR), false).EventsResults.Events;
@@ -193,7 +250,13 @@ public class TimetableWidgetRemoteViewsFactory implements RemoteViewsService.Rem
                             cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
                             cal.add(Calendar.DAY_OF_WEEK, day);
 
-                        if (cal.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)) {
+                            if (cal.get(Calendar.DAY_OF_YEAR) == current.get(Calendar.DAY_OF_YEAR)) {
+                                for (GlobalObject.Day periodDay : mPeriodDays) {
+                                    if (Integer.parseInt(periodDay.index) == day) {
+                                        mPeriodTimes = periodDay.PeriodTimes;
+                                        break;
+                                    }
+                                }
                                 periods = week.Classes.get(day);
                                 break weekLoop;
                             }
@@ -248,7 +311,7 @@ public class TimetableWidgetRemoteViewsFactory implements RemoteViewsService.Rem
 
     @Override
     public int getCount() {
-        if (dayEvents != null && mPeriodDefinitions != null && days != null && periods != null) {
+        if (dayEvents != null && mPeriodDefinitions != null && days != null && periods != null && mPeriodDays != null) {
             if (dayEvents.size() + periods.size() == 0)
                 return 1;
             return dayEvents.size() + periods.size();
@@ -314,11 +377,12 @@ public class TimetableWidgetRemoteViewsFactory implements RemoteViewsService.Rem
 
                 final TimetableObject.Class period = periods.get(pos);
                 final GlobalObject.PeriodDefinition periodDefinition = mPeriodDefinitions.get(pos);
+                final GlobalObject.PeriodTime periodTime = mPeriodTimes.get(pos);
                 rv.setTextViewText(R.id.time, periodDefinition.PeriodName);
 
                 if (!period.SubjectCode.equals("")) {
                     rv.setTextViewText(R.id.title, period.SubjectCode);
-                    rv.setTextViewText(R.id.details, String.format("%s • %s • %s", periodDefinition.PeriodTime, period.Teacher, period.Room));
+                    rv.setTextViewText(R.id.details, String.format("%s • %s • %s", periodTime.time, period.Teacher, period.Room));
                     final TypedArray colors = mContext.getResources().obtainTypedArray(R.array.mdcolor_500);
                     final int number = Math.abs(period.SubjectCode.hashCode()) % colors.length();
                     rv.setInt(R.id.item, "setBackgroundColor", colors.getColor(number, Color.BLACK));

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Created by Shea Smith on 26/05/19 9:35 PM
-  ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
-  ~ Last modified 26/05/19 8:50 PM
+  ~ Created by Shea Smith on 26/01/20 6:49 PM
+  ~ Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+  ~ Last modified 3/06/19 12:42 PM
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -16,109 +16,103 @@
         android:layout_height="match_parent"
         android:layout_gravity="center" />
 
-    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <include
+        android:id="@+id/noInternet"
+        layout="@layout/no_internet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipe_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <ScrollView
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <ScrollView
-                android:id="@+id/scrollView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <LinearLayout
-                        android:id="@+id/emergency"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/emergency_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Emergency Contact"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-                        <TextView
-                            android:id="@+id/emergency_home_phone_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Home Phone" />
-
-                        <TextView
-                            android:id="@+id/emergency_home_phone"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="0800 123 4567"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                        <TextView
-                            android:id="@+id/emergency_mobile_phone_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Mobile Phone" />
-
-                        <TextView
-                            android:id="@+id/emergency_mobile_phone"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="027 123 4567"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                        <TextView
-                            android:id="@+id/emergency_work_phone_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Work Phone" />
-
-                        <TextView
-                            android:id="@+id/emergency_work_phone"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="03 230 4567"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                        <TextView
-                            android:id="@+id/emergency_extension_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Extension" />
-
-                        <TextView
-                            android:id="@+id/emergency_extension"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="256"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-            </ScrollView>
-
-            <include
-                android:id="@+id/noInternet"
-                layout="@layout/no_internet"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone" />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+                <LinearLayout
+                    android:id="@+id/emergency"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/emergency_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Emergency Contact"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+                    <TextView
+                        android:id="@+id/emergency_home_phone_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Home Phone" />
+
+                    <TextView
+                        android:id="@+id/emergency_home_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="0800 123 4567"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <TextView
+                        android:id="@+id/emergency_mobile_phone_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mobile Phone" />
+
+                    <TextView
+                        android:id="@+id/emergency_mobile_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="027 123 4567"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <TextView
+                        android:id="@+id/emergency_work_phone_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Work Phone" />
+
+                    <TextView
+                        android:id="@+id/emergency_work_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="03 230 4567"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <TextView
+                        android:id="@+id/emergency_extension_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Extension" />
+
+                    <TextView
+                        android:id="@+id/emergency_extension"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="256"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </LinearLayout>

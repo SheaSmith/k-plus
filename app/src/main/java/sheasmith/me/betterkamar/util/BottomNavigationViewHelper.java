@@ -1,19 +1,14 @@
 /*
- * Created by Shea Smith on 18/05/19 9:45 AM
- * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 27/02/19 8:35 PM
+ * Created by Shea Smith on 26/01/20 6:49 PM
+ * Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+ * Last modified 3/06/19 12:42 PM
  */
 
 package sheasmith.me.betterkamar.util;
 
 import android.annotation.SuppressLint;
-import android.support.design.bottomnavigation.LabelVisibilityMode;
-import android.support.design.internal.BottomNavigationItemView;
-import android.support.design.internal.BottomNavigationMenuView;
-import android.support.design.widget.BottomNavigationView;
-import android.util.Log;
-
-import java.lang.reflect.Field;
+import com.google.android.material.bottomnavigation.LabelVisibilityMode;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 /**
  * Created by TheDiamondPicks on 15/09/2018.

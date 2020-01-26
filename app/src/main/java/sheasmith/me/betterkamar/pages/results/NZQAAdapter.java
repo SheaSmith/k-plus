@@ -1,13 +1,13 @@
 /*
- * Created by Shea Smith on 18/05/19 9:45 AM
- * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 1:03 PM
+ * Created by Shea Smith on 26/01/20 6:49 PM
+ * Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+ * Last modified 3/06/19 12:42 PM
  */
 
 package sheasmith.me.betterkamar.pages.results;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

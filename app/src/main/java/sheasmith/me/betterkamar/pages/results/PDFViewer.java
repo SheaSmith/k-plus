@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 26/05/19 9:35 PM
- * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 26/05/19 9:35 PM
+ * Created by Shea Smith on 26/01/20 6:49 PM
+ * Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+ * Last modified 23/06/19 9:03 AM
  */
 
 package sheasmith.me.betterkamar.pages.results;
@@ -19,10 +19,11 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.SwipeRefreshLayout;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -46,6 +47,8 @@ import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.htmlModels.ReportsObject;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
+
+import static android.view.View.GONE;
 
 /**
  * Created by Shea on 2/03/2017.
@@ -83,10 +86,21 @@ public class PDFViewer extends Activity {
 
         SwipeRefreshLayout layout = findViewById(R.id.swipe_container);
         layout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-        layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 recreate();
+            }
+        };
+        layout.setOnRefreshListener(listener);
+
+        Button noInternetRetry = findViewById(R.id.no_internet_retry);
+        noInternetRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                layout.setRefreshing(true);
+                listener.onRefresh();
+                findViewById(R.id.noInternet).setVisibility(GONE);
             }
         });
 
@@ -155,7 +169,7 @@ public class PDFViewer extends Activity {
                 if (sessionCookies.containsKey("csrf_kamar_cn"))
                     login = Jsoup.connect(mPortal.hostname + "/index.php/login").method(Connection.Method.POST).data("username", mPortal.username, "password", mPortal.password, "csrf_kamar_sn", sessionCookies.get("csrf_kamar_cn")).cookies(sessionCookies).execute();
                 else
-                    login = Jsoup.connect(mPortal + "/index.php/login").method(Connection.Method.POST).data("username", mPortal.username, "password", mPortal.password).cookies(sessionCookies).execute();
+                    login = Jsoup.connect(mPortal.hostname + "/index.php/login").method(Connection.Method.POST).data("username", mPortal.username, "password", mPortal.password).cookies(sessionCookies).execute();
 
                 Map<String, String> loginCookies = login.cookies();
 //                    if (sessionCookies.containsKey("kamar_session"))

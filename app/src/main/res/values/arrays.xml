@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Created by Shea Smith on 26/01/20 6:49 PM
+  ~ Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+  ~ Last modified 3/06/19 12:48 PM
+  -->
+
 <resources>
     <array name="mdcolor_500">
         <item name="red_500" type="color">#e51c23</item>
@@ -55,4 +61,14 @@
         <item name="blue_grey_800" type="color">#37474f</item>
 
     </array>
+    <!-- Reply Preference -->
+    <string-array name="reply_entries">
+        <item>Reply</item>
+        <item>Reply to all</item>
+    </string-array>
+
+    <string-array name="reply_values">
+        <item>reply</item>
+        <item>reply_all</item>
+    </string-array>
 </resources>

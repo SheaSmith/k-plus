@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Created by Shea Smith on 18/05/19 9:45 AM
-  ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
-  ~ Last modified 17/05/19 11:02 PM
+  ~ Created by Shea Smith on 26/01/20 6:49 PM
+  ~ Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+  ~ Last modified 3/06/19 12:42 PM
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -49,7 +49,7 @@
             android:layout_centerHorizontal="true"
             android:orientation="vertical">
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/items"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

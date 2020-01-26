@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 26/05/19 9:35 PM
- * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 26/05/19 8:54 PM
+ * Created by Shea Smith on 26/01/20 6:49 PM
+ * Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+ * Last modified 3/06/19 12:42 PM
  */
 
 package sheasmith.me.betterkamar.pages.details;
@@ -10,14 +10,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AlertDialog;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -94,10 +95,21 @@ public class EmergencyDetailsFragment extends Fragment {
 
             mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_container);
             mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
                     doRequest(mPortal, true);
+                }
+            };
+            mSwipeRefreshLayout.setOnRefreshListener(listener);
+
+            Button noInternetRetry = mView.findViewById(R.id.no_internet_retry);
+            noInternetRetry.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                    listener.onRefresh();
+                    mView.findViewById(R.id.noInternet).setVisibility(GONE);
                 }
             });
         }

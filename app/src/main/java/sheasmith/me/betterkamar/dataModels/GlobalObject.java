@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 26/05/19 9:35 PM
- * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 18/05/19 12:51 PM
+ * Created by Shea Smith on 26/01/20 6:49 PM
+ * Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+ * Last modified 31/05/19 8:55 PM
  */
 
 package sheasmith.me.betterkamar.dataModels;
@@ -52,6 +52,7 @@ public class GlobalObject implements Serializable
         }
 
         NodeList periodDefinitions = root.getElementsByTagName("PeriodDefinitions").item(0).getChildNodes();
+        NodeList startTimes = root.getElementsByTagName("StartTimes").item(0).getChildNodes();
 
         GlobalsResults results = new GlobalsResults();
         results.AccessLevel = root.getElementsByTagName("AccessLevel").item(0).getTextContent();
@@ -74,6 +75,33 @@ public class GlobalObject implements Serializable
             }
         }
 
+        for (int i = 0 ; i != startTimes.getLength() ; i++) {
+            if (startTimes.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                Element dayElement = (Element) startTimes.item(i);
+
+                Day day = new Day();
+                day.index = dayElement.getAttribute("index");
+
+                NodeList periodTimes = dayElement.getChildNodes();
+                for (int j = 0 ; j != periodTimes.getLength() ; j++) {
+                    if (periodTimes.item(j).getNodeType() == Node.ELEMENT_NODE) {
+                        Element periodTimeElement = (Element) periodTimes.item(j);
+
+                        PeriodTime periodTime = new PeriodTime();
+                        periodTime.index = periodTimeElement.getAttribute("index");
+                        periodTime.time = periodTimeElement.getTextContent();
+
+                        if (periodTime.time.equals(""))
+                            periodTime.time = "--";
+
+                        day.PeriodTimes.add(periodTime);
+                    }
+                }
+
+                results.StartTimes.add(day);
+            }
+        }
+
         GlobalsResults = results;
     }
 
@@ -84,6 +112,8 @@ public class GlobalObject implements Serializable
         public String ErrorCode;
 
         public ArrayList<PeriodDefinition> PeriodDefinitions = new ArrayList<>();
+
+        public ArrayList<Day> StartTimes = new ArrayList<>();
 
         public String apiversion;
 
@@ -97,5 +127,17 @@ public class GlobalObject implements Serializable
         public String PeriodTime;
 
         public String PeriodName;
+    }
+
+    public class Day implements Serializable
+    {
+        public String index;
+
+        public ArrayList<PeriodTime> PeriodTimes = new ArrayList<>();
+    }
+
+    public class PeriodTime implements Serializable {
+        public String index;
+        public String time;
     }
 }

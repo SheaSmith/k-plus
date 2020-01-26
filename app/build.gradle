@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 26/05/19 9:35 PM
- * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 26/05/19 9:34 PM
+ * Created by Shea Smith on 26/01/20 6:49 PM
+ * Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+ * Last modified 19/08/19 7:14 PM
  */
 
 buildscript {
@@ -48,8 +48,8 @@ android {
         minSdkVersion 16
         // DO NOT CHANGE THIS UNTIL THE SALT HAS BEEN FIXED !!!
         targetSdkVersion 27
-        versionCode 22
-        versionName "3.4.1"
+        versionCode 29
+        versionName "3.4.8"
     }
     buildTypes {
         release {
@@ -62,29 +62,30 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation files('libs/java-json.jar')
-    implementation 'com.github.barteksc:android-pdf-viewer:2.4.0'
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.github.barteksc:android-pdf-viewer:3.1.0-beta.1'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
     implementation 'org.jsoup:jsoup:1.10.2'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'com.android.support:support-v4:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.scottyab:secure-preferences-lib:0.1.7'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
-    implementation(name:'library-release', ext:'aar')
+    implementation(name: 'library-release', ext: 'aar')
+    implementation 'androidx.preference:preference:1.1.0-alpha05'
     testImplementation 'junit:junit:4.12'
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.5@aar') {
         transitive = true;
     }
-    implementation 'com.squareup.okhttp3:okhttp:3.13.1'
-    implementation 'com.android.support:cardview-v7:28.0.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'de.hdodenhof:circleimageview:3.0.0'
     implementation 'com.iainconnor:objectcache:0.0.18-SNAPSHOT'
     implementation 'com.google.firebase:firebase-core:16.0.7'
     implementation 'com.google.firebase:firebase-perf:16.2.3'
     implementation 'com.google.android.gms:play-services-analytics:16.0.7'
-    implementation 'com.android.support:customtabs:28.0.0'
-    implementation 'com.android.support:palette-v7:28.0.0'
+    implementation 'androidx.browser:browser:1.0.0'
+    implementation 'androidx.palette:palette:1.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

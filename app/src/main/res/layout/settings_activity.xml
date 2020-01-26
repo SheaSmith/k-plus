@@ -1,0 +1,15 @@
+<!--
+  ~ Created by Shea Smith on 26/01/20 6:49 PM
+  ~ Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+  ~ Last modified 3/06/19 12:49 PM
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/settings"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

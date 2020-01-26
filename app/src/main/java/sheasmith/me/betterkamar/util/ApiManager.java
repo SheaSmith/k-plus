@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 26/05/19 9:35 PM
- * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 21/05/19 8:58 PM
+ * Created by Shea Smith on 26/01/20 6:49 PM
+ * Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+ * Last modified 21/07/19 12:15 PM
  */
 
 package sheasmith.me.betterkamar.util;
@@ -218,7 +218,7 @@ public class ApiManager {
                             .url(URL)
                             .post(body)
                             .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                            .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                            .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                             .addHeader("X-Requested-With", "nz.co.KAMAR")
                             .addHeader("Origin", "file://")
                             .build();
@@ -267,7 +267,7 @@ public class ApiManager {
                             .url(URL)
                             .post(body)
                             .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                            .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                            .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                             .addHeader("X-Requested-With", "nz.co.KAMAR")
                             .addHeader("Origin", "file://")
                             .build();
@@ -312,7 +312,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                                .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -372,7 +372,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                                .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -421,7 +421,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                                .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -469,7 +469,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                                .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -516,7 +516,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                                .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -563,7 +563,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                                .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -607,7 +607,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                                .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -651,7 +651,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                                .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -698,7 +698,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                                .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -745,7 +745,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                                .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -789,7 +789,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                                .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -833,7 +833,7 @@ public class ApiManager {
                                 .url(URL)
                                 .post(body)
                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                                .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                                 .addHeader("X-Requested-With", "nz.co.KAMAR")
                                 .addHeader("Origin", "file://")
                                 .build();
@@ -884,7 +884,7 @@ public class ApiManager {
                         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
                         HttpURLConnection connection = (HttpURLConnection) new URL(URL.replace("api.php", "img.php") + "?Key=" + TOKEN + "&Stuid=" + ID).openConnection();
-                        connection.setRequestProperty("User-agent", "KAMAR+ " + BuildConfig.VERSION_NAME);
+                        connection.setRequestProperty("User-agent", "K+ " + BuildConfig.VERSION_NAME);
                         connection.setRequestProperty("X-Requested-With", "nz.co.KAMAR");
                         connection.setRequestProperty("Origin", "file://");
 
@@ -917,7 +917,7 @@ public class ApiManager {
                             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
                             HttpURLConnection connection = (HttpURLConnection) new URL(URL.replace("api.php", "img.php") + "?Key=" + TOKEN + "&Stuid=" + ID).openConnection();
-                            connection.setRequestProperty("User-agent", "KAMAR+ " + BuildConfig.VERSION_NAME);
+                            connection.setRequestProperty("User-agent", "K+ " + BuildConfig.VERSION_NAME);
                             connection.setRequestProperty("X-Requested-With", "nz.co.KAMAR");
                             connection.setRequestProperty("Origin", "file://");
 
@@ -968,7 +968,7 @@ public class ApiManager {
 
                     HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
                     HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-                    connection.setRequestProperty("User-agent", "KAMAR+ " + BuildConfig.VERSION_NAME);
+                    connection.setRequestProperty("User-agent", "K+ " + BuildConfig.VERSION_NAME);
                     connection.setRequestProperty("X-Requested-With", "nz.co.KAMAR");
                     connection.setRequestProperty("Origin", "file://");
 
@@ -998,7 +998,7 @@ public class ApiManager {
 
                         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
                         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-                        connection.setRequestProperty("User-agent", "KAMAR+ " + BuildConfig.VERSION_NAME);
+                        connection.setRequestProperty("User-agent", "K+ " + BuildConfig.VERSION_NAME);
                         connection.setRequestProperty("X-Requested-With", "nz.co.KAMAR");
                         connection.setRequestProperty("Origin", "file://");
 

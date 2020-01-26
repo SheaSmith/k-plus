@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 26/05/19 9:35 PM
- * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 18/05/19 9:52 AM
+ * Created by Shea Smith on 26/01/20 6:49 PM
+ * Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+ * Last modified 3/06/19 12:42 PM
  */
 
 package sheasmith.me.betterkamar.pages.timetable;
@@ -11,8 +11,8 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +40,7 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public List<EventsObject.Event> mEvents;
     public List<TimetableObject.Class> mClasses;
     public List<GlobalObject.PeriodDefinition> mPeriodDefinitions;
+    private List<GlobalObject.PeriodTime> mPeriodTimes;
     private Context mContext;
 
     public static class TimetableViewHolder extends RecyclerView.ViewHolder {
@@ -63,11 +64,12 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    public TimetableAdapter(List<EventsObject.Event> events, List<TimetableObject.Class> classes, List<GlobalObject.PeriodDefinition> periodDefinitions, Context context) {
+    public TimetableAdapter(List<EventsObject.Event> events, List<TimetableObject.Class> classes, List<GlobalObject.PeriodDefinition> periodDefinitions, List<GlobalObject.PeriodTime> periodTimes, Context context) {
         mEvents = events;
         mClasses = classes;
         mPeriodDefinitions = periodDefinitions;
         mContext = context;
+        mPeriodTimes = periodTimes;
     }
 
 
@@ -143,11 +145,12 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             final TimetableObject.Class period = mClasses.get(pos);
             final GlobalObject.PeriodDefinition periodDefinition = mPeriodDefinitions.get(pos);
+            final GlobalObject.PeriodTime periodTime = mPeriodTimes.get(pos);
             ((TimetableViewHolder) holder).periodName.setText(periodDefinition.PeriodName);
 
             if (!period.SubjectCode.equals("")) {
                 ((TimetableViewHolder) holder).title.setText(period.SubjectCode);
-                ((TimetableViewHolder) holder).details.setText(String.format("%s • %s • %s", periodDefinition.PeriodTime, period.Teacher, period.Room));
+                ((TimetableViewHolder) holder).details.setText(String.format("%s • %s • %s", periodTime.time, period.Teacher, period.Room));
                 final TypedArray colors = mContext.getResources().obtainTypedArray(R.array.mdcolor_500);
                 final int number = Math.abs(period.SubjectCode.hashCode()) % colors.length();
                 ((TimetableViewHolder) holder).item.getBackground().mutate().setColorFilter(colors.getColor(number, Color.BLACK), PorterDuff.Mode.SRC_ATOP);
@@ -187,21 +190,21 @@ public class TimetableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                     attendance.setText("Justified");
                                     break;
                                 default:
-                                    ((TimetableViewHolder) holder).attendance.setVisibility(View.GONE);
+                                    attendance.setVisibility(View.GONE);
                             }
 
                         }
                         else {
-                            ((TimetableViewHolder) holder).attendance.setVisibility(View.GONE);
+                            attendance.setVisibility(View.GONE);
                         }
                         String endTime = "";
-                        if (mPeriodDefinitions.size() != pos) {
-                            if (mPeriodDefinitions.get(pos + 1) != null && !mPeriodDefinitions.get(pos + 1).PeriodTime.equals(""))
-                                endTime = " - " + mPeriodDefinitions.get(pos + 1).PeriodTime;
+                        if (mPeriodTimes.size() != pos + 1) {
+                            if (mPeriodTimes.get(pos + 1) != null && !mPeriodTimes.get(pos + 1).time.equals("--"))
+                                endTime = " - " + mPeriodTimes.get(pos + 1).time;
                         }
                         new AlertDialog.Builder(mContext)
                                 .setCustomTitle(titleView)
-                                .setMessage(periodDefinition.PeriodTime + endTime + "\nTeacher: " + period.Teacher + "\nRoom: " + period.Room)
+                                .setMessage(periodTime.time + endTime + "\nTeacher: " + period.Teacher + "\nRoom: " + period.Room)
                                 .setPositiveButton("Close", null)
                                 .create()
                                 .show();

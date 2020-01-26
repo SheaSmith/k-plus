@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Created by Shea Smith on 26/05/19 9:35 PM
-  ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
-  ~ Last modified 26/05/19 8:55 PM
+  ~ Created by Shea Smith on 26/01/20 6:49 PM
+  ~ Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+  ~ Last modified 3/06/19 12:42 PM
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -16,279 +16,273 @@
         android:layout_height="match_parent"
         android:layout_gravity="center" />
 
-    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <include
+        android:id="@+id/noInternet"
+        layout="@layout/no_internet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipe_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <ScrollView
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <ScrollView
-                android:id="@+id/scrollView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <LinearLayout
-                        android:id="@+id/general_information"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/general_information_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="General Information"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-                        <TextView
-                            android:id="@+id/general_information_allowed_panadol_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Allowed Panadol" />
-
-                        <TextView
-                            android:id="@+id/general_information_allowed_panadol"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="1"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                        <TextView
-                            android:id="@+id/general_information_allowed_ibuprofen_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Allowed Ibuprofen" />
-
-                        <TextView
-                            android:id="@+id/general_information_allowed_ibuprofen"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="No"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                        <TextView
-                            android:id="@+id/general_information_medical_conditions_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Medical Conditions" />
-
-                        <TextView
-                            android:id="@+id/general_information_medical_conditions"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="None"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                        <TextView
-                            android:id="@+id/general_information_reactions_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Reactions" />
-
-                        <TextView
-                            android:id="@+id/general_information_reactions"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="None"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                        <TextView
-                            android:id="@+id/general_information_vaccinations_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Vaccinations" />
-
-                        <TextView
-                            android:id="@+id/general_information_vaccinations"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="All"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                        <TextView
-                            android:id="@+id/general_information_special_circumstances_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Special Circumstances" />
-
-                        <TextView
-                            android:id="@+id/general_information_special_circumstances"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="None"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                        <TextView
-                            android:id="@+id/general_information_general_notes_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="General Notes" />
-
-                        <TextView
-                            android:id="@+id/general_information_general_notes"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="None"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                        <TextView
-                            android:id="@+id/general_information_health_notes_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Health Notes" />
-
-                        <TextView
-                            android:id="@+id/general_information_health_notes"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="None"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/doctor"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/doctor_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Doctor"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-                        <TextView
-                            android:id="@+id/doctor_name_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Name" />
-
-                        <TextView
-                            android:id="@+id/doctor_name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="Dr M. Frankenstein"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                        <TextView
-                            android:id="@+id/doctor_phone_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Phone" />
-
-                        <TextView
-                            android:id="@+id/doctor_phone"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="111"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                        <TextView
-                            android:id="@+id/doctor_address_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Address" />
-
-                        <TextView
-                            android:id="@+id/doctor_address"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="2 Infinity Loop"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/dentist"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/dentist_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Dentist"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-                        <TextView
-                            android:id="@+id/dentist_name_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Name" />
-
-                        <TextView
-                            android:id="@+id/dentist_name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="Dr V. Dracula"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                        <TextView
-                            android:id="@+id/dentist_phone_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Phone" />
-
-                        <TextView
-                            android:id="@+id/dentist_phone"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="111"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                        <TextView
-                            android:id="@+id/dentist_address_heading"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Address" />
-
-                        <TextView
-                            android:id="@+id/dentist_address"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
-                            android:text="2 Infinity Loop"
-                            android:textColor="?android:attr/textColorPrimary" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-            </ScrollView>
-
-            <include
-                android:id="@+id/noInternet"
-                layout="@layout/no_internet"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone" />
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        </LinearLayout>
-    </android.support.v4.widget.SwipeRefreshLayout>
+                <LinearLayout
+                    android:id="@+id/general_information"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/general_information_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="General Information"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+                    <TextView
+                        android:id="@+id/general_information_allowed_panadol_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Allowed Panadol" />
+
+                    <TextView
+                        android:id="@+id/general_information_allowed_panadol"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="1"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <TextView
+                        android:id="@+id/general_information_allowed_ibuprofen_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Allowed Ibuprofen" />
+
+                    <TextView
+                        android:id="@+id/general_information_allowed_ibuprofen"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="No"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <TextView
+                        android:id="@+id/general_information_medical_conditions_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Medical Conditions" />
+
+                    <TextView
+                        android:id="@+id/general_information_medical_conditions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="None"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <TextView
+                        android:id="@+id/general_information_reactions_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Reactions" />
+
+                    <TextView
+                        android:id="@+id/general_information_reactions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="None"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <TextView
+                        android:id="@+id/general_information_vaccinations_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Vaccinations" />
+
+                    <TextView
+                        android:id="@+id/general_information_vaccinations"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="All"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <TextView
+                        android:id="@+id/general_information_special_circumstances_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Special Circumstances" />
+
+                    <TextView
+                        android:id="@+id/general_information_special_circumstances"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="None"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <TextView
+                        android:id="@+id/general_information_general_notes_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="General Notes" />
+
+                    <TextView
+                        android:id="@+id/general_information_general_notes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="None"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <TextView
+                        android:id="@+id/general_information_health_notes_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Health Notes" />
+
+                    <TextView
+                        android:id="@+id/general_information_health_notes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="None"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/doctor"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/doctor_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Doctor"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+                    <TextView
+                        android:id="@+id/doctor_name_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Name" />
+
+                    <TextView
+                        android:id="@+id/doctor_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="Dr M. Frankenstein"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <TextView
+                        android:id="@+id/doctor_phone_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Phone" />
+
+                    <TextView
+                        android:id="@+id/doctor_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="111"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <TextView
+                        android:id="@+id/doctor_address_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Address" />
+
+                    <TextView
+                        android:id="@+id/doctor_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="2 Infinity Loop"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/dentist"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/dentist_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Dentist"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+                    <TextView
+                        android:id="@+id/dentist_name_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Name" />
+
+                    <TextView
+                        android:id="@+id/dentist_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="Dr V. Dracula"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <TextView
+                        android:id="@+id/dentist_phone_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Phone" />
+
+                    <TextView
+                        android:id="@+id/dentist_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="111"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                    <TextView
+                        android:id="@+id/dentist_address_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Address" />
+
+                    <TextView
+                        android:id="@+id/dentist_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="2 Infinity Loop"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </LinearLayout>

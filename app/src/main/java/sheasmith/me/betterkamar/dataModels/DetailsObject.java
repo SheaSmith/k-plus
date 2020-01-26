@@ -1,13 +1,14 @@
 /*
- * Created by Shea Smith on 6/02/19 12:54 PM
- * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 12:54 PM
+ * Created by Shea Smith on 26/01/20 6:49 PM
+ * Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+ * Last modified 31/05/19 5:26 PM
  */
 
 package sheasmith.me.betterkamar.dataModels;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
@@ -56,86 +57,86 @@ public class DetailsObject implements Serializable {
 
         Student student = new Student();
         student.index = studentElement.getAttribute("index");
-        student.StudentID = studentElement.getElementsByTagName("StudentID").item(0).getTextContent();
-        student.FirstName = studentElement.getElementsByTagName("FirstName").item(0).getTextContent();
-        student.ForeNames = studentElement.getElementsByTagName("ForeNames").item(0).getTextContent();
-        student.LastName = studentElement.getElementsByTagName("LastName").item(0).getTextContent();
-        student.FirstNameLegal = studentElement.getElementsByTagName("FirstNameLegal").item(0).getTextContent();
-        student.ForeNamesLegal = studentElement.getElementsByTagName("ForeNamesLegal").item(0).getTextContent();
-        student.LastNameLegal = studentElement.getElementsByTagName("LastNameLegal").item(0).getTextContent();
-        student.Gender = studentElement.getElementsByTagName("Gender").item(0).getTextContent();
-        student.Ethnicity = studentElement.getElementsByTagName("Ethnicity").item(0).getTextContent();
-        student.DateBirth = studentElement.getElementsByTagName("DateBirth").item(0).getTextContent();
-        student.Age = studentElement.getElementsByTagName("Age").item(0).getTextContent();
-        student.NSN = studentElement.getElementsByTagName("NSN").item(0).getTextContent();
-        student.StudentEmail = studentElement.getElementsByTagName("StudentEmail").item(0).getTextContent();
-        student.StudentSchoolEmail = studentElement.getElementsByTagName("StudentSchoolEmail").item(0).getTextContent();
-        student.HomePhone = studentElement.getElementsByTagName("HomePhone").item(0).getTextContent();
-        student.HomeAddress = studentElement.getElementsByTagName("HomeAddress").item(0).getTextContent();
+        student.StudentID = getIfNotNull(studentElement.getElementsByTagName("StudentID"));
+        student.FirstName = getIfNotNull(studentElement.getElementsByTagName("FirstName"));
+        student.ForeNames = getIfNotNull(studentElement.getElementsByTagName("ForeNames"));
+        student.LastName = getIfNotNull(studentElement.getElementsByTagName("LastName"));
+        student.FirstNameLegal = getIfNotNull(studentElement.getElementsByTagName("FirstNameLegal"));
+        student.ForeNamesLegal = getIfNotNull(studentElement.getElementsByTagName("ForeNamesLegal"));
+        student.LastNameLegal = getIfNotNull(studentElement.getElementsByTagName("LastNameLegal"));
+        student.Gender = getIfNotNull(studentElement.getElementsByTagName("Gender"));
+        student.Ethnicity = getIfNotNull(studentElement.getElementsByTagName("Ethnicity"));
+        student.DateBirth = getIfNotNull(studentElement.getElementsByTagName("DateBirth"));
+        student.Age = getIfNotNull(studentElement.getElementsByTagName("Age"));
+        student.NSN = getIfNotNull(studentElement.getElementsByTagName("NSN"));
+        student.StudentEmail = getIfNotNull(studentElement.getElementsByTagName("StudentEmail"));
+        student.StudentSchoolEmail = getIfNotNull(studentElement.getElementsByTagName("StudentSchoolEmail"));
+        student.HomePhone = getIfNotNull(studentElement.getElementsByTagName("HomePhone"));
+        student.HomeAddress = getIfNotNull(studentElement.getElementsByTagName("HomeAddress"));
 
-        student.ParentTitle = studentElement.getElementsByTagName("ParentTitle").item(0).getTextContent();
-        student.ParentEmail = studentElement.getElementsByTagName("ParentEmail").item(0).getTextContent();
+        student.ParentTitle = getIfNotNull(studentElement.getElementsByTagName("ParentTitle"));
+        student.ParentEmail = getIfNotNull(studentElement.getElementsByTagName("ParentEmail"));
 
         if (studentElement.getElementsByTagName("HomePhoneB").getLength() != 0) {
-            student.HomePhoneB = studentElement.getElementsByTagName("HomePhoneB").item(0).getTextContent();
-            student.HomeAddressB = studentElement.getElementsByTagName("HomeAddressB").item(0).getTextContent();
-            student.ParentTitleB = studentElement.getElementsByTagName("ParentTitleB").item(0).getTextContent();
-            student.ParentSalutationB = studentElement.getElementsByTagName("ParentSalutationB").item(0).getTextContent();
-            student.ParentEmailB = studentElement.getElementsByTagName("ParentEmailB").item(0).getTextContent();
+            student.HomePhoneB = getIfNotNull(studentElement.getElementsByTagName("HomePhoneB"));
+            student.HomeAddressB = getIfNotNull(studentElement.getElementsByTagName("HomeAddressB"));
+            student.ParentTitleB = getIfNotNull(studentElement.getElementsByTagName("ParentTitleB"));
+            student.ParentSalutationB = getIfNotNull(studentElement.getElementsByTagName("ParentSalutationB"));
+            student.ParentEmailB = getIfNotNull(studentElement.getElementsByTagName("ParentEmailB"));
         }
 
         if (studentElement.getElementsByTagName("DoctorName").getLength() != 0) {
-            student.DoctorName = studentElement.getElementsByTagName("DoctorName").item(0).getTextContent();
-            student.DoctorPhone = studentElement.getElementsByTagName("DoctorPhone").item(0).getTextContent();
-            student.DoctorAddress = studentElement.getElementsByTagName("DoctorAddress").item(0).getTextContent();
+            student.DoctorName = getIfNotNull(studentElement.getElementsByTagName("DoctorName"));
+            student.DoctorPhone = getIfNotNull(studentElement.getElementsByTagName("DoctorPhone"));
+            student.DoctorAddress = getIfNotNull(studentElement.getElementsByTagName("DoctorAddress"));
         }
 
         if (studentElement.getElementsByTagName("DentistName").getLength() != 0) {
-            student.DentistName = studentElement.getElementsByTagName("DentistName").item(0).getTextContent();
-            student.DentistPhone = studentElement.getElementsByTagName("DentistPhone").item(0).getTextContent();
-            student.DentistAddress = studentElement.getElementsByTagName("DentistAddress").item(0).getTextContent();
+            student.DentistName = getIfNotNull(studentElement.getElementsByTagName("DentistName"));
+            student.DentistPhone = getIfNotNull(studentElement.getElementsByTagName("DentistPhone"));
+            student.DentistAddress = getIfNotNull(studentElement.getElementsByTagName("DentistAddress"));
         }
 
-        student.AllowedPanadol = studentElement.getElementsByTagName("AllowedPanadol").item(0).getTextContent();
-        student.AllowedIbuprofen = studentElement.getElementsByTagName("AllowedIbuprofen").item(0).getTextContent();
-        student.HealthFlag = studentElement.getElementsByTagName("HealthFlag").item(0).getTextContent();
-        student.Medical = studentElement.getElementsByTagName("Medical").item(0).getTextContent();
-        student.Reactions = studentElement.getElementsByTagName("Reactions").item(0).getTextContent();
-        student.Vaccinations = studentElement.getElementsByTagName("Vaccinations").item(0).getTextContent();
-        student.SpecialCircumstances = studentElement.getElementsByTagName("SpecialCircumstances").item(0).getTextContent();
-        student.GeneralNotes = studentElement.getElementsByTagName("GeneralNotes").item(0).getTextContent();
-        student.HealthNotes = studentElement.getElementsByTagName("HealthNotes").item(0).getTextContent();
+        student.AllowedPanadol = getIfNotNull(studentElement.getElementsByTagName("AllowedPanadol"));
+        student.AllowedIbuprofen = getIfNotNull(studentElement.getElementsByTagName("AllowedIbuprofen"));
+        student.HealthFlag = getIfNotNull(studentElement.getElementsByTagName("HealthFlag"));
+        student.Medical = getIfNotNull(studentElement.getElementsByTagName("Medical"));
+        student.Reactions = getIfNotNull(studentElement.getElementsByTagName("Reactions"));
+        student.Vaccinations = getIfNotNull(studentElement.getElementsByTagName("Vaccinations"));
+        student.SpecialCircumstances = getIfNotNull(studentElement.getElementsByTagName("SpecialCircumstances"));
+        student.GeneralNotes = getIfNotNull(studentElement.getElementsByTagName("GeneralNotes"));
+        student.HealthNotes = getIfNotNull(studentElement.getElementsByTagName("HealthNotes"));
 
-        student.MotherRelation = studentElement.getElementsByTagName("MotherRelation").item(0).getTextContent();
-        student.MotherName = studentElement.getElementsByTagName("MotherName").item(0).getTextContent();
-        student.MotherStatus = studentElement.getElementsByTagName("MotherStatus").item(0).getTextContent();
-        student.MotherEmail = studentElement.getElementsByTagName("MotherEmail").item(0).getTextContent();
-        student.MotherPhoneHome = studentElement.getElementsByTagName("MotherPhoneHome").item(0).getTextContent();
-        student.MotherPhoneCell = studentElement.getElementsByTagName("MotherPhoneCell").item(0).getTextContent();
-        student.MotherPhoneWork = studentElement.getElementsByTagName("MotherPhoneWork").item(0).getTextContent();
-        student.MotherPhoneExtn = studentElement.getElementsByTagName("MotherPhoneExtn").item(0).getTextContent();
-        student.MotherOccupation = studentElement.getElementsByTagName("MotherOccupation").item(0).getTextContent();
-        student.MotherWorkAddress = studentElement.getElementsByTagName("MotherWorkAddress").item(0).getTextContent();
-        student.MotherNotes = studentElement.getElementsByTagName("MotherNotes").item(0).getTextContent();
+        student.MotherRelation = getIfNotNull(studentElement.getElementsByTagName("MotherRelation"));
+        student.MotherName = getIfNotNull(studentElement.getElementsByTagName("MotherName"));
+        student.MotherStatus = getIfNotNull(studentElement.getElementsByTagName("MotherStatus"));
+        student.MotherEmail = getIfNotNull(studentElement.getElementsByTagName("MotherEmail"));
+        student.MotherPhoneHome = getIfNotNull(studentElement.getElementsByTagName("MotherPhoneHome"));
+        student.MotherPhoneCell = getIfNotNull(studentElement.getElementsByTagName("MotherPhoneCell"));
+        student.MotherPhoneWork = getIfNotNull(studentElement.getElementsByTagName("MotherPhoneWork"));
+        student.MotherPhoneExtn = getIfNotNull(studentElement.getElementsByTagName("MotherPhoneExtn"));
+        student.MotherOccupation = getIfNotNull(studentElement.getElementsByTagName("MotherOccupation"));
+        student.MotherWorkAddress = getIfNotNull(studentElement.getElementsByTagName("MotherWorkAddress"));
+        student.MotherNotes = getIfNotNull(studentElement.getElementsByTagName("MotherNotes"));
 
-        student.FatherRelation = studentElement.getElementsByTagName("FatherRelation").item(0).getTextContent();
-        student.FatherName = studentElement.getElementsByTagName("FatherName").item(0).getTextContent();
-        student.FatherStatus = studentElement.getElementsByTagName("FatherStatus").item(0).getTextContent();
-        student.FatherEmail = studentElement.getElementsByTagName("FatherEmail").item(0).getTextContent();
-        student.FatherPhoneHome = studentElement.getElementsByTagName("FatherPhoneHome").item(0).getTextContent();
-        student.FatherPhoneCell = studentElement.getElementsByTagName("FatherPhoneCell").item(0).getTextContent();
-        student.FatherPhoneWork = studentElement.getElementsByTagName("FatherPhoneWork").item(0).getTextContent();
-        student.FatherPhoneExtn = studentElement.getElementsByTagName("FatherPhoneExtn").item(0).getTextContent();
-        student.FatherOccupation = studentElement.getElementsByTagName("FatherOccupation").item(0).getTextContent();
-        student.FatherWorkAddress = studentElement.getElementsByTagName("FatherWorkAddress").item(0).getTextContent();
-        student.FatherNotes = studentElement.getElementsByTagName("FatherNotes").item(0).getTextContent();
+        student.FatherRelation = getIfNotNull(studentElement.getElementsByTagName("FatherRelation"));
+        student.FatherName = getIfNotNull(studentElement.getElementsByTagName("FatherName"));
+        student.FatherStatus = getIfNotNull(studentElement.getElementsByTagName("FatherStatus"));
+        student.FatherEmail = getIfNotNull(studentElement.getElementsByTagName("FatherEmail"));
+        student.FatherPhoneHome = getIfNotNull(studentElement.getElementsByTagName("FatherPhoneHome"));
+        student.FatherPhoneCell = getIfNotNull(studentElement.getElementsByTagName("FatherPhoneCell"));
+        student.FatherPhoneWork = getIfNotNull(studentElement.getElementsByTagName("FatherPhoneWork"));
+        student.FatherPhoneExtn = getIfNotNull(studentElement.getElementsByTagName("FatherPhoneExtn"));
+        student.FatherOccupation = getIfNotNull(studentElement.getElementsByTagName("FatherOccupation"));
+        student.FatherWorkAddress = getIfNotNull(studentElement.getElementsByTagName("FatherWorkAddress"));
+        student.FatherNotes = getIfNotNull(studentElement.getElementsByTagName("FatherNotes"));
 
-        student.EmergencyName = studentElement.getElementsByTagName("EmergencyName").item(0).getTextContent();
-        student.EmergencyPhoneHome = studentElement.getElementsByTagName("EmergencyPhoneHome").item(0).getTextContent();
-        student.EmergencyPhoneCell = studentElement.getElementsByTagName("EmergencyPhoneCell").item(0).getTextContent();
-        student.EmergencyPhoneWork = studentElement.getElementsByTagName("EmergencyPhoneWork").item(0).getTextContent();
-        student.EmergencyPhoneExtn = studentElement.getElementsByTagName("EmergencyPhoneExtn").item(0).getTextContent();
-        student.EmergencyNotes = studentElement.getElementsByTagName("EmergencyNotes").item(0).getTextContent();
+        student.EmergencyName = getIfNotNull(studentElement.getElementsByTagName("EmergencyName"));
+        student.EmergencyPhoneHome = getIfNotNull(studentElement.getElementsByTagName("EmergencyPhoneHome"));
+        student.EmergencyPhoneCell = getIfNotNull(studentElement.getElementsByTagName("EmergencyPhoneCell"));
+        student.EmergencyPhoneWork = getIfNotNull(studentElement.getElementsByTagName("EmergencyPhoneWork"));
+        student.EmergencyPhoneExtn = getIfNotNull(studentElement.getElementsByTagName("EmergencyPhoneExtn"));
+        student.EmergencyNotes = getIfNotNull(studentElement.getElementsByTagName("EmergencyNotes"));
 
         results.Student = student;
         StudentDetailsResults = results;
@@ -289,5 +290,18 @@ public class DetailsObject implements Serializable {
         public String FatherStatus;
 
         public String MotherStatus;
+    }
+
+    public String getIfNotNull(NodeList nodeList) {
+        if (nodeList == null)
+            return null;
+
+        if (nodeList.item(0) == null)
+            return null;
+
+        if (nodeList.item(0).getTextContent() == null)
+            return null;
+
+        return nodeList.item(0).getTextContent();
     }
 }

@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~ Created by Shea Smith on 18/05/19 9:45 AM
-  ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
-  ~ Last modified 13/03/19 7:09 PM
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Created by Shea Smith on 26/01/20 6:49 PM
+  ~ Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+  ~ Last modified 3/06/19 12:48 PM
   -->
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="sheasmith.me.betterkamar">
@@ -20,6 +22,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
+        <activity
+            android:name=".pages.settings.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".pages.portals.PortalActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="sheasmith.me.betterkamar.pages.portals.PortalActivity" />
+        </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="0f73ef781806f32d7cd8ed58bc3925758ed50644" />

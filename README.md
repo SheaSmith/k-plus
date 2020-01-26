@@ -1,4 +1,4 @@
-# KAMAR+ 3.0
+# K+ 3.0
 ## Pages currently supported by the API
 - Notices
 - Absences & Attendance

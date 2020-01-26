@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 26/05/19 9:35 PM
- * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 26/05/19 9:07 PM
+ * Created by Shea Smith on 26/01/20 6:49 PM
+ * Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+ * Last modified 3/06/19 12:42 PM
  */
 
 package sheasmith.me.betterkamar.pages.results;
@@ -10,17 +10,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.google.android.gms.analytics.HitBuilders;
@@ -39,6 +40,8 @@ import sheasmith.me.betterkamar.internalModels.Exceptions;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
 import sheasmith.me.betterkamar.internalModels.ResultsViewModel;
 import sheasmith.me.betterkamar.util.ApiManager;
+
+import static android.view.View.GONE;
 
 public class AllResultsFragment extends Fragment {
 
@@ -110,10 +113,21 @@ public class AllResultsFragment extends Fragment {
 
             mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_container);
             mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            SwipeRefreshLayout.OnRefreshListener listener = new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
                     doRequest(mPortal, true);
+                }
+            };
+            mSwipeRefreshLayout.setOnRefreshListener(listener);
+
+            Button noInternetRetry = mView.findViewById(R.id.no_internet_retry);
+            noInternetRetry.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                    listener.onRefresh();
+                    mView.findViewById(R.id.noInternet).setVisibility(GONE);
                 }
             });
             return mView;

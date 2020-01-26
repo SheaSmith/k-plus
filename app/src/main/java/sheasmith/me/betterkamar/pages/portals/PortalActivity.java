@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 26/05/19 9:35 PM
- * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 26/05/19 9:35 PM
+ * Created by Shea Smith on 26/01/20 6:49 PM
+ * Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+ * Last modified 3/06/19 12:42 PM
  */
 
 package sheasmith.me.betterkamar.pages.portals;
@@ -11,11 +11,12 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -108,38 +109,93 @@ public class PortalActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("sheasmith.me.betterkamar", MODE_PRIVATE);
         AppCompatDelegate.setDefaultNightMode(preferences.getInt("night-mode", 1));
 
-        SharedPreferences prefNoSalt = new SecurePreferences(this);
+        SharedPreferences prefNoSalt = new SecurePreferences(this, "");
 
-        // TODO remove this in future version & target api level 28
-        // TODO Dialog should be shown for direct upgrades from 3.1.x -> new unsalted version (3.2.x?)
-        String serial = Build.SERIAL;
-        if (!serial.equals("UNKNOWN") && prefNoSalt.contains("sheasmith.me.betterkamar.portals") && !preferences.contains("serial"))
-            preferences.edit().putString("serial", serial).apply();
+        Set<String> jsonString;
+        if (!preferences.contains("salt")) {
+            // There are two possible salts, Build.SERIAL and Unknown. If it is neither we will nuke the data.
 
-        String salt = null;
+            SharedPreferences serialPrefs = new SecurePreferences(this, Build.SERIAL);
+            jsonString = serialPrefs.getStringSet("sheasmith.me.betterkamar.portals", null);
 
-        if (preferences.contains("serial"))
-            salt = preferences.getString("serial", null);
+            String salt = null;
 
-
-        if (salt == null)
-            salt = Settings.Secure.getString(getContentResolver(),
-                    Settings.Secure.ANDROID_ID);
-
-
-        SharedPreferences prefs = new SecurePreferences(this, salt);
-
-        Set<String> jsonString = prefs.getStringSet("sheasmith.me.betterkamar.portals", null);
-        if (jsonString != null && !jsonString.isEmpty() && jsonString.toArray()[0] == null) {
-            prefs = new SecurePreferences(this, "UNKNOWN");
-            jsonString = prefs.getStringSet("sheasmith.me.betterkamar.portals", null);
-        }
-        if (jsonString != null) {
-            for (String s : jsonString) {
-                Gson gson = new Gson();
-                PortalObject s1 = gson.fromJson(s, PortalObject.class);
-                servers.add(s1);
+            if (jsonString == null || jsonString.isEmpty() || jsonString.toArray()[0] == null) {
+                jsonString = null;
             }
+            else {
+                salt = Build.SERIAL;
+            }
+
+            if (jsonString == null) {
+                SharedPreferences unknownPrefs = new SecurePreferences(this, "UNKNOWN");
+
+                jsonString = unknownPrefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+
+                if (jsonString == null || jsonString.isEmpty() || jsonString.toArray()[0] == null) {
+                    jsonString = null;
+                }
+                else {
+                    salt = "UNKNOWN";
+                }
+            }
+
+            if (jsonString == null) {
+                SharedPreferences unknownPrefs = new SecurePreferences(this, Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+
+                jsonString = unknownPrefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+
+                if (jsonString == null || jsonString.isEmpty() || jsonString.toArray()[0] == null) {
+                    jsonString = null;
+                }
+                else {
+                    salt = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+                }
+            }
+
+            if (jsonString == null) {
+                preferences.edit().putString("serial", Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID)).apply();
+                prefNoSalt.edit().remove("sheasmith.me.betterkamar.portals").apply();
+                jsonString = new HashSet<>();
+            }
+            else {
+                preferences.edit().putString("serial", salt).apply();
+            }
+        }
+        else {
+
+            jsonString = new SecurePreferences(this, preferences.getString("salt", Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID))).getStringSet("sheasmith.me.betterkamar.portals", null);
+        }
+
+//        // TODO remove this in future version & target api level 28
+//        // TODO Dialog should be shown for direct upgrades from 3.1.x -> new unsalted version (3.2.x?)
+//        String serial = Build.SERIAL;
+//        if (!serial.equals("UNKNOWN") && prefNoSalt.contains("sheasmith.me.betterkamar.portals") && !preferences.contains("serial"))
+//            preferences.edit().putString("serial", serial).apply();
+//
+//        String salt = null;
+//
+//        if (preferences.contains("serial"))
+//            salt = preferences.getString("serial", null);
+//
+//
+//        if (salt == null)
+//            salt = Settings.Secure.getString(getContentResolver(),
+//                    Settings.Secure.ANDROID_ID);
+//
+//
+//        SharedPreferences prefs = new SecurePreferences(this, salt);
+//
+//        Set<String> jsonString = prefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+//        if (jsonString != null && !jsonString.isEmpty() && jsonString.toArray()[0] == null) {
+//            prefs = new SecurePreferences(this, "UNKNOWN");
+//            jsonString = prefs.getStringSet("sheasmith.me.betterkamar.portals", null);
+//        }
+
+        for (String s : jsonString) {
+            Gson gson = new Gson();
+            PortalObject s1 = gson.fromJson(s, PortalObject.class);
+            servers.add(s1);
         }
 
         // specify an adapter (see also next example)
@@ -202,7 +258,7 @@ public class PortalActivity extends AppCompatActivity {
     }
 
     private void save() {
-        SharedPreferences.Editor editor = new SecurePreferences(this).edit();
+        SharedPreferences.Editor editor = new SecurePreferences(this, getSharedPreferences("sheasmith.me.betterkamar", MODE_PRIVATE).getString("serial", Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID))).edit();
         Set<String> jsonSet = new HashSet<>();
         for (PortalObject portal : servers) {
             Gson gson = new Gson();

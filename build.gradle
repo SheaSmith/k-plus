@@ -1,3 +1,9 @@
+/*
+ * Created by Shea Smith on 26/01/20 6:49 PM
+ * Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+ * Last modified 3/06/19 12:42 PM
+ */
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
@@ -30,6 +36,7 @@ allprojects {
 allprojects {
     repositories {
         maven { url "https://jitpack.io" }
+        google()
     }
 }
 task clean(type: Delete) {

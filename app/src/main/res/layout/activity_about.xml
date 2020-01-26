@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Created by Shea Smith on 26/05/19 9:35 PM
-  ~ Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
-  ~ Last modified 26/05/19 3:35 PM
+  ~ Created by Shea Smith on 26/01/20 6:49 PM
+  ~ Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+  ~ Last modified 21/07/19 1:50 PM
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autoLink="web"
-        android:text="Thanks for using KAMAR+! If you enjoy the app, please rate it in the Play Store, it is greatly appreciated."
+        android:text="Thanks for using K+! If you enjoy the app, please rate it in the Play Store, it is greatly appreciated."
         android:textStyle="bold" />
 
     <TextView
@@ -45,7 +45,7 @@
         android:id="@+id/copyright"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="KAMAR+ for Android is © Shea Smith 2016-2019. All rights reserved." />
+        android:text="K+ for Android is © Shea Smith 2016-2019. All rights reserved." />
 
     <TextView
         android:id="@+id/privacy"

@@ -1,7 +1,7 @@
 /*
- * Created by Shea Smith on 6/02/19 12:54 PM
- * Copyright (c) 2016 -  2019 Shea Smith. All rights reserved.
- * Last modified 6/02/19 12:54 PM
+ * Created by Shea Smith on 26/01/20 6:49 PM
+ * Copyright (c) 2016 -  2020 Shea Smith. All rights reserved.
+ * Last modified 21/07/19 12:42 PM
  */
 
 package sheasmith.me.betterkamar.util;
@@ -80,7 +80,7 @@ public class WidgetApiManager {
                     .url(URL)
                     .post(body)
                     .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                    .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                    .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                     .addHeader("X-Requested-With", "nz.co.KAMAR")
                     .addHeader("Origin", "file://")
                     .build();
@@ -122,7 +122,7 @@ public class WidgetApiManager {
                         .url(URL)
                         .post(body)
                         .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                        .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                        .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                         .addHeader("X-Requested-With", "nz.co.KAMAR")
                         .addHeader("Origin", "file://")
                         .build();
@@ -177,7 +177,7 @@ public class WidgetApiManager {
                         .url(URL)
                         .post(body)
                         .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                        .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                        .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                         .addHeader("X-Requested-With", "nz.co.KAMAR")
                         .addHeader("Origin", "file://")
                         .build();
@@ -218,7 +218,7 @@ public class WidgetApiManager {
                         .url(URL)
                         .post(body)
                         .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                        .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                        .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                         .addHeader("X-Requested-With", "nz.co.KAMAR")
                         .addHeader("Origin", "file://")
                         .build();
@@ -258,7 +258,7 @@ public class WidgetApiManager {
                         .url(URL)
                         .post(body)
                         .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                        .addHeader("User-Agent", "KAMAR+ " + BuildConfig.VERSION_NAME)
+                        .addHeader("User-Agent", "K+ " + BuildConfig.VERSION_NAME)
                         .addHeader("X-Requested-With", "nz.co.KAMAR")
                         .addHeader("Origin", "file://")
                         .build();
