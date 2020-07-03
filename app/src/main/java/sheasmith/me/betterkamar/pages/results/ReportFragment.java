@@ -209,13 +209,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -223,13 +216,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
@@ -249,7 +247,6 @@ public class ReportFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private ReportAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private Tracker mTracker;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static ReportFragment newInstance() {
@@ -277,9 +274,6 @@ public class ReportFragment extends Fragment {
 
         if (isAdded()) {
             KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
-            mTracker = application.getDefaultTracker();
-            mTracker.setScreenName("Reports");
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
             FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "Reports", null);
         }
     }

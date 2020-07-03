@@ -210,13 +210,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-import androidx.annotation.ColorInt;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatDelegate;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -233,14 +226,19 @@ import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
@@ -257,7 +255,6 @@ public class NCEAFragment extends Fragment {
     private View mView;
     private ProgressBar mLoader;
     private PortalObject mPortal;
-    private Tracker mTracker;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static NCEAFragment newInstance() {
@@ -297,9 +294,6 @@ public class NCEAFragment extends Fragment {
 
         if (isAdded()) {
             KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
-            mTracker = application.getDefaultTracker();
-            mTracker.setScreenName("NCEA Results");
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
             FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "NCEA Results", null);
         }
     }

@@ -207,21 +207,17 @@ package sheasmith.me.betterkamar.pages.about;
 
 import android.os.Build;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import androidx.appcompat.app.AppCompatActivity;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 
 public class AboutActivity extends AppCompatActivity {
-
-    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,9 +228,6 @@ public class AboutActivity extends AppCompatActivity {
         setTitle("About");
 
         KamarPlusApplication application = (KamarPlusApplication) getApplication();
-        mTracker = application.getDefaultTracker();
-        mTracker.setScreenName("About");
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         FirebaseAnalytics.getInstance(this).setCurrentScreen(this, "About", null);
     }
 

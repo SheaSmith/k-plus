@@ -210,19 +210,12 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.securepreferences.SecurePreferences;
 
@@ -231,6 +224,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import io.fabric.sdk.android.Fabric;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
@@ -244,7 +241,6 @@ public class PortalActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<PortalObject> servers = new ArrayList<>();
-    private Tracker mTracker;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -288,10 +284,6 @@ public class PortalActivity extends AppCompatActivity {
         setContentView(R.layout.activity_portal);
 
         KamarPlusApplication application = (KamarPlusApplication) getApplication();
-        mTracker = application.getDefaultTracker();
-        mTracker.setScreenName("Portal List");
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
-        mTracker.enableAdvertisingIdCollection(true);
 
         setTitle("Portals");
 

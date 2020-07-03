@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/k-plus.iml" filepath="$PROJECT_DIR$/.idea/modules/k-plus.iml" group="k-plus" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/k-plus-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/k-plus-app.iml" group="k-plus/app" />
       <module fileurl="file://$PROJECT_DIR$/kamar.iml" filepath="$PROJECT_DIR$/kamar.iml" />
     </modules>
   </component>

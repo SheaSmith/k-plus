@@ -209,22 +209,20 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import okhttp3.HttpUrl;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
@@ -235,8 +233,6 @@ import sheasmith.me.betterkamar.util.ApiManager;
 
 public class AddPortalActivity extends AppCompatActivity {
 
-    private Tracker mTracker;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -245,9 +241,6 @@ public class AddPortalActivity extends AppCompatActivity {
         findViewById(R.id.button).setVisibility(View.GONE);
 
         KamarPlusApplication application = (KamarPlusApplication) getApplication();
-        mTracker = application.getDefaultTracker();
-        mTracker.setScreenName("Add Portal");
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         FirebaseAnalytics.getInstance(this).setCurrentScreen(this, "Add Portal", null);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

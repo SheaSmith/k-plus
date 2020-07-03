@@ -209,10 +209,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.AlertDialog;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -222,12 +218,14 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.DetailsObject;
@@ -244,7 +242,6 @@ public class EmergencyDetailsFragment extends Fragment {
     private View mView;
     private ProgressBar mLoader;
     private PortalObject mPortal;
-    private Tracker mTracker;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static EmergencyDetailsFragment newInstance() {
@@ -271,9 +268,6 @@ public class EmergencyDetailsFragment extends Fragment {
 
         if (isAdded()) {
             KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
-            mTracker = application.getDefaultTracker();
-            mTracker.setScreenName("Emergency Details");
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
             FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "Emergency Details", null);
         }
     }

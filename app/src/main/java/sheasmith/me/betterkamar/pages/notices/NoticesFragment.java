@@ -209,15 +209,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -229,8 +220,6 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
@@ -242,6 +231,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.LoginObject;
@@ -271,7 +269,6 @@ public class NoticesFragment extends Fragment {
     private Date lastDate;
 
     private HashMap<Date, NoticesObject> notices = new HashMap<>();
-    private Tracker mTracker;
     private TextView mCurrentDate;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -296,9 +293,6 @@ public class NoticesFragment extends Fragment {
                 doRequest(mPortal, new Date(System.currentTimeMillis()), false, contextThemeWrapper);
 
             KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
-            mTracker = application.getDefaultTracker();
-            mTracker.setScreenName("Notices");
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
             FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "Notices", null);
         }
     }

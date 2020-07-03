@@ -212,10 +212,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.AlertDialog;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -224,12 +220,14 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import de.hdodenhof.circleimageview.CircleImageView;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
@@ -247,7 +245,6 @@ public class StudentDetailsFragment extends Fragment {
     private View mView;
     private ProgressBar mLoader;
     private PortalObject mPortal;
-    private Tracker mTracker;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static StudentDetailsFragment newInstance() {
@@ -274,9 +271,6 @@ public class StudentDetailsFragment extends Fragment {
 
         if (isAdded()) {
             KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
-            mTracker = application.getDefaultTracker();
-            mTracker.setScreenName("Student Details");
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
             FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "Student Details", null);
         }
     }
