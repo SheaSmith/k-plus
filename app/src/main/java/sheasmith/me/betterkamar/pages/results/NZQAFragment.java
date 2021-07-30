@@ -226,8 +226,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
+
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
@@ -251,7 +250,7 @@ public class NZQAFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private NZQAAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private Tracker mTracker;
+
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static NZQAFragment newInstance() {
@@ -278,9 +277,7 @@ public class NZQAFragment extends Fragment {
 
         if (isAdded()) {
             KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
-            mTracker = application.getDefaultTracker();
-            mTracker.setScreenName("NZQA Results");
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
             FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "NZQA Results", null);
         }
     }
@@ -425,13 +422,7 @@ public class NZQAFragment extends Fragment {
                                                 doRequest(portal, ignoreCache);
                                             }
                                         })
-                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                if (isAdded())
-                                                    requireActivity().finish();
-                                            }
-                                        })
+                                        .setNegativeButton("Cancel", null)
                                         .create()
                                         .show();
                             }

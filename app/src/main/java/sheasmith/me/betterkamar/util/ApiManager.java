@@ -232,15 +232,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -1240,11 +1244,41 @@ public class ApiManager {
                     Connection.Response origCookies = Jsoup.connect(URL.replace("api/api.php", "index.php")).method(Connection.Method.GET).execute();
                     Map<String, String> sessionCookies = origCookies.cookies();
 
+                    // Honestly KAMAR, you guys need to make it harder to login via scraping ;)
+                    OkHttpClient client = new OkHttpClient();
+
+                    Request request = new Request.Builder()
+                            .url(URL.replace("api/api.php", "index.php/assets/javascript.js"))
+                            .get()
+                            .build();
+
+                    Response js = client.newCall(request).execute();
+                    String body = js.body().string();
+                    Pattern urlPattern = Pattern.compile("\\$form\\.prop\\('action'\\) \\+'(.*?)'");
+
+                    Matcher urlMatcher = urlPattern.matcher(body);
+
+                    urlMatcher.find();
+
+                    String urlPart = urlMatcher.group(1);
+
+                    Pattern formInputPattern = Pattern.compile("<input type=\"hidden\" name=\"(.*?)\" value=\"'\\+ \\$auth\\.data\\('(.*?)'");
+                    Matcher keyValue = formInputPattern.matcher(body);
+                    keyValue.find();
+                    String key = keyValue.group(1);
+
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("X-Requested-With", "XMLHttpRequest");
+                    headers.put("Referer", URL.replace("api/api.php", "index.php"));
+
+                    String value = origCookies.parse().body().getElementById("auth").attr("data-" + key);
+
+
                     Connection.Response login;
-                    if (sessionCookies.containsKey("csrf_kamar_cn"))
-                        login = Jsoup.connect(URL.replace("api/api.php", "index.php/login")).method(Connection.Method.POST).data("username", ID, "password", PASSWORD, "csrf_kamar_sn", sessionCookies.get("csrf_kamar_cn")).cookies(sessionCookies).execute();
-                    else
-                        login = Jsoup.connect(URL.replace("api/api.php", "index.php/login")).method(Connection.Method.POST).data("username", ID, "password", PASSWORD).cookies(sessionCookies).execute();
+                    //if (sessionCookies.containsKey("csrf_kamar_cn"))
+                        login = Jsoup.connect(URL.replace("api/api.php", "index.php/" + urlPart)).method(Connection.Method.POST).data("username", ID, "password", PASSWORD, key, value).headers(headers).cookies(sessionCookies).ignoreContentType(true).execute();
+                    //else
+                       // login = Jsoup.connect(URL.replace("api/api.php", "index.php/" + urlPart)).method(Connection.Method.POST).data("username", ID, "password", PASSWORD).cookies(sessionCookies).execute();
 
                     Map<String, String> cookies = login.cookies();
 //                    if (sessionCookies.containsKey("kamar_session"))
@@ -1289,11 +1323,41 @@ public class ApiManager {
                     Connection.Response origCookies = Jsoup.connect(URL.replace("api/api.php", "index.php")).method(Connection.Method.GET).execute();
                     Map<String, String> sessionCookies = origCookies.cookies();
 
+                    // Honestly KAMAR, you guys need to make it harder to login via scraping ;)
+                    OkHttpClient client = new OkHttpClient();
+
+                    Request request = new Request.Builder()
+                            .url(URL.replace("api/api.php", "index.php/assets/javascript.js"))
+                            .get()
+                            .build();
+
+                    Response js = client.newCall(request).execute();
+                    String body = js.body().string();
+                    Pattern urlPattern = Pattern.compile("\\$form\\.prop\\('action'\\) \\+'(.*?)'");
+
+                    Matcher urlMatcher = urlPattern.matcher(body);
+
+                    urlMatcher.find();
+
+                    String urlPart = urlMatcher.group(1);
+
+                    Pattern formInputPattern = Pattern.compile("<input type=\"hidden\" name=\"(.*?)\" value=\"'\\+ \\$auth\\.data\\('(.*?)'");
+                    Matcher keyValue = formInputPattern.matcher(body);
+                    keyValue.find();
+                    String key = keyValue.group(1);
+
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("X-Requested-With", "XMLHttpRequest");
+                    headers.put("Referer", URL.replace("api/api.php", "index.php"));
+
+                    String value = origCookies.parse().body().getElementById("auth").attr("data-" + key);
+
+
                     Connection.Response login;
-                    if (sessionCookies.containsKey("csrf_kamar_cn"))
-                        login = Jsoup.connect(URL.replace("api/api.php", "index.php/login")).method(Connection.Method.POST).data("username", ID, "password", PASSWORD, "csrf_kamar_sn", sessionCookies.get("csrf_kamar_cn")).cookies(sessionCookies).execute();
-                    else
-                        login = Jsoup.connect(URL.replace("api/api.php", "index.php/login")).method(Connection.Method.POST).data("username", ID, "password", PASSWORD).cookies(sessionCookies).execute();
+                    //if (sessionCookies.containsKey("csrf_kamar_cn"))
+                    login = Jsoup.connect(URL.replace("api/api.php", "index.php/" + urlPart)).method(Connection.Method.POST).data("username", ID, "password", PASSWORD, key, value).headers(headers).cookies(sessionCookies).ignoreContentType(true).execute();
+                    //else
+                    // login = Jsoup.connect(URL.replace("api/api.php", "index.php/" + urlPart)).method(Connection.Method.POST).data("username", ID, "password", PASSWORD).cookies(sessionCookies).execute();
 
                     Map<String, String> cookies = login.cookies();
 //                    if (sessionCookies.containsKey("kamar_session"))

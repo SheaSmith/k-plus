@@ -217,10 +217,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
-import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -235,8 +233,6 @@ import sheasmith.me.betterkamar.util.ApiManager;
 
 public class AddPortalActivity extends AppCompatActivity {
 
-    private Tracker mTracker;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -245,9 +241,6 @@ public class AddPortalActivity extends AppCompatActivity {
         findViewById(R.id.button).setVisibility(View.GONE);
 
         KamarPlusApplication application = (KamarPlusApplication) getApplication();
-        mTracker = application.getDefaultTracker();
-        mTracker.setScreenName("Add Portal");
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         FirebaseAnalytics.getInstance(this).setCurrentScreen(this, "Add Portal", null);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -378,7 +371,7 @@ public class AddPortalActivity extends AppCompatActivity {
                             }
                         });
                     } else if (e instanceof NullPointerException) {
-                        Crashlytics.logException(e);
+                        FirebaseCrashlytics.getInstance().recordException(e);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -411,7 +404,7 @@ public class AddPortalActivity extends AppCompatActivity {
                             }
                         });
                     } else if (e instanceof IOException) {
-                        Crashlytics.logException(e);
+                        FirebaseCrashlytics.getInstance().recordException(e);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

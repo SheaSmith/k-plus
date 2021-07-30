@@ -204,6 +204,7 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
@@ -226,8 +227,6 @@
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@+id/refresh"
-            android:layout_toLeftOf="@+id/refresh"
             android:gravity="center_vertical"
             android:paddingTop="4dp"
             android:text="Timetable"
@@ -243,6 +242,15 @@
             android:layout_alignParentLeft="true"
             android:layout_marginTop="5dp"
             android:textColor="@color/white" />
+
+        <ImageView
+            android:id="@+id/refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/title"
+            android:layout_alignRight="@+id/title"
+            android:layout_alignBottom="@+id/title"
+            android:layout_alignParentTop="true" />
 
     </RelativeLayout>
 

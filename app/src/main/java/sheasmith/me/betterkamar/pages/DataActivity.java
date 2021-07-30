@@ -280,7 +280,7 @@ public class DataActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         SharedPreferences preferences = getSharedPreferences("sheasmith.me.betterkamar", MODE_PRIVATE);
-        AppCompatDelegate.setDefaultNightMode(preferences.getInt("night-mode", 1));
+        AppCompatDelegate.setDefaultNightMode(preferences.getInt("night-mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM));
 
         setContentView(R.layout.activity_data);
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
@@ -348,6 +348,6 @@ public class DataActivity extends AppCompatActivity {
         super.onStart();
 
         SharedPreferences preferences = getSharedPreferences("sheasmith.me.betterkamar", MODE_PRIVATE);
-        AppCompatDelegate.setDefaultNightMode(preferences.getInt("night-mode", 1));
+        AppCompatDelegate.setDefaultNightMode(preferences.getInt("night-mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM));
     }
 }

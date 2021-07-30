@@ -210,8 +210,16 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.widget.RemoteViews;
+
+import androidx.annotation.DrawableRes;
+import androidx.appcompat.content.res.AppCompatResources;
+
+import java.util.Date;
 
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.internalModels.PortalObject;
@@ -222,7 +230,7 @@ import sheasmith.me.betterkamar.internalModels.PortalObject;
  */
 public class TimetableWidget extends AppWidgetProvider {
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+    void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.timetable_widget);
@@ -230,6 +238,11 @@ public class TimetableWidget extends AppWidgetProvider {
         PortalObject p = TimetableWidgetConfigureActivity.getPortal(context, appWidgetId);
         if (p != null)
             views.setTextViewText(R.id.student, p.student + " (" + p.schoolName + ")");
+
+        views.setOnClickPendingIntent(R.id.refresh, getPendingSelfIntent(context, appWidgetId));
+
+        views.setImageViewBitmap(R.id.refresh, vectorToBitmap(context, R.drawable.ic_refresh));
+
         intent.setData(Uri.fromParts("content", appWidgetId + "", null));
         views.setRemoteAdapter(R.id.timetable, intent);
 
@@ -268,5 +281,33 @@ public class TimetableWidget extends AppWidgetProvider {
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
     }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+
+        int widgetId = intent.getIntExtra("widgetId", -1);
+
+        if (widgetId != -1) {
+            updateAppWidget(context, AppWidgetManager.getInstance(context), widgetId);
+        }
+    }
+
+    private PendingIntent getPendingSelfIntent(Context context, int widgetId) {
+        Intent intent = new Intent(context, getClass()); // An intent directed at the current class (the "self").
+        intent.putExtra("widgetId", widgetId);
+        return PendingIntent.getBroadcast(context, 0, intent, 0);
+    }
+
+    private static Bitmap vectorToBitmap(Context context, @DrawableRes int resVector) {
+        Drawable drawable = AppCompatResources.getDrawable(context, resVector);
+        Bitmap b = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        drawable.setBounds(0, 0, c.getWidth(), c.getHeight());
+        drawable.draw(c);
+        return b;
+    }
+
 }
 

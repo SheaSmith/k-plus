@@ -206,6 +206,7 @@
 package sheasmith.me.betterkamar.widgets;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -442,8 +443,9 @@ public class TimetableWidgetConfigureActivity extends Activity {
                 saveTitlePref(context, mAppWidgetId, serverId);
 
                 // It is the responsibility of the configuration activity to update the app widget
-                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-                TimetableWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
+                Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE, null, context, TimetableWidget.class); // An intent directed at the current class (the "self").
+                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] {mAppWidgetId});
+                sendBroadcast(intent);
 
                 // Make sure we pass back the original appWidgetId
                 Intent resultValue = new Intent();

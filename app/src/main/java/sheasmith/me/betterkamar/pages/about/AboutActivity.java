@@ -212,8 +212,6 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import sheasmith.me.betterkamar.KamarPlusApplication;
@@ -221,7 +219,7 @@ import sheasmith.me.betterkamar.R;
 
 public class AboutActivity extends AppCompatActivity {
 
-    private Tracker mTracker;
+    //
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,9 +230,9 @@ public class AboutActivity extends AppCompatActivity {
         setTitle("About");
 
         KamarPlusApplication application = (KamarPlusApplication) getApplication();
-        mTracker = application.getDefaultTracker();
-        mTracker.setScreenName("About");
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        //mTracker = FirebaseAnalytics.getInstance(this);
+        //mTracker.setScreenName("About");
+        //
         FirebaseAnalytics.getInstance(this).setCurrentScreen(this, "About", null);
     }
 

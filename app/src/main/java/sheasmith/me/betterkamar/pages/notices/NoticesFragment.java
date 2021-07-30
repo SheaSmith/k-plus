@@ -229,8 +229,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
+
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
@@ -271,7 +270,7 @@ public class NoticesFragment extends Fragment {
     private Date lastDate;
 
     private HashMap<Date, NoticesObject> notices = new HashMap<>();
-    private Tracker mTracker;
+
     private TextView mCurrentDate;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -296,9 +295,7 @@ public class NoticesFragment extends Fragment {
                 doRequest(mPortal, new Date(System.currentTimeMillis()), false, contextThemeWrapper);
 
             KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
-            mTracker = application.getDefaultTracker();
-            mTracker.setScreenName("Notices");
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
             FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "Notices", null);
         }
     }
@@ -529,12 +526,7 @@ public class NoticesFragment extends Fragment {
                                                     doRequest(portal, date, ignoreCache, contextThemeWrapper);
                                                 }
                                             })
-                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    // Since notices is the first section we aren't going to go back to portals activity. This isn't great, but we don't want to brick the rest of the app
-                                                }
-                                            })
+                                            .setNegativeButton("Cancel", null)
                                             .create()
                                             .show();
                                 }

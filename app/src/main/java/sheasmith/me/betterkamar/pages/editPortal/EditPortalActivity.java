@@ -217,8 +217,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
+
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -232,7 +231,7 @@ import sheasmith.me.betterkamar.util.ApiManager;
 
 public class EditPortalActivity extends AppCompatActivity {
 
-    private Tracker mTracker;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -240,9 +239,7 @@ public class EditPortalActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_portal);
 
         KamarPlusApplication application = (KamarPlusApplication) getApplication();
-        mTracker = application.getDefaultTracker();
-        mTracker.setScreenName("Edit Portal");
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

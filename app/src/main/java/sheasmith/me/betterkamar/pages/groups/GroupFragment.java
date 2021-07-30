@@ -225,8 +225,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
+
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
@@ -254,7 +253,7 @@ public class GroupFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private GroupAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private Tracker mTracker;
+
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static GroupFragment newInstance() {
@@ -280,9 +279,7 @@ public class GroupFragment extends Fragment {
 
 
             KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
-            mTracker = application.getDefaultTracker();
-            mTracker.setScreenName("Groups");
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
             FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "Groups", null);
         }
     }
@@ -415,13 +412,7 @@ public class GroupFragment extends Fragment {
                                                     doRequest(portal, ignoreCache, useHtml);
                                                 }
                                             })
-                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    if (isAdded())
-                                                        requireActivity().finish();
-                                                }
-                                            })
+                                            .setNegativeButton("Cancel", null)
                                             .create()
                                             .show();
                                 }
@@ -492,13 +483,7 @@ public class GroupFragment extends Fragment {
                                                     doRequest(portal, ignoreCache, useHtml);
                                                 }
                                             })
-                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    if (isAdded())
-                                                        requireActivity().finish();
-                                                }
-                                            })
+                                            .setNegativeButton("Cancel", null)
                                             .create()
                                             .show();
                                 }

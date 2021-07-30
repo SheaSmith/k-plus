@@ -227,8 +227,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.barteksc.pdfviewer.PDFView;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
+
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -240,8 +239,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import sheasmith.me.betterkamar.KamarPlusApplication;
 import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.htmlModels.ReportsObject;
@@ -257,7 +262,7 @@ public class PDFViewer extends Activity {
     ProgressDialog mProgressDialog;
     ReportsObject report;
     PortalObject mPortal;
-    private Tracker mTracker;
+
 
 
     @SuppressLint("NewApi")
@@ -304,9 +309,7 @@ public class PDFViewer extends Activity {
         });
 
         KamarPlusApplication application = (KamarPlusApplication) getApplication();
-        mTracker = application.getDefaultTracker();
-        mTracker.setScreenName("Report Viewer");
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
 
         report = (ReportsObject) getIntent().getSerializableExtra("report");
         ((TextView) findViewById(R.id.reportName)).setText(report.title);
@@ -364,14 +367,44 @@ public class PDFViewer extends Activity {
                 Connection.Response origCookies = Jsoup.connect(mPortal.hostname + "/index.php").method(Connection.Method.GET).execute();
                 Map<String, String> sessionCookies = origCookies.cookies();
 
-                Connection.Response login;
-                if (sessionCookies.containsKey("csrf_kamar_cn"))
-                    login = Jsoup.connect(mPortal.hostname + "/index.php/login").method(Connection.Method.POST).data("username", mPortal.username, "password", mPortal.password, "csrf_kamar_sn", sessionCookies.get("csrf_kamar_cn")).cookies(sessionCookies).execute();
-                else
-                    login = Jsoup.connect(mPortal.hostname + "/index.php/login").method(Connection.Method.POST).data("username", mPortal.username, "password", mPortal.password).cookies(sessionCookies).execute();
+                // Honestly KAMAR, you guys need to make it harder to login via scraping ;)
+                OkHttpClient client = new OkHttpClient();
 
-                Map<String, String> loginCookies = login.cookies();
+                Request request = new Request.Builder()
+                        .url(mPortal.hostname + "/index.php/assets/javascript.js")
+                        .get()
+                        .build();
+
+                Response js = client.newCall(request).execute();
+                String body = js.body().string();
+                Pattern urlPattern = Pattern.compile("\\$form\\.prop\\('action'\\) \\+'(.*?)'");
+
+                Matcher urlMatcher = urlPattern.matcher(body);
+
+                urlMatcher.find();
+
+                String urlPart = urlMatcher.group(1);
+
+                Pattern formInputPattern = Pattern.compile("<input type=\"hidden\" name=\"(.*?)\" value=\"'\\+ \\$auth\\.data\\('(.*?)'");
+                Matcher keyValue = formInputPattern.matcher(body);
+                keyValue.find();
+                String key = keyValue.group(1);
+
+                Map<String, String> headers = new HashMap<>();
+                headers.put("X-Requested-With", "XMLHttpRequest");
+                headers.put("Referer", mPortal.hostname + "/index.php");
+
+                String value = origCookies.parse().body().getElementById("auth").attr("data-" + key);
+
+
+                Connection.Response login;
+                //if (sessionCookies.containsKey("csrf_kamar_cn"))
+                login = Jsoup.connect(mPortal.hostname + "/index.php/" + urlPart).method(Connection.Method.POST).data("username", mPortal.username, "password", mPortal.password, key, value).headers(headers).cookies(sessionCookies).ignoreContentType(true).execute();
+                //else
+                // login = Jsoup.connect(mPortal.hostname.replace("api/api.php", "index.php/" + urlPart)).method(Connection.Method.POST).data("username", ID, "password", PASSWORD).cookies(sessionCookies).execute();
 //                    if (sessionCookies.containsKey("kamar_session"))
+                Map<String, String> loginCookies = login.cookies();
+
                 loginCookies.put("kamar_session", sessionCookies.get("kamar_session"));
 
                 URL url = new URL(sUrl[0]);

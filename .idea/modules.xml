@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/kamar.iml" filepath="$PROJECT_DIR$/kamar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kamar_t.iml" filepath="$PROJECT_DIR$/.idea/modules/kamar_t.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/kamar_t.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/kamar_t.app.iml" />
     </modules>
   </component>
 </project>

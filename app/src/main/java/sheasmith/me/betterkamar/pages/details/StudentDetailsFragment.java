@@ -224,8 +224,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
+
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
@@ -247,7 +246,7 @@ public class StudentDetailsFragment extends Fragment {
     private View mView;
     private ProgressBar mLoader;
     private PortalObject mPortal;
-    private Tracker mTracker;
+
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static StudentDetailsFragment newInstance() {
@@ -274,9 +273,7 @@ public class StudentDetailsFragment extends Fragment {
 
         if (isAdded()) {
             KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
-            mTracker = application.getDefaultTracker();
-            mTracker.setScreenName("Student Details");
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
             FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "Student Details", null);
         }
     }
@@ -419,13 +416,7 @@ public class StudentDetailsFragment extends Fragment {
                                                 doRequest(portal, ignoreCache);
                                             }
                                         })
-                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                if (isAdded())
-                                                    requireActivity().finish();
-                                            }
-                                        })
+                                        .setNegativeButton("Cancel", null)
                                         .create()
                                         .show();
                             }

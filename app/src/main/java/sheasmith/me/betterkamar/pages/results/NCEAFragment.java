@@ -233,8 +233,7 @@ import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
+
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
@@ -257,7 +256,7 @@ public class NCEAFragment extends Fragment {
     private View mView;
     private ProgressBar mLoader;
     private PortalObject mPortal;
-    private Tracker mTracker;
+
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static NCEAFragment newInstance() {
@@ -297,9 +296,7 @@ public class NCEAFragment extends Fragment {
 
         if (isAdded()) {
             KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
-            mTracker = application.getDefaultTracker();
-            mTracker.setScreenName("NCEA Results");
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
             FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "NCEA Results", null);
         }
     }
@@ -603,13 +600,7 @@ public class NCEAFragment extends Fragment {
                                                 doRequest(portal, ignoreCache);
                                             }
                                         })
-                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                if (requireActivity() != null)
-                                                    requireActivity().finish();
-                                            }
-                                        })
+                                        .setNegativeButton("Cancel", null)
                                         .create()
                                         .show();
                             }

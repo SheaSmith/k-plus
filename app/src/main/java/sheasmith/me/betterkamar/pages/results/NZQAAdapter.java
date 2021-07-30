@@ -213,7 +213,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.crashlytics.android.Crashlytics;
 
 import java.util.List;
 
@@ -221,6 +220,8 @@ import sheasmith.me.betterkamar.R;
 import sheasmith.me.betterkamar.dataModels.NZQAObject;
 
 import static android.view.View.GONE;
+
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 /**
  * Created by TheDiamondPicks on 9/09/2018.
@@ -325,11 +326,11 @@ public class NZQAAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
             }
             catch (IndexOutOfBoundsException e) {
-                Crashlytics.logException(e);
-                Crashlytics.setInt("q", codeQ.size());
-                Crashlytics.setInt("o", codeO.size());
-                Crashlytics.setInt("c", codeC.size());
-                Crashlytics.setInt("pos", position);
+                FirebaseCrashlytics.getInstance().recordException(e);
+                FirebaseCrashlytics.getInstance().setCustomKey("q", codeQ.size());
+                FirebaseCrashlytics.getInstance().setCustomKey("o", codeO.size());
+                FirebaseCrashlytics.getInstance().setCustomKey("c", codeC.size());
+                FirebaseCrashlytics.getInstance().setCustomKey("pos", position);
             }
 
 

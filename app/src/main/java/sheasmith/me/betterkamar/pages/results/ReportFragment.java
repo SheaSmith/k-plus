@@ -223,8 +223,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
+
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
@@ -249,7 +248,7 @@ public class ReportFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private ReportAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private Tracker mTracker;
+
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static ReportFragment newInstance() {
@@ -277,9 +276,7 @@ public class ReportFragment extends Fragment {
 
         if (isAdded()) {
             KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
-            mTracker = application.getDefaultTracker();
-            mTracker.setScreenName("Reports");
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
             FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "Reports", null);
         }
     }

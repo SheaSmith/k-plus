@@ -223,8 +223,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
+
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
@@ -277,9 +276,7 @@ public class AllResultsFragment extends Fragment {
 
         if (isAdded()) {
             KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
-            Tracker mTracker = application.getDefaultTracker();
-            mTracker.setScreenName("All Results");
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
             FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "All Results", null);
         }
     }
@@ -398,13 +395,7 @@ public class AllResultsFragment extends Fragment {
                                                 doRequest(portal, ignoreCache);
                                             }
                                         })
-                                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                if (isAdded())
-                                                    requireActivity().finish();
-                                            }
-                                        })
+                                        .setNegativeButton("Cancel", null)
                                         .create()
                                         .show();
                             }

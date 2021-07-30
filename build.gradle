@@ -8,17 +8,21 @@
 
 buildscript {
     repositories {
-        jcenter()
+        mavenLocal()
+        google()
+        mavenCentral()
         maven {
             url 'https://maven.google.com/'
             name 'Google'
         }
-        google()
+        jcenter()
+        maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
-        classpath 'com.google.gms:google-services:4.0.1'
-        classpath 'com.google.firebase:firebase-plugins:1.1.5'
+        classpath 'com.android.tools.build:gradle:7.0.0'
+        classpath 'com.google.firebase:perf-plugin:1.4.0'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.7.1'
+        classpath 'com.google.gms:google-services:4.3.8'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -27,16 +31,23 @@ buildscript {
 
 allprojects {
     repositories {
-        jcenter()
+        mavenLocal()
+        google()
+        mavenCentral()
         flatDir {
             dirs 'libs'
         }
+        jcenter()
+        maven { url 'https://jitpack.io' }
     }
 }
 allprojects {
     repositories {
-        maven { url "https://jitpack.io" }
+        mavenLocal()
         google()
+        mavenCentral()
+        jcenter()
+        maven { url 'https://jitpack.io' }
     }
 }
 task clean(type: Delete) {

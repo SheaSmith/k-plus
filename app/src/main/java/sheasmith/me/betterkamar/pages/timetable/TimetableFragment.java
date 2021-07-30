@@ -230,8 +230,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
+
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -305,9 +304,7 @@ public class TimetableFragment extends Fragment {
             requireActivity().invalidateOptionsMenu();
 
             KamarPlusApplication application = (KamarPlusApplication) requireActivity().getApplication();
-            Tracker mTracker = application.getDefaultTracker();
-            mTracker.setScreenName("Timetable");
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
             FirebaseAnalytics.getInstance(requireActivity()).setCurrentScreen(requireActivity(), "Timetable", null);
         }
     }
@@ -682,13 +679,7 @@ public class TimetableFragment extends Fragment {
                                         doRequest(portal, ignoreCache);
                                     }
                                 })
-                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        if (isAdded())
-                                            requireActivity().finish();
-                                    }
-                                })
+                                .setNegativeButton("Cancel", null)
                                 .create()
                                 .show();
                     }
