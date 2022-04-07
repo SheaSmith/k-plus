@@ -225,6 +225,8 @@ public class NZQAObject implements Serializable
 {
     public StudentOfficialResultsResults StudentOfficialResultsResults;
 
+    public NZQAObject() {}
+
     public NZQAObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.UnknownServerError, Exceptions.ExpiredToken, Exceptions.AccessDenied {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
@@ -281,7 +283,7 @@ public class NZQAObject implements Serializable
         StudentOfficialResultsResults = results;
     }
 
-    public class StudentOfficialResultsResults implements Serializable
+    public static class StudentOfficialResultsResults implements Serializable
     {
         public String AccessLevel;
 
@@ -296,7 +298,7 @@ public class NZQAObject implements Serializable
         public String NumberRecords;
     }
 
-    public class Qualification implements Serializable
+    public static class Qualification implements Serializable
     {
         public String Year;
 
@@ -311,7 +313,7 @@ public class NZQAObject implements Serializable
         public String Title;
     }
 
-    public class Type implements Serializable
+    public static class Type implements Serializable
     {
         public String index;
 

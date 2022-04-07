@@ -226,6 +226,8 @@ public class NCEAObject implements Serializable
 {
     public StudentNCEASummaryResults StudentNCEASummaryResults;
 
+    public NCEAObject() {}
+
     public NCEAObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.ExpiredToken, Exceptions.UnknownServerError, Exceptions.AccessDenied {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
@@ -382,7 +384,7 @@ public class NCEAObject implements Serializable
         StudentNCEASummaryResults = results;
     }
 
-    public class StudentNCEASummaryResults implements Serializable
+    public static class StudentNCEASummaryResults implements Serializable
     {
         public String AccessLevel;
 
@@ -395,7 +397,7 @@ public class NCEAObject implements Serializable
         public String NumberRecords;
     }
 
-    public class Student implements Serializable
+    public static class Student implements Serializable
     {
         public String index;
 
@@ -412,7 +414,7 @@ public class NCEAObject implements Serializable
         public CreditsInternal CreditsInternal;
     }
 
-    public class CreditsInternal implements Serializable
+    public static class CreditsInternal implements Serializable
     {
         public String Achieved = "0";
 
@@ -427,7 +429,7 @@ public class NCEAObject implements Serializable
         public String NotAchieved = "0";
     }
 
-    public class CreditsTotal
+    public static class CreditsTotal
     {
         public String Achieved = "0";
 
@@ -442,7 +444,7 @@ public class NCEAObject implements Serializable
         public String NotAchieved = "0";
     }
 
-    public class LevelTotal
+    public static class LevelTotal
     {
         public String index;
 
@@ -461,7 +463,7 @@ public class NCEAObject implements Serializable
         public String NotAchieved = "0";
     }
 
-    public class NCEA
+    public static class NCEA
     {
         public String NCEAL1LIT;
 
@@ -476,7 +478,7 @@ public class NCEAObject implements Serializable
         public String NCEAUELIT;
     }
 
-    public class YearTotal
+    public static class YearTotal
     {
         public String Year;
 
@@ -495,7 +497,7 @@ public class NCEAObject implements Serializable
         public String NotAchieved = "0";
     }
 
-    public class CreditsExternal
+    public static class CreditsExternal
     {
         public String Achieved = "0";
 

@@ -248,7 +248,7 @@ public class LoginObject implements Serializable
         }
         else {
             String error = root.getElementsByTagName("Error").item(0).getTextContent();
-            if (error.equalsIgnoreCase("The Username & Password do not appear to match a user on record. Please re-enter your Username and Password.") || error.equals("Incorrect Username or Password")) {
+            if (error.equalsIgnoreCase("The Username & Password do not appear to match a user on record. Please re-enter your Username and Password.") || error.equals("Incorrect Username or Password") || error.equals("Incorrect Username or Password entered")) {
                 throw new Exceptions.InvalidUsernamePassword();
             }
             else if (error.equalsIgnoreCase("Too many failed login attempts, try again in 20 minutes")) {

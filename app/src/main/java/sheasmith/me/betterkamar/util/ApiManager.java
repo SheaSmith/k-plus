@@ -218,6 +218,7 @@ import com.iainconnor.objectcache.DiskCache;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.File;
@@ -823,7 +824,22 @@ public class ApiManager {
                         cacheManager.put("NCEAObject" + ID, nceaObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_DAY.asSeconds(), false);
 
                     } catch (Exception e) {
-                        callback.error(e);
+                        if (e instanceof Exceptions.AccessDenied) {
+                            getNCEADetailsHtml(new ApiResponse<NCEAObject>() {
+                                @Override
+                                public void success(NCEAObject value) {
+                                    callback.success(value);
+                                }
+
+                                @Override
+                                public void error(Exception e) {
+                                    callback.error(e);
+                                }
+                            }, ignoreCache);
+                        } else {
+                            callback.error(e);
+
+                        }
                     }
                 }
             });
@@ -831,6 +847,125 @@ public class ApiManager {
         } else {
             callback.error(new Exceptions.InvalidToken());
         }
+    }
+
+    public static void getNCEADetailsHtml(final ApiResponse<NCEAObject> callback, boolean ignoreCache) {
+        NCEAObject cache = (NCEAObject) cacheManager.get("NCEAObject" + ID, NCEAObject.class, new TypeToken<NCEAObject>() {
+        }.getType());
+        if (cache != null && !ignoreCache) {
+            callback.success(cache);
+            return;
+        }
+
+        Thread webThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Map<String, String> cookies = loginHtml();
+
+                    org.jsoup.nodes.Document d = Jsoup.connect(URL.replace("api/api.php", "index.php/ncea_summary")).cookies(cookies).get();
+                    Element article = d.getElementsByTag("article").first();
+
+                    NCEAObject object = new NCEAObject();
+                    NCEAObject.StudentNCEASummaryResults results = new NCEAObject.StudentNCEASummaryResults();
+                    NCEAObject.Student student = new NCEAObject.Student();
+
+                    Elements tbodies = article.getElementsByTag("tbody");
+                    Elements byLevel = tbodies.get(2).children();
+
+                    ArrayList<NCEAObject.LevelTotal> levelTotals = new ArrayList<>();
+                    NCEAObject.NCEA ncea = new NCEAObject.NCEA();
+
+                    for (Element t : byLevel) {
+                        if (!t.child(1).tagName().equals("th")) {
+                            NCEAObject.LevelTotal levelTotal = new NCEAObject.LevelTotal();
+
+                            levelTotal.Level = t.child(0).text().trim();
+                            levelTotal.NotAchieved = t.child(1).text().trim();
+                            levelTotal.Achieved = t.child(2).text().trim();
+                            levelTotal.Merit = t.child(3).text().trim();
+                            levelTotal.Excellence = t.child(4).text().trim();
+                            levelTotal.Total = t.child(5).text().trim();
+                            levelTotal.Attempted = t.child(6).text().trim();
+
+                            switch (levelTotal.Level) {
+                                case "3":
+                                    ncea.L3NCEA = t.child(7).ownText().trim();
+                                    break;
+                                case "2":
+                                    ncea.L2NCEA = t.child(7).ownText().trim();
+                                    break;
+                                case "1":
+                                    ncea.L1NCEA = t.child(7).ownText().trim();
+                                    break;
+                            }
+
+                            levelTotals.add(levelTotal);
+                        }
+                        else {
+                            Elements ueInfo = t.child(8).getElementsByTag("div");
+
+                            ncea.NCEAUELIT = ueInfo.get(0).ownText().trim();
+                            ncea.NCEAL1LIT = ueInfo.get(1).ownText().trim();
+                            ncea.NCEANUM = ueInfo.get(2).ownText().trim();
+                        }
+                    }
+
+                    Elements byYear = tbodies.get(3).children();
+
+                    int totalNotAchieved = 0;
+                    int totalAchieved = 0;
+                    int totalMerit = 0;
+                    int totalExcellence = 0;
+                    int totalTotal = 0;
+                    int totalAttempted = 0;
+
+                    ArrayList<NCEAObject.YearTotal> yearTotals = new ArrayList<>();
+                    for (Element t : byYear) {
+                        NCEAObject.YearTotal yearTotal = new NCEAObject.YearTotal();
+                        yearTotal.Year = t.child(0).text().trim();
+                        yearTotal.NotAchieved = t.child(1).text().trim();
+                        yearTotal.Achieved = t.child(2).text().trim();
+                        yearTotal.Merit = t.child(3).text().trim();
+                        yearTotal.Excellence = t.child(4).text().trim();
+                        yearTotal.Total = t.child(5).text().trim();
+                        yearTotal.Attempted = t.child(6).text().trim();
+
+                        totalNotAchieved += Integer.parseInt(yearTotal.NotAchieved);
+                        totalAchieved += Integer.parseInt(yearTotal.Achieved);
+                        totalMerit += Integer.parseInt(yearTotal.Merit);
+                        totalExcellence += Integer.parseInt(yearTotal.Excellence);
+                        totalTotal += Integer.parseInt(yearTotal.Total);
+                        totalAttempted += Integer.parseInt(yearTotal.Attempted);
+
+                        yearTotals.add(yearTotal);
+                    }
+
+                    NCEAObject.CreditsTotal total = new NCEAObject.CreditsTotal();
+                    total.NotAchieved = String.valueOf(totalNotAchieved);
+                    total.Achieved = String.valueOf(totalAchieved);
+                    total.Merit = String.valueOf(totalMerit);
+                    total.Excellence = String.valueOf(totalExcellence);
+                    total.Total = String.valueOf(totalTotal);
+                    total.Attempted = String.valueOf(totalAttempted);
+
+                    student.CreditsTotal = total;
+                    student.NCEA = ncea;
+                    student.LevelTotals = levelTotals;
+                    student.YearTotals = yearTotals;
+
+                    results.Student = student;
+
+                    object.StudentNCEASummaryResults = results;
+
+                    callback.success(object);
+                    cacheManager.put("NCEAObject" + ID, object, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), false);
+                } catch (Exception e) {
+                    callback.error(e);
+                }
+            }
+        });
+        webThread.start();
     }
 
     public static void getNZQAResults(final ApiResponse<NZQAObject> callback, boolean ignoreCache) {
@@ -867,7 +1002,22 @@ public class ApiManager {
                         cacheManager.put("NZQAObject" + ID, nzqaObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_DAY.asSeconds(), false);
 
                     } catch (Exception e) {
-                        callback.error(e);
+                        if (e instanceof Exceptions.AccessDenied) {
+                            getNZQAResultsHtml(new ApiResponse<NZQAObject>() {
+                                @Override
+                                public void success(NZQAObject value) {
+                                    callback.success(value);
+                                }
+
+                                @Override
+                                public void error(Exception e) {
+                                    callback.error(e);
+                                }
+                            }, ignoreCache);
+                        } else {
+                            callback.error(e);
+
+                        }
                     }
                 }
             });
@@ -875,6 +1025,96 @@ public class ApiManager {
         } else {
             callback.error(new Exceptions.InvalidToken());
         }
+    }
+
+    public static void getNZQAResultsHtml(final ApiResponse<NZQAObject> callback, boolean ignoreCache) {
+        NZQAObject cache = (NZQAObject) cacheManager.get("NZQAObject" + ID, NZQAObject.class, new TypeToken<NZQAObject>() {
+        }.getType());
+        if (cache != null && !ignoreCache) {
+            callback.success(cache);
+            return;
+        }
+
+        Thread webThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Map<String, String> cookies = loginHtml();
+
+                    org.jsoup.nodes.Document d = Jsoup.connect(URL.replace("api/api.php", "index.php/ncea_summary")).cookies(cookies).get();
+                    Element article = d.getElementsByTag("article").first();
+
+                    NZQAObject object = new NZQAObject();
+                    NZQAObject.StudentOfficialResultsResults results = new NZQAObject.StudentOfficialResultsResults();
+
+                    NZQAObject.Type qualifications = new NZQAObject.Type();
+                    NZQAObject.Type other = new NZQAObject.Type();
+                    NZQAObject.Type course = new NZQAObject.Type();
+
+                    qualifications.TypeCode = "Q";
+                    other.TypeCode = "O";
+                    course.TypeCode = "C";
+
+                    ArrayList<NZQAObject.Qualification> qualificationsItems = new ArrayList<>();
+                    ArrayList<NZQAObject.Qualification> otherItems = new ArrayList<>();
+
+                    Elements tbodies = article.getElementsByTag("tbody");
+                    Elements achievements = tbodies.first().children();
+
+                    for (Element a : achievements) {
+                        Elements children = a.children();
+
+                        NZQAObject.Qualification qual = new NZQAObject.Qualification();
+                        qual.Year = children.get(0).text().trim();
+                        qual.Title = children.get(1).text().trim();
+                        qual.Level = children.get(2).text().trim();
+                        qual.Endorse = children.get(3).text().trim();
+
+                        if (qual.Level != null && !qual.Level.trim().isEmpty()) {
+                            qualificationsItems.add(qual);
+                        } else {
+                            otherItems.add(qual);
+                        }
+                    }
+
+                    qualifications.Qualifications = qualificationsItems;
+                    other.Qualifications = otherItems;
+
+                    ArrayList<NZQAObject.Qualification> courseEndorsements = new ArrayList<>();
+
+                    Elements courseTable = tbodies.get(1).children();
+
+                    for (Element c : courseTable) {
+                        Elements children = c.children();
+
+                        NZQAObject.Qualification qual = new NZQAObject.Qualification();
+                        qual.Year = children.get(0).text().trim();
+                        qual.Title = children.get(1).text().trim();
+                        qual.Ref = children.get(2).text().trim();
+                        qual.Level = children.get(3).text().trim();
+                        qual.Endorse = children.get(4).text().trim();
+
+                        courseEndorsements.add(qual);
+                    }
+
+                    course.Qualifications = courseEndorsements;
+
+                    ArrayList<NZQAObject.Type> types = new ArrayList<>();
+                    types.add(qualifications);
+                    types.add(other);
+                    types.add(course);
+
+                    results.Types = types;
+                    object.StudentOfficialResultsResults = results;
+
+                    callback.success(object);
+                    cacheManager.put("NZQAObject" + ID, object, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), false);
+                } catch (Exception e) {
+                    callback.error(e);
+                }
+            }
+        });
+        webThread.start();
     }
 
     public static void getAllResults(final ApiResponse<ResultObject> callback, boolean ignoreCache) {
@@ -914,7 +1154,22 @@ public class ApiManager {
                         cacheManager.put("ResultObject" + ID, resultObject, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_DAY.asSeconds(), false);
 
                     } catch (Exception e) {
-                        callback.error(e);
+                        if (e instanceof Exceptions.AccessDenied) {
+                            getAllResultsHtml(new ApiResponse<ResultObject>() {
+                                @Override
+                                public void success(ResultObject value) {
+                                    callback.success(value);
+                                }
+
+                                @Override
+                                public void error(Exception e) {
+                                    callback.error(e);
+                                }
+                            }, ignoreCache);
+                        } else {
+                            callback.error(e);
+
+                        }
                     }
                 }
             });
@@ -922,6 +1177,74 @@ public class ApiManager {
         } else {
             callback.error(new Exceptions.InvalidToken());
         }
+    }
+
+    public static void getAllResultsHtml(final ApiResponse<ResultObject> callback, boolean ignoreCache) {
+        ResultObject cache = (ResultObject) cacheManager.get("ResultObject" + ID, NCEAObject.class, new TypeToken<NCEAObject>() {
+        }.getType());
+        if (cache != null && !ignoreCache) {
+            callback.success(cache);
+            return;
+        }
+
+        Thread webThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Map<String, String> cookies = loginHtml();
+
+                    org.jsoup.nodes.Document d = Jsoup.connect(URL.replace("api/api.php", "index.php/ncea_summary")).cookies(cookies).get();
+                    Element article = d.getElementsByTag("article").first();
+
+                    ResultObject object = new ResultObject();
+
+                    Element resultsTable = article.getElementsByClass("thead-inverse").first().parent();
+
+                    ArrayList<ResultObject.ResultLevel> resultLevels = new ArrayList<>();
+                    ResultObject.ResultLevel lastLevel = null;
+                    String lastSubLevel = null;
+
+                    for (Element c : resultsTable.children()) {
+                        if (c.childNodeSize() != 0) {
+                            if (c.tagName().equals("thead") && !c.hasClass("tableFloatingHeader")) {
+                                lastLevel = new ResultObject.ResultLevel();
+                                lastLevel.NCEALevel = c.child(0).child(0).text().trim().replace("NCEA Level: ", "");
+                                lastLevel.Results = new ArrayList<>();
+                                resultLevels.add(lastLevel);
+                            }
+
+                            else if (c.tagName().equals("tbody")) {
+                                for (Element row : c.children()) {
+                                    if (row.hasClass("table-active")) {
+                                        lastSubLevel = row.text().trim();
+                                    }
+                                    else {
+                                        ResultObject.Result result = new ResultObject.Result();
+
+                                        result.Title = row.child(0).text().trim();
+                                        result.Credits = row.child(1).text().trim().split(" ")[0];
+                                        result.Grade = row.child(2).text().trim();
+                                        result.SubField = lastSubLevel;
+
+                                        if (lastLevel != null)
+                                            lastLevel.Results.add(result);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    object.StudentResultsResults = new ResultObject.StudentResultsResults();
+                    object.StudentResultsResults.ResultLevels = resultLevels;
+
+                    callback.success(object);
+                    cacheManager.put("ResultObject" + ID, object, com.iainconnor.objectcache.CacheManager.ExpiryTimes.ONE_WEEK.asSeconds(), false);
+                } catch (Exception e) {
+                    callback.error(e);
+                }
+            }
+        });
+        webThread.start();
     }
 
     public static void getTimetable(final ApiResponse<TimetableObject> callback, boolean ignoreCache) {
@@ -1231,7 +1554,8 @@ public class ApiManager {
     }
 
     public static void getReports(final ApiResponse<List<ReportsObject>> callback, boolean ignoreCache) {
-        List<ReportsObject> cache = (List<ReportsObject>) cacheManager.get("ReportsObject" + ID, ArrayList.class, new TypeToken<List<ReportsObject>>() {}.getType());
+        List<ReportsObject> cache = (List<ReportsObject>) cacheManager.get("ReportsObject" + ID, ArrayList.class, new TypeToken<List<ReportsObject>>() {
+        }.getType());
         if (cache != null && !ignoreCache) {
             callback.success(cache);
             return;
@@ -1241,48 +1565,7 @@ public class ApiManager {
             @Override
             public void run() {
                 try {
-                    Connection.Response origCookies = Jsoup.connect(URL.replace("api/api.php", "index.php")).method(Connection.Method.GET).execute();
-                    Map<String, String> sessionCookies = origCookies.cookies();
-
-                    // Honestly KAMAR, you guys need to make it harder to login via scraping ;)
-                    OkHttpClient client = new OkHttpClient();
-
-                    Request request = new Request.Builder()
-                            .url(URL.replace("api/api.php", "index.php/assets/javascript.js"))
-                            .get()
-                            .build();
-
-                    Response js = client.newCall(request).execute();
-                    String body = js.body().string();
-                    Pattern urlPattern = Pattern.compile("\\$form\\.prop\\('action'\\) \\+'(.*?)'");
-
-                    Matcher urlMatcher = urlPattern.matcher(body);
-
-                    urlMatcher.find();
-
-                    String urlPart = urlMatcher.group(1);
-
-                    Pattern formInputPattern = Pattern.compile("<input type=\"hidden\" name=\"(.*?)\" value=\"'\\+ \\$auth\\.data\\('(.*?)'");
-                    Matcher keyValue = formInputPattern.matcher(body);
-                    keyValue.find();
-                    String key = keyValue.group(1);
-
-                    Map<String, String> headers = new HashMap<>();
-                    headers.put("X-Requested-With", "XMLHttpRequest");
-                    headers.put("Referer", URL.replace("api/api.php", "index.php"));
-
-                    String value = origCookies.parse().body().getElementById("auth").attr("data-" + key);
-
-
-                    Connection.Response login;
-                    //if (sessionCookies.containsKey("csrf_kamar_cn"))
-                        login = Jsoup.connect(URL.replace("api/api.php", "index.php/" + urlPart)).method(Connection.Method.POST).data("username", ID, "password", PASSWORD, key, value).headers(headers).cookies(sessionCookies).ignoreContentType(true).execute();
-                    //else
-                       // login = Jsoup.connect(URL.replace("api/api.php", "index.php/" + urlPart)).method(Connection.Method.POST).data("username", ID, "password", PASSWORD).cookies(sessionCookies).execute();
-
-                    Map<String, String> cookies = login.cookies();
-//                    if (sessionCookies.containsKey("kamar_session"))
-                    cookies.put("kamar_session", sessionCookies.get("kamar_session"));
+                    Map<String, String> cookies = loginHtml();
 
                     org.jsoup.nodes.Document d = Jsoup.connect(URL.replace("api/api.php", "index.php/reports/")).cookies(cookies).get();
                     Elements groups = d.getElementsByTag("tbody").first().children();
@@ -1308,6 +1591,52 @@ public class ApiManager {
         webThread.start();
     }
 
+    private static Map<String, String> loginHtml() throws IOException {
+        Connection.Response origCookies = Jsoup.connect(URL.replace("api/api.php", "index.php")).method(Connection.Method.GET).execute();
+        Map<String, String> sessionCookies = origCookies.cookies();
+
+        // Honestly KAMAR, you guys need to make it harder to login via scraping ;)
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(URL.replace("api/api.php", "index.php/assets/javascript.js"))
+                .get()
+                .build();
+
+        Response js = client.newCall(request).execute();
+        String body = js.body().string();
+        Pattern urlPattern = Pattern.compile("\\$form\\.prop\\('action'\\) \\+'(.*?)'");
+
+        Matcher urlMatcher = urlPattern.matcher(body);
+
+        urlMatcher.find();
+
+        String urlPart = urlMatcher.group(1);
+
+        Pattern formInputPattern = Pattern.compile("<input type=\"hidden\" name=\"(.*?)\" value=\"'\\+ \\$auth\\.data\\('(.*?)'");
+        Matcher keyValue = formInputPattern.matcher(body);
+        keyValue.find();
+        String key = keyValue.group(1);
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("X-Requested-With", "XMLHttpRequest");
+        headers.put("Referer", URL.replace("api/api.php", "index.php"));
+
+        String value = origCookies.parse().body().getElementById("auth").attr("data-" + key);
+
+
+        Connection.Response login;
+        //if (sessionCookies.containsKey("csrf_kamar_cn"))
+        login = Jsoup.connect(URL.replace("api/api.php", "index.php/" + urlPart)).method(Connection.Method.POST).data("username", ID, "password", PASSWORD, key, value).headers(headers).cookies(sessionCookies).ignoreContentType(true).execute();
+        //else
+        // login = Jsoup.connect(URL.replace("api/api.php", "index.php/" + urlPart)).method(Connection.Method.POST).data("username", ID, "password", PASSWORD).cookies(sessionCookies).execute();
+
+        Map<String, String> cookies = login.cookies();
+//                    if (sessionCookies.containsKey("kamar_session"))
+        cookies.put("kamar_session", sessionCookies.get("kamar_session"));
+        return cookies;
+    }
+
     public static void getGroupsHtml(final ApiResponse<List<GroupsObject>> callback, boolean ignoreCache) {
         List<GroupsObject> cache = (List<GroupsObject>) cacheManager.get("GroupsObjectHTML" + ID, ArrayList.class, new TypeToken<List<GroupsObject>>() {
         }.getType());
@@ -1320,48 +1649,7 @@ public class ApiManager {
             @Override
             public void run() {
                 try {
-                    Connection.Response origCookies = Jsoup.connect(URL.replace("api/api.php", "index.php")).method(Connection.Method.GET).execute();
-                    Map<String, String> sessionCookies = origCookies.cookies();
-
-                    // Honestly KAMAR, you guys need to make it harder to login via scraping ;)
-                    OkHttpClient client = new OkHttpClient();
-
-                    Request request = new Request.Builder()
-                            .url(URL.replace("api/api.php", "index.php/assets/javascript.js"))
-                            .get()
-                            .build();
-
-                    Response js = client.newCall(request).execute();
-                    String body = js.body().string();
-                    Pattern urlPattern = Pattern.compile("\\$form\\.prop\\('action'\\) \\+'(.*?)'");
-
-                    Matcher urlMatcher = urlPattern.matcher(body);
-
-                    urlMatcher.find();
-
-                    String urlPart = urlMatcher.group(1);
-
-                    Pattern formInputPattern = Pattern.compile("<input type=\"hidden\" name=\"(.*?)\" value=\"'\\+ \\$auth\\.data\\('(.*?)'");
-                    Matcher keyValue = formInputPattern.matcher(body);
-                    keyValue.find();
-                    String key = keyValue.group(1);
-
-                    Map<String, String> headers = new HashMap<>();
-                    headers.put("X-Requested-With", "XMLHttpRequest");
-                    headers.put("Referer", URL.replace("api/api.php", "index.php"));
-
-                    String value = origCookies.parse().body().getElementById("auth").attr("data-" + key);
-
-
-                    Connection.Response login;
-                    //if (sessionCookies.containsKey("csrf_kamar_cn"))
-                    login = Jsoup.connect(URL.replace("api/api.php", "index.php/" + urlPart)).method(Connection.Method.POST).data("username", ID, "password", PASSWORD, key, value).headers(headers).cookies(sessionCookies).ignoreContentType(true).execute();
-                    //else
-                    // login = Jsoup.connect(URL.replace("api/api.php", "index.php/" + urlPart)).method(Connection.Method.POST).data("username", ID, "password", PASSWORD).cookies(sessionCookies).execute();
-
-                    Map<String, String> cookies = login.cookies();
-//                    if (sessionCookies.containsKey("kamar_session"))
-                    cookies.put("kamar_session", sessionCookies.get("kamar_session"));
+                    Map<String, String> cookies = loginHtml();
 
                     String lastcategory = "";
                     String lastyear = "";

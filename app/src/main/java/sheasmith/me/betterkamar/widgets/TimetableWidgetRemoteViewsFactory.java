@@ -357,6 +357,7 @@ public class TimetableWidgetRemoteViewsFactory implements RemoteViewsService.Rem
 
     private void doRequest(final PortalObject portal) {
         try {
+            Log.d("Request", "Updating timetable...");
             WidgetApiManager.setVariables(portal, mContext);
             WidgetApiManager.login(portal.username, portal.password);
             WidgetApiManager.setVariables(portal, mContext);

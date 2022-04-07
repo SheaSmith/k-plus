@@ -244,10 +244,10 @@ android {
 
     defaultConfig {
         applicationId "sheasmith.me.betterkamar"
-        minSdkVersion 22
+        minSdkVersion 23
         // DO NOT CHANGE THIS UNTIL THE SALT HAS BEEN FIXED !!!
         targetSdkVersion 31
-        versionCode 30
+        versionCode 31
         versionName "3.5.0"
         vectorDrawables.useSupportLibrary = true
     }

@@ -252,6 +252,7 @@ public class TimetableWidget extends AppWidgetProvider {
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.timetable);
 
 
     }
@@ -296,7 +297,7 @@ public class TimetableWidget extends AppWidgetProvider {
     private PendingIntent getPendingSelfIntent(Context context, int widgetId) {
         Intent intent = new Intent(context, getClass()); // An intent directed at the current class (the "self").
         intent.putExtra("widgetId", widgetId);
-        return PendingIntent.getBroadcast(context, 0, intent, 0);
+        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
     }
 
     private static Bitmap vectorToBitmap(Context context, @DrawableRes int resVector) {

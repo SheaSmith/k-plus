@@ -232,7 +232,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autoLink="email"
-        android:text="\nFound a bug? Want to request a feature? Send an email to kamar.plus.app@gmail.com" />
+        android:text="\nFound a bug? Want to request a feature? Send an email to k.plus.app.nz@gmail.com" />
 
     <TextView
         android:id="@+id/credit"
@@ -244,7 +244,7 @@
         android:id="@+id/copyright"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="K+ for Android is © Shea Smith 2016-2019. All rights reserved." />
+        android:text="K+ for Android is © Shea Smith 2016-2022. All rights reserved." />
 
     <TextView
         android:id="@+id/privacy"

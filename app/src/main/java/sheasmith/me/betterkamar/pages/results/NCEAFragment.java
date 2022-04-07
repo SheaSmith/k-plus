@@ -347,26 +347,32 @@ public class NCEAFragment extends Fragment {
                         @Override
                         public void run() {
                             NCEAObject.Student student = value.StudentNCEASummaryResults.Student;
-                            ((TextView) mView.findViewById(R.id.total_notachieved)).setText(student.CreditsTotal.NotAchieved);
-                            ((TextView) mView.findViewById(R.id.total_achieved)).setText(student.CreditsTotal.Achieved);
-                            ((TextView) mView.findViewById(R.id.total_merit)).setText(student.CreditsTotal.Merit);
-                            ((TextView) mView.findViewById(R.id.total_excellence)).setText(student.CreditsTotal.Excellence);
-                            ((TextView) mView.findViewById(R.id.total_credits)).setText(student.CreditsTotal.Total);
-                            ((TextView) mView.findViewById(R.id.total_attempted)).setText(student.CreditsTotal.Attempted);
 
-                            ((TextView) mView.findViewById(R.id.internal_notachieved)).setText(student.CreditsInternal.NotAchieved);
-                            ((TextView) mView.findViewById(R.id.internal_achieved)).setText(student.CreditsInternal.Achieved);
-                            ((TextView) mView.findViewById(R.id.internal_merit)).setText(student.CreditsInternal.Merit);
-                            ((TextView) mView.findViewById(R.id.internal_excellence)).setText(student.CreditsInternal.Excellence);
-                            ((TextView) mView.findViewById(R.id.internal_credits)).setText(student.CreditsInternal.Total);
-                            ((TextView) mView.findViewById(R.id.internal_attempted)).setText(student.CreditsInternal.Attempted);
+                            if (student.CreditsInternal != null && student.CreditsExternal != null) {
+                                ((TextView) mView.findViewById(R.id.total_notachieved)).setText(student.CreditsTotal.NotAchieved);
+                                ((TextView) mView.findViewById(R.id.total_achieved)).setText(student.CreditsTotal.Achieved);
+                                ((TextView) mView.findViewById(R.id.total_merit)).setText(student.CreditsTotal.Merit);
+                                ((TextView) mView.findViewById(R.id.total_excellence)).setText(student.CreditsTotal.Excellence);
+                                ((TextView) mView.findViewById(R.id.total_credits)).setText(student.CreditsTotal.Total);
+                                ((TextView) mView.findViewById(R.id.total_attempted)).setText(student.CreditsTotal.Attempted);
 
-                            ((TextView) mView.findViewById(R.id.external_notachieved)).setText(student.CreditsExternal.NotAchieved);
-                            ((TextView) mView.findViewById(R.id.external_achieved)).setText(student.CreditsExternal.Achieved);
-                            ((TextView) mView.findViewById(R.id.external_merit)).setText(student.CreditsExternal.Merit);
-                            ((TextView) mView.findViewById(R.id.external_excellence)).setText(student.CreditsExternal.Excellence);
-                            ((TextView) mView.findViewById(R.id.external_credits)).setText(student.CreditsExternal.Total);
-                            ((TextView) mView.findViewById(R.id.external_attempted)).setText(student.CreditsExternal.Attempted);
+                                ((TextView) mView.findViewById(R.id.internal_notachieved)).setText(student.CreditsInternal.NotAchieved);
+                                ((TextView) mView.findViewById(R.id.internal_achieved)).setText(student.CreditsInternal.Achieved);
+                                ((TextView) mView.findViewById(R.id.internal_merit)).setText(student.CreditsInternal.Merit);
+                                ((TextView) mView.findViewById(R.id.internal_excellence)).setText(student.CreditsInternal.Excellence);
+                                ((TextView) mView.findViewById(R.id.internal_credits)).setText(student.CreditsInternal.Total);
+                                ((TextView) mView.findViewById(R.id.internal_attempted)).setText(student.CreditsInternal.Attempted);
+
+                                ((TextView) mView.findViewById(R.id.external_notachieved)).setText(student.CreditsExternal.NotAchieved);
+                                ((TextView) mView.findViewById(R.id.external_achieved)).setText(student.CreditsExternal.Achieved);
+                                ((TextView) mView.findViewById(R.id.external_merit)).setText(student.CreditsExternal.Merit);
+                                ((TextView) mView.findViewById(R.id.external_excellence)).setText(student.CreditsExternal.Excellence);
+                                ((TextView) mView.findViewById(R.id.external_credits)).setText(student.CreditsExternal.Total);
+                                ((TextView) mView.findViewById(R.id.external_attempted)).setText(student.CreditsExternal.Attempted);
+                            }
+                            else {
+                                mView.findViewById(R.id.totals_table_card).setVisibility(GONE);
+                            }
 
                             NCEAObject.YearTotal latest = student.YearTotals.get(0);
                             int excellence = Integer.parseInt(latest.Excellence);

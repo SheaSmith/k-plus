@@ -211,5 +211,5 @@
     android:minHeight="110dp"
     android:previewImage="@drawable/widget_preview"
     android:resizeMode="horizontal|vertical"
-    android:updatePeriodMillis="100"
+    android:updatePeriodMillis="3600000"
     android:widgetCategory="home_screen|keyguard" />

@@ -226,6 +226,8 @@ public class ResultObject implements Serializable
 {
     public StudentResultsResults StudentResultsResults;
 
+    public ResultObject() {}
+
     public ResultObject(String xml) throws IOException, SAXException, ParserConfigurationException, Exceptions.UnknownServerError, Exceptions.ExpiredToken, Exceptions.AccessDenied {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
@@ -289,7 +291,7 @@ public class ResultObject implements Serializable
         StudentResultsResults = results;
     }
 
-    public class StudentResultsResults implements Serializable
+    public static class StudentResultsResults implements Serializable
     {
         public String AccessLevel;
 
@@ -305,7 +307,7 @@ public class ResultObject implements Serializable
 
         public String StudentID;
     }
-    public class Result implements Serializable
+    public static class Result implements Serializable
     {
         public String SubField;
 
@@ -326,7 +328,7 @@ public class ResultObject implements Serializable
         public String Title;
     }
 
-    public class ResultLevel implements Serializable
+    public static class ResultLevel implements Serializable
     {
         public String NCEALevel;
 

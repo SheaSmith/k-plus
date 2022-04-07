@@ -276,8 +276,11 @@ public class AllResultsChildAdapter extends RecyclerView.Adapter<AllResultsChild
 
         final ResultObject.Result result = results.get(position);
         holder.title.setText(result.Title);
-        holder.version.setText(String.format("%s ver. %s", result.Number, result.Version));
-        if (!result.ResultPublished.equals("")) {
+        if (result.Number != null && result.Version != null)
+            holder.version.setText(String.format("%s ver. %s", result.Number, result.Version));
+        else
+            holder.version.setVisibility(View.GONE);
+        if (result.ResultPublished != null && !result.ResultPublished.equals("")) {
             holder.date.setVisibility(View.VISIBLE);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             try {
@@ -299,13 +302,13 @@ public class AllResultsChildAdapter extends RecyclerView.Adapter<AllResultsChild
             holder.result.setVisibility(View.VISIBLE);
             // Outstanding and not awarded are total guesses
             holder.result.setText(result.Grade.substring(0, 1).toUpperCase() + result.Grade.substring(1));
-            if (result.Grade.equals("Achieved with Excellence") || result.Grade.equals("Scholarship Awarded With Outstanding Performance"))
+            if (result.Grade.equalsIgnoreCase("Achieved with Excellence") || result.Grade.equalsIgnoreCase("Scholarship Awarded With Outstanding Performance"))
                 holder.result.setBackgroundColor(mContext.getResources().getColor(R.color.excellence));
-            else if (result.Grade.equals("Achieved with Merit"))
+            else if (result.Grade.equalsIgnoreCase("Achieved with Merit"))
                 holder.result.setBackgroundColor(mContext.getResources().getColor(R.color.merit));
-            else if (result.Grade.equals("Achieved") || result.Grade.equals("Scholarship Awarded"))
+            else if (result.Grade.equalsIgnoreCase("Achieved") || result.Grade.equalsIgnoreCase("Scholarship Awarded"))
                 holder.result.setBackgroundColor(mContext.getResources().getColor(R.color.achieved));
-            else if (result.Grade.equals("Not Achieved") || result.Grade.equals("Scholarship Not Awarded"))
+            else if (result.Grade.equalsIgnoreCase("Not Achieved") || result.Grade.equalsIgnoreCase("Scholarship Not Awarded"))
                 holder.result.setBackgroundColor(mContext.getResources().getColor(R.color.notachieved));
         }
         else {
