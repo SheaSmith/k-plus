@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "405631272676",
+    "firebase_url": "https://kamar-plus.firebaseio.com",
+    "project_id": "kamar-plus",
+    "storage_bucket": "kamar-plus.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:405631272676:android:d17bc6d4a1058e14",
+        "android_client_info": {
+          "package_name": "sheasmith.me.betterkamar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "405631272676-kq08lqsh6fl4e2upske3vqoeiu8788oj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sheasmith.me.betterkamar",
+            "certificate_hash": "7bfbde6f033265b2d4e7f7bb13ccb17667302b07"
+          }
+        },
+        {
+          "client_id": "405631272676-ivfk536r7j1qgssg340etobof8lngnc2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApzMjilvjhaJHb-VDQXYXfWCtJS3SHJ_k"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "405631272676-ivfk536r7j1qgssg340etobof8lngnc2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
